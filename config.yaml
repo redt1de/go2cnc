@@ -1,0 +1,10 @@
+pendant_cfg:
+  server_address: :8080
+machine_cfg:
+  controller_type: "grbl"
+  socket_provider: "websocket"
+  socket_address: "192.168.0.134"
+  socket_port: 81
+  baudrate: 115200
+  serial_port: "/dev/ttyUSB0"
+  auth: "TODO"
