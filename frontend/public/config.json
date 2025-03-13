@@ -1,0 +1,8 @@
+{
+    "socketProvider": "websocket",
+    "socketAddress": "192.168.0.134",
+    "socketPort": 81,
+    "baudrate": 115200,
+    "controllerType": "fluidnc",
+    "serialPort": "/dev/ttyUSB0"
+}

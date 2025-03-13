@@ -1,0 +1,22 @@
+.fieldset {
+    border: 1px solid #fff;
+    border-radius: 4px;
+    color: #fff;
+    /* No fixed width or height here: auto sizing */
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 10px;
+    background: transparent;
+
+    /* Optionally, if you want it to shrink-wrap more tightly around the content, 
+       you can use: display: inline-block; */
+    display: inline-block;
+    /* or block if you prefer full-width layout */
+}
+
+.legend {
+    padding: 0 5px;
+    font-size: 1rem;
+    color: #fff;
+}

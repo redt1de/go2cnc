@@ -3,12 +3,13 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/redt1de/go2cnc/cnc/controller"
-	"github.com/redt1de/go2cnc/cnc/provider"
-	"github.com/redt1de/go2cnc/config"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/redt1de/go2cnc/backend/cnc/controller"
+	"github.com/redt1de/go2cnc/backend/cnc/provider"
+	"github.com/redt1de/go2cnc/backend/config"
 )
 
 var cncController controller.Controller

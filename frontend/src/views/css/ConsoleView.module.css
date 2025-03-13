@@ -1,0 +1,15 @@
+/* views/ControlView.module.css */
+.consoleView {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.machineContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    border-radius: 8px;
+    overflow: hidden;
+    gap: 10px;
+}

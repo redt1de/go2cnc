@@ -1,0 +1,30 @@
+.webcamContainer {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 1024px;
+    height: 540px;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.videoFeed {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+}
+
+.overlayCanvas {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+}
+
+.error {
+    color: red;
+    font-size: 1.5rem;
+}

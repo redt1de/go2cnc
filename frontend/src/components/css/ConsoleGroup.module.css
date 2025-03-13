@@ -1,0 +1,61 @@
+/* .consoleContainer {
+    width: 490px;
+    height: 220px;
+    background-color: #000;
+    color: #0f0;
+    font-family: monospace;
+    font-size: 14px;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+
+    padding: 10px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+}
+     */
+
+.consoleContainer {
+    width: 490px;
+    height: 220px;
+    background-color: #000;
+    font-family: monospace;
+    font-size: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    border: 2px solid #aaa;
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Default text (green) */
+.default {
+    color: #aaa;
+}
+
+.success {
+    color: #0f0;
+}
+
+/* Status updates (yellow) */
+.status {
+    color: #ff0;
+}
+
+/* Errors (red) */
+.error {
+    color: #f00;
+}
+
+.sent {
+    color: rgb(92, 91, 91);
+}
+
+/* Each line in console */
+.consoleLine {
+    white-space: pre-wrap;
+    word-break: break-word;
+    padding: 2px 0;
+}

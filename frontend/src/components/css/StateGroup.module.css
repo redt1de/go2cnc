@@ -1,0 +1,96 @@
+.stateContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border-radius: 8px;
+    overflow: hidden;
+    padding-bottom: 15px;
+}
+
+/* State Label */
+.stateLabel {
+    margin-right: 5px;
+    font-size: 1.5rem;
+    color: #fff;
+    grid-column: 1/1;
+}
+
+/* Default State */
+.state {
+    font-size: 1.2rem;
+    color: #fff;
+    border-radius: 8px;
+    padding: 5px;
+    grid-column: 2/-1;
+    text-align: center;
+    margin-left: 40px;
+    margin-right: 40px;
+    background-color: gray;
+    /* Default */
+}
+
+/* Dynamic state colors */
+.idle {
+    background-color: gray;
+}
+
+.running {
+    background-color: green;
+}
+
+.hold {
+    background-color: orange;
+}
+
+.home {
+    background-color: blue;
+}
+
+.alarm {
+    background-color: red;
+}
+
+.check {
+    background-color: yellow;
+}
+
+.door {
+    background-color: purple;
+}
+
+/* Flashing Alarm State */
+@keyframes flashAlarm {
+    0% {
+        background-color: red;
+    }
+
+    50% {
+        background-color: darkred;
+    }
+
+    100% {
+        background-color: red;
+    }
+}
+
+.flashing {
+    animation: flashAlarm 1s infinite;
+}
+
+/* Info Label */
+.infoLabel {
+    margin-right: 5px;
+    font-size: 1.2rem;
+    color: #fff;
+    grid-column: 1/-1;
+}
+
+/* Info Box */
+.info {
+    font-size: 1rem;
+    color: #fff;
+    background-color: #333;
+    padding: 5px;
+    grid-column: 1/-1;
+    width: 400px;
+}

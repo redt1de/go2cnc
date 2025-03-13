@@ -1,0 +1,61 @@
+.gpadContainer {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    border-radius: 8px;
+    overflow: hidden;
+    gap: 10px;
+}
+
+.gpadContainer button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    text-align: center;
+    background: #555;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+}
+
+.gpadContainer button:active {
+    background-color: #777;
+    transform: scale(0.98);
+}
+
+/* ✅ Input and ENTER button layout */
+.displayContainer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.display {
+    flex-grow: 1;
+    background: #222;
+    border: 1px solid #666;
+    font-family: monospace;
+    font-size: 1rem;
+    padding: 8px;
+    height: 20px;
+    border-radius: 4px;
+    overflow: hidden;
+    text-align: left;
+}
+
+.enterButton {
+    width: 60px;
+    height: 40px;
+    font-size: 1.5rem;
+    background: #007bff;
+    color: #fff;
+    border: 1px solid #0056b3;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+.enterButton:hover {
+    background: #0056b3;
+}

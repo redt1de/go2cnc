@@ -1,4 +1,4 @@
-module github.com/redt2de/go2cnc
+module github.com/redt1de/go2cnc
 
 go 1.23.4
 

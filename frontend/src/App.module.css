@@ -1,0 +1,58 @@
+/* App.module.css */
+.appContainer {
+    position: relative;
+    width: 1024px;
+    height: 600px;
+    overflow: hidden;
+    /* prevent content overflow outside the fixed area */
+    background: #222;
+    /* optional: a background color for contrast */
+}
+
+.tabBar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 1024px;
+    height: 60px;
+    background: #333;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    /**/
+    gap: 10px;
+
+}
+
+/* .tabBar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+} */
+
+.tabBar a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 1.5rem;
+    padding: 10px 20px;
+    /* Increased padding for button effect */
+    background: #444;
+    /* Button-like background */
+    border-radius: 6px;
+    /* Rounded corners */
+    transition: background 0.2s ease-in-out;
+}
+
+.viewContainer {
+    position: absolute;
+    top: 60px;
+    /* below the tab bar */
+    left: 0;
+    width: 1024px;
+    height: 540px;
+    /* remaining height (600-60) */
+    background: #111;
+    color: #fff;
+    padding: 10px;
+    box-sizing: border-box;
+}

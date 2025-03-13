@@ -1,0 +1,11 @@
+.runViewContainer {
+    position: absolute;
+    top: 0px;
+    left: 0;
+    width: 1024px;
+    height: 600px;
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

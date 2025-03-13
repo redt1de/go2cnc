@@ -1,0 +1,121 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 980px;
+    height: 480px;
+}
+
+.controlContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    width: 90%;
+    margin-top: 10px;
+}
+
+.toggleButton {
+    background: #555;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.toggleButton:hover {
+    background: #777;
+}
+
+.runButton,
+.dryRunButton,
+.autoLevelButton {
+    background: #333;
+    color: white;
+    border: 1px solid #555;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 120px;
+}
+
+.runButton:hover {
+    background: #008000;
+}
+
+.dryRunButton:hover {
+    background: #666;
+}
+
+.autoLevelButton:hover {
+    background: #0044aa;
+}
+
+.explorerContainer {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    /* Adjusted to give more space to file viewer */
+    border: 1px solid #444;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 400px;
+    width: 100%;
+}
+
+.fileList {
+    background: #333;
+    color: white;
+    overflow-y: auto;
+    border-right: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+}
+
+.fileItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #555;
+}
+
+.fileItem:hover {
+    background: #555;
+}
+
+.selected {
+    background: #777;
+    font-weight: bold;
+}
+
+.fileName {
+    flex-grow: 1;
+}
+
+.fileSize {
+    color: #aaa;
+}
+
+.fileViewer {
+    background: #222;
+    color: #fff;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    /* Allow it to fill remaining space */
+}
+
+.aceEditor {
+    width: 100% !important;
+    /* Ensure it fills the available width */
+    height: 100% !important;
+    /* Ensure it fills the available height */
+    border-radius: 5px;
+    background: #111;
+}

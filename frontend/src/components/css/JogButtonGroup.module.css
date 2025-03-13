@@ -1,0 +1,47 @@
+.jogContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border-radius: 8px;
+    overflow: hidden;
+    gap: 10px;
+}
+
+.stepSizeContainer {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding-bottom: 15px;
+}
+
+.stepSizeLabel {
+    margin-right: 5px;
+    font-size: 1.5rem;
+    color: #fff;
+}
+
+.stepSizeSelect {
+    font-size: 1.5rem;
+    background: #666;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+}
+
+/* Common button styles */
+.jogContainer button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    text-align: center;
+
+    background: #555;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+
+}
+
+.jogContainer button:active {
+    background-color: #777;
+    transform: scale(0.98);
+}

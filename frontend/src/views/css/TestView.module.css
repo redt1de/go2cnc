@@ -1,0 +1,29 @@
+.testContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border-radius: 8px;
+    overflow: hidden;
+    gap: 10px;
+}
+
+
+
+/* Common button styles */
+.testContainer button {
+    width: 120px;
+    height: 60px;
+    font-size: 1.5rem;
+    text-align: center;
+
+    background: #555;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+
+}
+
+.testContainer button:active {
+    background-color: #777;
+    transform: scale(0.98);
+}
