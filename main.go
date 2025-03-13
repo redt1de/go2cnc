@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/redt1de/go2cnc/cnc"
-	"github.com/redt1de/go2cnc/config"
-	"github.com/redt1de/go2cnc/server"
+	"github.com/redt1de/go2cnc/backend/cnc"
+	"github.com/redt1de/go2cnc/backend/config"
+	"github.com/redt1de/go2cnc/backend/server"
 )
 
 func main() {
