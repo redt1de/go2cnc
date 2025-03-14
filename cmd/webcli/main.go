@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"encoding/json"
 	"fmt"
-	"github.com/redt1de/go2cnc/backend/server"
+	"go2cnc/pkg/server"
 	"log"
 	"os"
 	"os/signal"

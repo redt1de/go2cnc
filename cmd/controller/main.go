@@ -7,9 +7,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/redt1de/go2cnc/backend/cnc/controller"
-	"github.com/redt1de/go2cnc/backend/cnc/provider"
-	"github.com/redt1de/go2cnc/backend/config"
+	"go2cnc/pkg/cnc/controller"
+	"go2cnc/pkg/cnc/provider"
+	"go2cnc/pkg/config"
 )
 
 var cncController controller.Controller

@@ -1,4 +1,4 @@
-module github.com/redt1de/go2cnc
+module go2cnc
 
 go 1.23.4
 
@@ -8,8 +8,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.1
 )
 
-require (
-	github.com/gofrs/uuid v4.0.0+incompatible // indirect
-	github.com/gomodule/redigo v1.8.4 // indirect
-	golang.org/x/sys v0.31.0 // indirect
-)
+require golang.org/x/sys v0.31.0 // indirect

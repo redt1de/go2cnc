@@ -1,11 +1,14 @@
 package main
 
+/*
+'s/github.com\/redt1de\/go2cnc\/backend/go2cnc\/pkg/g'
+*/
 import (
 	"log"
 
-	"github.com/redt1de/go2cnc/backend/cnc"
-	"github.com/redt1de/go2cnc/backend/config"
-	"github.com/redt1de/go2cnc/backend/server"
+	"go2cnc/pkg/cnc"
+	"go2cnc/pkg/config"
+	"go2cnc/pkg/server"
 )
 
 func main() {
@@ -14,7 +17,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	// Initialize CNC controller
 	cncController := cnc.InitController(&c.MachineCfg)
 
