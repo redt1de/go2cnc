@@ -11,10 +11,10 @@ import styles from './css/ConsoleView.module.css';
 import MachineGroup from '../components/MachineGroup';
 import CycleGroup from '../components/CycleGroup';
 import StateGroup from '../components/StateGroup';
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 
 export default function ConsoleView() {
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
 
     return (

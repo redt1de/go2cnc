@@ -70,7 +70,7 @@ func (g *GrblController) parseStatusReport(data string) {
 			fs := strings.Split(value, ",")
 			if len(fs) == 2 {
 				g.Machine.Status.Feedrate, _ = strconv.Atoi(fs[0])
-				g.Machine.Tool.Speed, _ = strconv.Atoi(fs[1])
+				g.Machine.Status.Tool.Speed, _ = strconv.Atoi(fs[1])
 			}
 
 		case "Ov":
@@ -82,7 +82,14 @@ func (g *GrblController) parseStatusReport(data string) {
 				g.Machine.Status.Ov = append(g.Machine.Status.Ov, num)
 			}
 
-		case "Buf":
+		// case "Buf":
+		// 	// Buffer info (Planner buffer, RX buffer)
+		// 	buf := strings.Split(value, ",")
+		// 	if len(buf) == 2 {
+		// 		g.Machine.Status.Buf.Planner, _ = strconv.Atoi(buf[0])
+		// 		g.Machine.Status.Buf.Rx, _ = strconv.Atoi(buf[1])
+		// 	}
+		case "Buf", "Bf": // ✅ Accepts both variations
 			// Buffer info (Planner buffer, RX buffer)
 			buf := strings.Split(value, ",")
 			if len(buf) == 2 {
@@ -116,13 +123,13 @@ func (g *GrblController) parseGCodeParserState(data string) {
 	for _, token := range tokens {
 		switch {
 		case strings.HasPrefix(token, "G"):
-			g.Machine.Modal.Motion = token
+			g.Machine.Status.Modal.Motion = token
 		case strings.HasPrefix(token, "M"):
-			g.Machine.Modal.Program = token
+			g.Machine.Status.Modal.Program = token
 		case strings.HasPrefix(token, "T"):
-			g.Machine.Tool.Number, _ = strconv.Atoi(strings.TrimPrefix(token, "T"))
+			g.Machine.Status.Tool.Number, _ = strconv.Atoi(strings.TrimPrefix(token, "T"))
 		case strings.HasPrefix(token, "S"):
-			g.Machine.Tool.Speed, _ = strconv.Atoi(strings.TrimPrefix(token, "S"))
+			g.Machine.Status.Tool.Speed, _ = strconv.Atoi(strings.TrimPrefix(token, "S"))
 		case strings.HasPrefix(token, "F"):
 			g.Machine.Status.Feedrate, _ = strconv.Atoi(strings.TrimPrefix(token, "F"))
 		}

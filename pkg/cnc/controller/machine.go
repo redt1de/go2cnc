@@ -1,9 +1,9 @@
 package controller
 
 type Machine struct {
-	Status       Status        `json:"status"`
-	Modal        Modal         `json:"modal"`
-	Tool         Tool          `json:"tool"`
+	Status Status `json:"status"`
+	// Modal        Modal         `json:"modal"`
+	// Tool         Tool          `json:"tool"`
 	ProbeHistory []ProbeResult `json:"probeHistory"`
 }
 
@@ -31,8 +31,10 @@ type Status struct {
 		Planner int `json:"planner"`
 		Rx      int `json:"rx"`
 	} `json:"buf"`
-	Feedrate int `json:"feedrate"`
-	Spindle  int `json:"spindle"`
+	Feedrate int   `json:"feedrate"`
+	Spindle  int   `json:"spindle"`
+	Modal    Modal `json:"modal"`
+	Tool     Tool  `json:"tool"`
 }
 
 type Modal struct {

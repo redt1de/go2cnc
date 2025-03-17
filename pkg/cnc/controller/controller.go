@@ -7,5 +7,7 @@ type Controller interface {
 	GetStatus() Status
 	IsConnected() bool
 	Disconnect()
-	Console() chan string
+	SetEmitter(func(eventName string, optionalData ...interface{}))
+	onData(data string)
+	onConnection(isConnected bool)
 }

@@ -14,14 +14,27 @@ import (
 
 var cncController controller.Controller
 
+const yamlCfg = `
+pendant_cfg:
+  server_address: :8080
+machine_cfg:
+  controller_type: "grbl"
+  socket_provider: "websocket"
+  socket_address: "192.168.0.134"
+  socket_port: 81
+  baudrate: 115200
+  serial_port: "/dev/ttyUSB1"
+  auth: "TODO"
+  `
+
 func main() {
-	// withProvider()
-	withController()
+	withProvider()
+	// withController()
 }
 
 func withController() {
 	// Load configuration
-	c, err := config.LoadYamlConfig("./config.yaml")
+	c, err := config.UnmarshalConfig(yamlCfg)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,7 +105,13 @@ func withController() {
 
 func withProvider() {
 	// Load configuration
-	c, err := config.LoadYamlConfig("./config.yaml")
+	// c, err := config.LoadYamlConfig("./config.yaml")
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// Load configuration
+	c, err := config.UnmarshalConfig(yamlCfg)
 	if err != nil {
 		log.Fatal(err)
 	}

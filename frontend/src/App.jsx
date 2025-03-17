@@ -13,8 +13,27 @@ import { NavLink } from "react-router-dom"; // ✅ Use NavLink for active stylin
 import WebcamView from './views/WebcamView';
 import loadConfig from "./util/Config";
 import { useState, useEffect } from 'react';
-import { WebSocketProvider } from "./websocket/WebSocketProvider"; // Import WebSocketProvider
+import { CNCProvider } from './context/CNCContext';
+/*
+// import { Greet, EmitEvent } from "../wailsjs/go/main/App";
+// import { EventsEmit, EventsOn } from "@wailsapp/runtime";
+// import { EventsEmit, EventsOn } from "../wailsjs/runtime";
 
+const [messages, setMessages] = useState([]);
+    useEffect(() => {
+        console.log("Setting up event listener...");
+        EventsOn("timerEvent", (message) => {
+            console.log("Received event:", message);
+            setMessages((prev) => [...prev, message]);
+        });
+
+        return () => {
+            console.log("Cleaning up event listener...");
+            // unsubscribe();
+        };
+    }, []);
+
+*/
 
 
 function App() {
@@ -24,14 +43,14 @@ function App() {
     loadConfig().then(setConfig);
   }, []);
 
-  if (!config) return <div>Loading...</div>;
+  // if (!config) return <div>Loading...</div>;
 
 
 
 
   return (
 
-    <WebSocketProvider>
+    <CNCProvider>
       <div className={styles.appContainer}>
         <Router>
           <nav className={styles.tabBar}>
@@ -70,7 +89,7 @@ function App() {
       </div>
       <DisconnectedOverlay />
 
-    </WebSocketProvider >
+    </CNCProvider >
   );
 }
 

@@ -7,5 +7,6 @@ type Provider interface {
 	Send(string) error
 	SendRaw([]byte) error
 	SetOnData(func(string))
+	SetOnConnection(func(bool))
 	IsConnected() bool
 }

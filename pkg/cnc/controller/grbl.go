@@ -7,33 +7,39 @@ import (
 )
 
 type GrblController struct {
-	Provider    provider.Provider
-	Machine     *Machine
-	consoleChan chan string
+	Provider provider.Provider
+	Machine  *Machine
+	Emitter  func(eventName string, optionalData ...interface{})
 }
 
 func NewGrblController(provider provider.Provider) *GrblController {
 	g := &GrblController{
-		Provider:    provider,
-		consoleChan: make(chan string, 250),
+		Provider: provider,
+		Emitter: func(ceventName string, optionalData ...interface{}) {
+			log.Println("EmitConsole not set")
+		},
 	}
 	g.Machine = &Machine{
 		Status: Status{},
-		Modal:  Modal{},
+		// Modal:  Modal{},
 	}
 	g.Provider.SetOnData(g.onData)
+	g.Provider.SetOnConnection(g.onConnection)
 	return g
 }
 
-// Console() returns a channel for receiving console messages
-func (g *GrblController) Console() chan string {
-	return g.consoleChan
+func (g *GrblController) SetEmitter(emitter func(eventName string, optionalData ...interface{})) {
+	g.Emitter = emitter
 }
 
 // onData parses CNC machine responses
 func (g *GrblController) onData(data string) {
-	// log.Println("📥 Grbl parsing:", data)
 	g.parseData(data)
+}
+
+func (g *GrblController) onConnection(isConnected bool) {
+	log.Println("🔗 Emitting connection event:", isConnected)
+	g.Emitter("connectionEvent", isConnected)
 }
 
 // Connect starts the connection to the CNC machine
@@ -83,12 +89,9 @@ func (g *GrblController) parseData(data string) {
 		g.parseWorkOffsets(data)
 	}
 
-	// ✅ Send raw console message to the channel
-	select {
-	case g.consoleChan <- data:
-	default:
-		log.Println("⚠️ Console channel full, dropping message:", data)
-	}
+	g.emitConsole(data)
+	g.emitStatus()
+
 }
 
 var ignoreFilters = []string{
@@ -105,4 +108,14 @@ func ignore(data string) bool {
 	}
 	return false
 
+}
+
+func (g *GrblController) emitConsole(data string) {
+	g.Emitter("consoleEvent", data)
+}
+func (g *GrblController) emitStatus() {
+	g.Emitter("statusEvent", g.Machine.Status)
+}
+func (g *GrblController) emitConn() {
+	g.Emitter("connectionEvent", g.Provider.IsConnected())
 }

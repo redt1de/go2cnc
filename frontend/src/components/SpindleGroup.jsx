@@ -1,13 +1,15 @@
 import React, { useState, useContext } from 'react';
 import styles from './css/SpindleGroup.module.css';
-import { useWebSocket } from "../websocket/WebSocketProvider";
+// import { useWebSocket } from "../websocket/WebSocketProvider";
+import { Send } from "../../wailsjs/go/main/App";
 import KeypadModal from '../util/KeypadModal';
+import { useCNC } from '../context/CNCContext';
 
 export default function SpindleGroup() {
     const [showKeypad, setShowKeypad] = useState(false);
     const [prompt, setPrompt] = useState('Enter Value');
     const [currentCommand, setCurrentCommand] = useState('');
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
 
     const handleOpenKeypad = (command) => {
@@ -77,15 +79,15 @@ export default function SpindleGroup() {
                     <tbody>
                         <tr>
                             <td className={styles.toolLabel}>T</td>
-                            <td className={styles.toolTdV}>{(status && status.modal?.tool) ?? -1}</td>
+                            <td className={styles.toolTdV}>{(status && status.tool?.number) ?? -1}</td>
                         </tr>
                         <tr>
                             <td className={styles.toolLabel}>TLO</td>
-                            <td className={styles.toolTdV}>{(status && status.tlo) ?? -1}</td>
+                            <td className={styles.toolTdV}>{(status && status.tool?.tlo) ?? -1}</td>
                         </tr>
                         <tr>
                             <td className={styles.toolLabel}>S</td>
-                            <td className={styles.toolTdV}>{(status && status.modal?.spindleSpeed) ?? -1}</td>
+                            <td className={styles.toolTdV}>{(status && status.tool?.speed) ?? -1}</td>
                         </tr>
                     </tbody>
                 </table>

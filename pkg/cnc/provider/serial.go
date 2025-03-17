@@ -1,30 +1,47 @@
 package provider
 
 import (
+	"bufio"
 	"errors"
-	"fmt"
 	"log"
+	"sync"
 	"time"
 
-	"github.com/tarm/serial"
+	"go.bug.st/serial"
+	"go.bug.st/serial/enumerator"
 )
 
-// SerialProvider communicates with a CNC machine over a Serial (USB/UART) connection
+// SerialProvider communicates with a CNC machine over Serial (USB/UART)
 type SerialProvider struct {
-	Port        string
-	BaudRate    int
-	isConnected bool
-	serialPort  *serial.Port
-	OnData      func(string)
+	Port         string
+	BaudRate     int
+	isConnected  bool
+	serialPort   serial.Port
+	OnData       func(string)
+	OnConnection func(bool)
+	mu           sync.Mutex // Prevents race conditions
 }
 
-func (w *SerialProvider) SetOnData(f func(string)) {
-	w.OnData = f
+// SetOnData sets the callback function for incoming data
+func (s *SerialProvider) SetOnData(f func(string)) {
+	s.OnData = f
+}
+
+// SetOnConnection sets the callback function for connection status changes
+func (s *SerialProvider) SetOnConnection(f func(bool)) {
+	s.OnConnection = f
+}
+
+func (w *SerialProvider) setConnected(is bool) {
+	w.isConnected = is
+	if w.OnConnection != nil {
+		w.OnConnection(is)
+	}
 }
 
 // NewSerialProvider creates a new instance of SerialProvider
 func NewSerialProvider(port string, baudRate int) *SerialProvider {
-	log.Println("🔗 Using WebSocket Provider...")
+	log.Println("🔗 Initializing Serial Provider using go-serial...")
 	return &SerialProvider{
 		Port:     port,
 		BaudRate: baudRate,
@@ -33,40 +50,71 @@ func NewSerialProvider(port string, baudRate int) *SerialProvider {
 
 // Connect establishes a serial connection
 func (s *SerialProvider) Connect() error {
-	config := &serial.Config{Name: s.Port, Baud: s.BaudRate, ReadTimeout: time.Second * 2}
-	port, err := serial.OpenPort(config)
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	// Prevent duplicate connections
+	if s.isConnected {
+		return nil
+	}
+
+	// Configure the serial port
+	mode := &serial.Mode{
+		BaudRate: s.BaudRate,
+		Parity:   serial.NoParity,
+		DataBits: 8,
+		StopBits: serial.OneStopBit,
+	}
+
+	port, err := serial.Open(s.Port, mode)
 	if err != nil {
-		return fmt.Errorf("failed to open serial port: %w", err)
+		log.Println("❌ Failed to open serial port:", s.Port)
+		log.Println("❌ Failed to open serial port:", err)
+		return err
 	}
 
 	s.serialPort = port
-	s.isConnected = true
+	s.setConnected(true)
+
 	log.Println("✅ Connected to CNC via Serial on", s.Port)
 
-	// Start reading serial data
+	// Start listening for serial data in a separate goroutine
 	go s.listen()
+
 	return nil
 }
 
-// listen reads messages from the serial port
+// listen continuously reads messages from the serial port
 func (s *SerialProvider) listen() {
-	buf := make([]byte, 128)
+	reader := bufio.NewReader(s.serialPort)
+
 	for s.isConnected {
-		n, err := s.serialPort.Read(buf)
+		// Read until newline
+		line, err := reader.ReadString('\n')
 		if err != nil {
 			log.Println("❌ Serial read error:", err)
-			s.Disconnect()
+			s.handleDisconnect() // Handles automatic reconnection
 			return
 		}
 
-		message := string(buf[:n])
-		log.Println("📥 Received from Serial:", message)
+		cleanLine := line[:len(line)-1] // Trim newline
+		// log.Println("📥 Received:", cleanLine)
+
+		// Send data to OnData callback
+		if s.OnData != nil {
+			s.OnData(cleanLine)
+		}
 	}
 }
 
 // Send sends a command over Serial
 func (s *SerialProvider) Send(msg string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if s.serialPort == nil || !s.isConnected {
+		log.Println("⚠️ Attempted to send, but serial port is disconnected.")
+		s.setConnected(false)
 		return errors.New("serial port not connected")
 	}
 
@@ -74,9 +122,14 @@ func (s *SerialProvider) Send(msg string) error {
 	return err
 }
 
-// Send sends a command over Serial
+// SendRaw sends a raw byte command over Serial
 func (s *SerialProvider) SendRaw(msg []byte) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
 	if s.serialPort == nil || !s.isConnected {
+		log.Println("⚠️ Attempted to send raw data, but serial port is disconnected.")
+		s.setConnected(false)
 		return errors.New("serial port not connected")
 	}
 
@@ -84,17 +137,66 @@ func (s *SerialProvider) SendRaw(msg []byte) error {
 	return err
 }
 
-// Disconnect closes the Serial connection
-func (s *SerialProvider) Disconnect() {
+// handleDisconnect handles connection loss and retries connection
+func (s *SerialProvider) handleDisconnect() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	log.Println("🔌 Serial connection lost. Attempting to reconnect...")
+
+	s.setConnected(false)
+
+	// Close the port if open
 	if s.serialPort != nil {
 		s.serialPort.Close()
 		s.serialPort = nil
-		s.isConnected = false
-		log.Println("🔌 Serial connection closed")
+	}
+
+	// Continuous reconnect loop
+	go func() {
+		for !s.isConnected {
+			log.Println("🔄 Reconnecting to serial port...")
+			err := s.Connect()
+			if err == nil {
+				log.Println("✅ Reconnected successfully!")
+				return
+			}
+			time.Sleep(3 * time.Second) // Wait before retrying
+		}
+	}()
+}
+
+// Disconnect closes the Serial connection
+func (s *SerialProvider) Disconnect() {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+
+	if s.serialPort != nil {
+		log.Println("🔌 Closing serial connection...")
+		s.serialPort.Close()
+		s.serialPort = nil
+		s.setConnected(false)
 	}
 }
 
 // IsConnected returns the connection status
 func (s *SerialProvider) IsConnected() bool {
+	s.mu.Lock()
+	defer s.mu.Unlock()
 	return s.isConnected
+}
+
+// ListPorts lists available serial ports
+func ListPorts() ([]string, error) {
+	ports, err := enumerator.GetDetailedPortsList()
+	if err != nil {
+		return nil, err
+	}
+
+	var portNames []string
+	for _, port := range ports {
+		portNames = append(portNames, port.Name)
+	}
+
+	return portNames, nil
 }

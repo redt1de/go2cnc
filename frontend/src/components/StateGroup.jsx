@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import styles from "./css/StateGroup.module.css";
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 
 export default function StateGroup() {
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
     const [infoMessage, setInfoMessage] = useState("");
 
     // ✅ Ensure gState is always a valid string
-    const gState = status?.state || "unknown";
+    const gState = status?.activeState || "unknown";
+    // console.log("gState:", gState); // Debugging
 
     // ✅ Determine the state class for background color
     const getStateClass = () => {
@@ -24,10 +25,25 @@ export default function StateGroup() {
     };
 
     // ✅ Extract  messages from console output
+    // useEffect(() => {
+    //     const lastMessage = consoleMessages.find(
+    //         (msg) => msg.filter(msg => typeof msg === "string")
+    //             .startsWith("[MSG:") || msg.startsWith("[DBG:")
+    //     );
+
+    //     if (lastMessage) {
+    //         setInfoMessage(
+    //             lastMessage.replace(/\[(MSG|DBG):/, "").replace("]", "")
+    //         );
+    //     }
+    // }, [consoleMessages]);
+
     useEffect(() => {
-        const lastMessage = consoleMessages.find(
-            (msg) => msg.startsWith("[MSG:") || msg.startsWith("[DBG:")
-        );
+        console.log("consoleMessages:", consoleMessages); // Debugging
+
+        const lastMessage = consoleMessages
+            .filter(msg => typeof msg === "string") // ✅ Ensure only strings
+            .find(msg => msg.startsWith("[MSG:") || msg.startsWith("[DBG:"));
 
         if (lastMessage) {
             setInfoMessage(

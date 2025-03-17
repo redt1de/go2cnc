@@ -1,13 +1,13 @@
 import styles from './css/MachineGroup.module.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHouse, faLockOpen, faRotateBack } from '@fortawesome/free-solid-svg-icons';
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 import HomingModal from "../util/HomingModal";
 import { useState } from 'react';
 
 export default function MachineGroup() {
     const [showModal, setShowModal] = useState(false);
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
     const handleHoming = (command) => {
         console.log("Sending:", command);

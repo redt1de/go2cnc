@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
 import styles from './css/JogButtonGroup.module.css';
 import { useContext } from 'react';
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 import YesNoDialog from "../util/YesNoDialog";
 
 export default function JogButtonGroup() {
     const [stepSize, setStepSize] = useState('10.0');
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
     const [showDialog, setShowDialog] = useState(false);
 
     const handleConfirm = () => {
         setShowDialog(false);
-        console.log('Sending G0 Z0');
+        console.log('sendCommanding G0 Z0');
         sendCommand(`G90 G0 Z0`);
     };
 

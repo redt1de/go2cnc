@@ -12,7 +12,7 @@ func NewFluidNCController(provider provider.Provider) *FluidNCController {
 	grblC := NewGrblController(provider)
 	grblC.Machine = &Machine{
 		Status: Status{},
-		Modal:  Modal{},
+		// Modal:  Modal{},
 	}
 
 	fC := &FluidNCController{

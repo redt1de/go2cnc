@@ -1,0 +1,46 @@
+{
+    "activeState": "Idle",
+    "mpos": {
+        "x": "0.000",
+        "y": "0.000",
+        "z": "0.000"
+    },
+    "wpos": {
+        "x": "",
+        "y": "",
+        "z": ""
+    },
+    "ov": [
+        100,
+        100,
+        100
+    ],
+    "subState": 0,
+    "wco": {
+        "x": "",
+        "y": "",
+        "z": ""
+    },
+    "buf": {
+        "planner": 0,
+        "rx": 0
+    },
+    "feedrate": 0,
+    "spindle": 0,
+    "modal": {
+        "motion": "G94",
+        "wcs": "",
+        "plane": "",
+        "units": "",
+        "distance": "",
+        "feedrate": "",
+        "program": "M9",
+        "spindle": "",
+        "coolant": null
+    },
+    "tool": {
+        "number": 101,
+        "speed": 0,
+        "tlo": 0
+    }
+}

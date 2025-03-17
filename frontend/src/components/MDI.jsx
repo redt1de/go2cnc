@@ -1,8 +1,8 @@
 import React, { useContext } from "react"; import styles from './css/MDI.module.css';
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 
 export default function MDI({ positions = {} }) {
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
     return (
         <div className={styles.mdiContainer}>

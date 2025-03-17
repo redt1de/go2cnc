@@ -120,10 +120,10 @@ func (ws *WebSocketServer) StartStatusUpdates() {
 
 // ListenToConsole reads console messages from CNC and forwards them
 func (ws *WebSocketServer) ListenToConsole() {
-	go func() {
-		for msg := range ws.cncController.Console() {
-			log.Println("📡 Console:", msg)
-			ws.Broadcast("console", msg)
-		}
-	}()
+	// go func() {
+	// 	for msg := range ws.cncController.Console() {
+	// 		log.Println("📡 Console:", msg)
+	// 		ws.Broadcast("console", msg)
+	// 	}
+	// }()
 }

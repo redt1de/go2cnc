@@ -1,8 +1,8 @@
 import styles from './css/ZeroGroup.module.css';
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 
 export default function ZeroGroup() {
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
     return (
         // <Frame title="Zero">
         <div className={styles.zeroContainer}>

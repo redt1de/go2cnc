@@ -3,10 +3,11 @@ import Frame from '../util/Frame';
 import ConsoleGroup from '../components/ConsoleGroup';
 import { useEffect, useState, useRef } from 'react';
 import styles from './css/TestView.module.css';
-import { useWebSocket } from "../websocket/WebSocketProvider"; // Import WebSocket hook
+import { useCNC } from '../context/CNCContext';
+
 
 export default function FilesView() {
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
     const consoleRef = useRef(null);
 
     useEffect(() => {

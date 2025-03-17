@@ -1,6 +1,8 @@
-import React, { useRef, useEffect, useContext } from "react";
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import React, { useRef, useEffect, useContext, useState } from "react";
+import { useCNC } from '../context/CNCContext';
 import styles from "./css/ConsoleGroup.module.css";
+// // import { Send } from "../../wailsjs/go/main/App";
+// import { EventsOn } from "../../wailsjs/runtime"
 
 
 const syntaxMatchers = {
@@ -16,10 +18,21 @@ const syntaxMatchers = {
 
 
 export default function ConsoleGroup() {
-
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
     const scrollRef = useRef(null);
+
+    // useEffect(() => {
+    //     EventsOn("consoleEvent", (message) => {
+    //         console.log("Received event:", message);
+    //         setConsoleMessages((prev) => [...prev, message]);
+    //     });
+
+    //     return () => {
+    //         // console.log("Cleaning up event listener...");
+    //         // unsubscribe();
+    //     };
+    // }, []);
 
     // ✅ Auto-scroll when messages update
     useEffect(() => {
@@ -43,6 +56,7 @@ export default function ConsoleGroup() {
 
     return (
         <div className={styles.consoleContainer} ref={scrollRef}>
+            <button onClick={() => sendCommand("?")}>Send Test</button>
             {consoleMessages.length > 0 ? (
                 consoleMessages.map((msg, i) => (
                     <div key={i} className={styles.consoleLine}>

@@ -1,12 +1,12 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 import styles from "./css/WebcamView.module.css";
-import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from '../context/CNCContext';
 
 export default function WebcamView() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [error, setError] = useState(null);
-    const { consoleMessages, status, sendCommand } = useWebSocket();
+    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
 
     useEffect(() => {
         async function startWebcam() {
