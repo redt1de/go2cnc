@@ -7,27 +7,22 @@ type Machine struct {
 	ProbeHistory []ProbeResult `json:"probeHistory"`
 }
 
+type Coordinate struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
+	Z float64 `json:"z"`
+}
+
 // Status is a CNCjs compatible status struct
 type Status struct {
-	ActiveState string `json:"activeState"`
-	Mpos        struct {
-		X string `json:"x"`
-		Y string `json:"y"`
-		Z string `json:"z"`
-	} `json:"mpos"`
-	Wpos struct {
-		X string `json:"x"`
-		Y string `json:"y"`
-		Z string `json:"z"`
-	} `json:"wpos"`
-	Ov       []int `json:"ov"`
-	SubState int   `json:"subState"`
-	Wco      struct {
-		X string `json:"x"`
-		Y string `json:"y"`
-		Z string `json:"z"`
-	} `json:"wco"`
-	Buf struct {
+	ActiveState string                `json:"activeState"`
+	Mpos        Coordinate            `json:"mpos"`
+	Wpos        Coordinate            `json:"wpos"`
+	Ov          []int                 `json:"ov"`
+	SubState    int                   `json:"subState"`
+	ActiveWCS   string                `json:"activeWCS"` // added to store the current WCS, taken from modal command $G
+	Wco         map[string]Coordinate `json:"wco"`
+	Buf         struct {
 		Planner int `json:"planner"`
 		Rx      int `json:"rx"`
 	} `json:"buf"`

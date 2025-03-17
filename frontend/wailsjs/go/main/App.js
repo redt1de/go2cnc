@@ -9,3 +9,7 @@ export function Emitter(arg1, arg2) {
 export function Send(arg1) {
   return window['go']['main']['App']['Send'](arg1);
 }
+
+export function SendRaw(arg1) {
+  return window['go']['main']['App']['SendRaw'](arg1);
+}

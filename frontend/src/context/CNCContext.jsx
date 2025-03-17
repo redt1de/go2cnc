@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Send } from "../../wailsjs/go/main/App";
+import { Send, SendRaw } from "../../wailsjs/go/main/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime"
 
 // Create CNC Context
@@ -61,8 +61,20 @@ export const CNCProvider = ({ children }) => {
         }
     };
 
+    const sendRaw = async (command) => {
+        console.log("Sending command:", command);
+        try {
+            const response = await SendRaw(command);
+            console.log("Command response:", response);
+            return response;
+        } catch (error) {
+            console.error("Send command failed:", error);
+            return null;
+        }
+    };
+
     return (
-        <CNCContext.Provider value={{ consoleMessages, status, isConnected, sendCommand }}>
+        <CNCContext.Provider value={{ consoleMessages, status, isConnected, sendCommand, sendRaw }}>
             {children}
         </CNCContext.Provider>
     );

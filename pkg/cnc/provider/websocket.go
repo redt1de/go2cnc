@@ -52,6 +52,7 @@ func NewWebSocketProvider(ip string, port int) *WebSocketProvider {
 
 // Connect establishes a WebSocket connection
 func (w *WebSocketProvider) Connect() error {
+	log.Println("🔗 Connecting to WebSocket:", w.Addr)
 	w.mutex.Lock()
 	defer w.mutex.Unlock()
 
@@ -67,7 +68,6 @@ func (w *WebSocketProvider) Connect() error {
 		return err
 	}
 
-	w.setConnected(true)
 	w.lastMessage = time.Now()
 
 	log.Println("✅ WebSocket Connected:", w.Addr)
@@ -77,6 +77,8 @@ func (w *WebSocketProvider) Connect() error {
 
 	// Start timeout checker
 	go w.checkConnectionHealth()
+
+	w.setConnected(true)
 
 	return nil
 }

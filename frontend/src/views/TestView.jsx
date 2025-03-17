@@ -7,7 +7,7 @@ import { useCNC } from '../context/CNCContext';
 
 
 export default function FilesView() {
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { consoleMessages, status, isConnected, sendCommand, sendRaw } = useCNC();
     const consoleRef = useRef(null);
 
     useEffect(() => {
@@ -18,7 +18,7 @@ export default function FilesView() {
 
     const tsend = () => {
         // sendCommand("$H\n");
-        sendCommand(0x18);
+        sendRaw(0x18);
     }
 
 
@@ -27,7 +27,7 @@ export default function FilesView() {
         <div style={{ padding: '10px' }}>
             <h2>Testing</h2>
             <div className={styles.testContainer}>
-                <button onClick={tsend}>?</button>
+                <button onClick={tsend}>reset</button>
                 {/* <button onClick={getProbeData}>get</button>
                 <button onClick={fakeprobe} >fake probe</button> */}
 

@@ -1,12 +1,12 @@
 package main
 
 import (
-	"go2cnc/pkg/cnc"
-	"go2cnc/pkg/cnc/controller"
-	"go2cnc/pkg/config"
 	"context"
 	"encoding/json"
 	"fmt"
+	"go2cnc/pkg/cnc"
+	"go2cnc/pkg/cnc/controller"
+	"go2cnc/pkg/config"
 	"log"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -45,7 +45,6 @@ func (a *App) startup(ctx context.Context) {
 
 }
 
-// Greet returns a greeting for the given name
 func (a *App) Send(cmd string) {
 
 	if cmd == "dump" {
@@ -61,6 +60,28 @@ func (a *App) Send(cmd string) {
 	a.cncController.Send(cmd)
 }
 
+func (a *App) SendRaw(cmd interface{}) {
+	var data []byte
+
+	switch v := cmd.(type) {
+	case int: // If it's an integer, convert it to a single-byte slice
+		data = []byte{byte(v)}
+	case float64: // Wails might send numbers as float64, so handle this case too
+		data = []byte{byte(int(v))}
+	case string: // If it's a string, convert it to bytes
+		data = []byte(v)
+	case []byte: // If it's already a []byte, use it directly
+		data = v
+	default:
+		log.Println("❌ SendRaw: Unsupported command type:", cmd)
+		return
+	}
+
+	// Send the correctly formatted byte slice
+	a.cncController.SendRaw(data)
+}
+
 func (a *App) Emitter(eventName string, optionalData ...interface{}) {
+	log.Println("📡 Emitting event:", eventName)
 	runtime.EventsEmit(a.ctx, eventName, optionalData)
 }

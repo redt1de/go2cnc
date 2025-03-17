@@ -9,7 +9,7 @@ export default function CycleGroup() {
 
         <div className={styles.cycleContainer}>
             <button onClick={() => sendCommand(`?\n$G\n$#`)}><FontAwesomeIcon icon={faPlay} /></button>
-            <button><FontAwesomeIcon icon={faPause} /></button>
+            <button onClick={() => sendCommand(`dump`)}><FontAwesomeIcon icon={faPause} /></button>
             <button><FontAwesomeIcon icon={faStop} /></button>
         </div>
 

@@ -4,3 +4,5 @@
 export function Emitter(arg1:string,arg2:Array<any>):Promise<void>;
 
 export function Send(arg1:string):Promise<void>;
+
+export function SendRaw(arg1:any):Promise<void>;
