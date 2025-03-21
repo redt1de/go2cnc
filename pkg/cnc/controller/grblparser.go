@@ -69,9 +69,9 @@ func (g *GrblController) parseProbeResult(data string) {
 }
 
 // parseStatusReport parses Grbl's real-time status reports
-func (g *GrblController) parseStatusReport(data string) {
+func (g *GrblController) parseStatusReport(rawdata string) {
 	// Remove `< >` brackets
-	data = strings.Trim(data, "<>")
+	data := strings.Trim(rawdata, "<>")
 
 	// Split the report into key-value pairs
 	fields := strings.Split(data, "|")
@@ -157,7 +157,7 @@ func (g *GrblController) parseStatusReport(data string) {
 			logme.Println("📡 Input Pin State:", value)
 
 		default:
-			logme.Println("Unknown Grbl status field:", key, "=", value)
+			logme.Println("Unknown Grbl status field:", key, " in ", rawdata)
 		}
 	}
 }
