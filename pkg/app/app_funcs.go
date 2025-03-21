@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"go2cnc/pkg/cnc/controller"
+	"go2cnc/pkg/logme"
 	"log"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -36,7 +37,7 @@ func (a *App) SendRaw(cmd interface{}) {
 	case []byte: // If it's already a []byte, use it directly
 		data = v
 	default:
-		log.Println("❌ SendRaw: Unsupported command type:", cmd)
+		logme.Error("SendRaw: Unsupported command type:", cmd)
 		return
 	}
 

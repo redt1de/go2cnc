@@ -5,6 +5,7 @@ import (
 	"go2cnc/pkg/cnc"
 	"go2cnc/pkg/cnc/controller"
 	"go2cnc/pkg/config"
+	"go2cnc/pkg/logme"
 	"log"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -28,7 +29,7 @@ func NewApp() *App {
 func (a *App) Startup(ctx context.Context) {
 
 	runtime.LogSetLogLevel(ctx, 3)
-	runtime.LogInfo(ctx, "Starting up CNC controller")
+	logme.Info("Starting up CNC controller")
 	a.ctx = ctx
 	c, err := config.LoadYamlConfig(ConfigFile)
 	if err != nil {
@@ -40,7 +41,7 @@ func (a *App) Startup(ctx context.Context) {
 
 	err = a.cncController.Connect()
 	if err != nil {
-		// log.Fatal("❌ Failed to connect to CNC:", err)
+		logme.Error("Failed to connect to CNC:", err)
 	}
 
 }

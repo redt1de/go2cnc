@@ -21,7 +21,7 @@ func main() {
 	url := "ws://localhost:8080/ws"
 	conn, _, err := websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
-		log.Fatal("❌ Failed to connect to WebSocket:", err)
+		log.Fatal("Failed to connect to WebSocket:", err)
 	}
 	defer conn.Close()
 
@@ -34,13 +34,13 @@ func main() {
 		for {
 			_, message, err := conn.ReadMessage()
 			if err != nil {
-				log.Println("❌ WebSocket error:", err)
+				log.Println("WebSocket error:", err)
 				return
 			}
 
 			var msg server.WebSocketEvent
 			if err := json.Unmarshal(message, &msg); err != nil {
-				log.Println("⚠️ Error parsing message:", err)
+				log.Println("Error parsing message:", err)
 				fmt.Println(string(message))
 				continue
 			}
@@ -79,7 +79,7 @@ func main() {
 		// Send the command over WebSocket
 		err := conn.WriteMessage(websocket.TextMessage, []byte(command))
 		if err != nil {
-			log.Println("❌ Error sending command:", err)
+			log.Println("Error sending command:", err)
 			break
 		}
 

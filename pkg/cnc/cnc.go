@@ -1,7 +1,7 @@
 package cnc
 
 import (
-	"log"
+	"go2cnc/pkg/logme"
 
 	"go2cnc/pkg/cnc/controller"
 	"go2cnc/pkg/cnc/provider"
@@ -26,7 +26,7 @@ func InitController(m *MachineCfg) controller.Controller {
 	case "serial":
 		cncProvider = provider.NewSerialProvider(m.SerialPort, m.Baudrate)
 	default:
-		log.Fatal("❌ Unsupported provider:", m.SocketProvider)
+		logme.Fatal("Unsupported provider: " + m.SocketProvider)
 	}
 
 	// Initialize CNC controller
@@ -37,7 +37,7 @@ func InitController(m *MachineCfg) controller.Controller {
 	case "fluidnc":
 		cncController = controller.NewFluidNCController(cncProvider)
 	default:
-		log.Fatal("❌ Unsupported controller:", m.ControllerType)
+		logme.Fatal("Unsupported controller: " + m.ControllerType)
 	}
 
 	return cncController

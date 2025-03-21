@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"log"
+	"go2cnc/pkg/logme"
 	"regexp"
 	"strconv"
 	"strings"
@@ -11,7 +11,7 @@ func (g *GrblController) parseData(data string) {
 	if ignore(data) {
 		return
 	}
-	// log.Println("🔍 recieved data:", data)
+	// logme.Println("🔍 recieved data:", data)
 
 	switch {
 	case strings.HasPrefix(data, "<"):
@@ -52,7 +52,7 @@ func (g *GrblController) parseProbeResult(data string) {
 	matches := re.FindStringSubmatch(data)
 
 	if len(matches) < 5 {
-		log.Println("❌ Invalid Grbl probe result:", data)
+		logme.Println("Invalid Grbl probe result:", data)
 		return
 	}
 
@@ -109,7 +109,7 @@ func (g *GrblController) parseStatusReport(data string) {
 
 		case "WCO": // tracking work offsets stored in Status.Wco[Status.ActiveWCS]
 
-			// log.Println("⚠️ Satus includes WCO, triggering ForceUpdate()  ($G + $# + ?)")
+			// logme.Println("Satus includes WCO, triggering ForceUpdate()  ($G + $# + ?)")
 
 			// Work Coordinate Offset
 			// wco := strings.Split(value, ",")
@@ -154,10 +154,10 @@ func (g *GrblController) parseStatusReport(data string) {
 			}
 
 		case "Pn":
-			log.Println("📡 Input Pin State:", value)
+			logme.Println("📡 Input Pin State:", value)
 
 		default:
-			log.Println("⚠️ Unknown Grbl status field:", key, "=", value)
+			logme.Println("Unknown Grbl status field:", key, "=", value)
 		}
 	}
 }
@@ -168,7 +168,7 @@ func (g *GrblController) parseGCodeParserState(data string) {
 	matches := re.FindStringSubmatch(data)
 
 	if len(matches) < 2 {
-		log.Println("❌ Invalid Grbl parser state:", data)
+		logme.Println("Invalid Grbl parser state:", data)
 		return
 	}
 
@@ -203,7 +203,7 @@ func (g *GrblController) parseWorkOffsets(data string) {
 	matches := re.FindAllStringSubmatch(data, -1)
 
 	if len(matches) == 0 {
-		log.Println("❌ Invalid Grbl offset data:", data)
+		logme.Println("Invalid Grbl offset data:", data)
 		return
 	}
 
@@ -228,12 +228,12 @@ func (g *GrblController) parseWorkOffsets(data string) {
 
 		// Store offsets in Status.Wco map
 		g.Machine.Status.Wco[wcs] = Coordinate{X: x, Y: y, Z: z}
-		// log.Printf("📡 Work Coordinate %s: X=%.3f, Y=%.3f, Z=%.3f\n", wcs, x, y, z)
+		// logme.Printf("📡 Work Coordinate %s: X=%.3f, Y=%.3f, Z=%.3f\n", wcs, x, y, z)
 
 		// Special handling for Tool Length Offset (TLO)
 		if wcs == "TLO" {
 			g.Machine.Status.Tool.TLO = x
-			// log.Printf("📡 Tool Length Offset (TLO): %.3f\n", x)
+			// logme.Printf("📡 Tool Length Offset (TLO): %.3f\n", x)
 		}
 	}
 }

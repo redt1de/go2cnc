@@ -16,7 +16,7 @@ export default function WebcamView() {
                     videoRef.current.srcObject = stream;
                 }
             } catch (err) {
-                setError("❌ Failed to access webcam. Please check permissions.");
+                setError("Failed to access webcam. Please check permissions.");
                 console.error("Webcam error:", err);
             }
         }

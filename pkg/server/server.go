@@ -32,7 +32,7 @@ func NewWebSocketServer(cnc controller.Controller) *WebSocketServer {
 func (ws *WebSocketServer) Start(srvAddr string) {
 	err := ws.cncController.Connect()
 	if err != nil {
-		log.Fatal("❌ Failed to connect to CNC MachineCfg:", err)
+		log.Fatal("Failed to connect to CNC MachineCfg:", err)
 
 	}
 
@@ -62,7 +62,7 @@ func (ws *WebSocketServer) HandleConnections(w http.ResponseWriter, r *http.Requ
 	for {
 		_, msg, err := conn.ReadMessage()
 		if err != nil {
-			log.Println("❌ Client disconnected:", err)
+			log.Println("Client disconnected:", err)
 			ws.clientMux.Lock()
 			delete(ws.clients, conn)
 			ws.clientMux.Unlock()
@@ -88,7 +88,7 @@ func (ws *WebSocketServer) HandleConnections(w http.ResponseWriter, r *http.Requ
 func (ws *WebSocketServer) Broadcast(eventType string, data interface{}) {
 	message, err := json.Marshal(map[string]interface{}{"event": eventType, "data": data})
 	if err != nil {
-		log.Println("❌ Error encoding message:", err)
+		log.Println("Error encoding message:", err)
 		return
 	}
 
@@ -98,7 +98,7 @@ func (ws *WebSocketServer) Broadcast(eventType string, data interface{}) {
 	for conn := range ws.clients {
 		err := conn.WriteMessage(websocket.TextMessage, message)
 		if err != nil {
-			log.Println("❌ Error sending message:", err)
+			log.Println("Error sending message:", err)
 			conn.Close()
 			delete(ws.clients, conn)
 		}

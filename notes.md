@@ -39,6 +39,10 @@ wails build
 ---------------------------------
 git clone https://github.com/redt1de/go2cnc
 cd go2cnc
-cd frontend npm install .
+cd frontend 
+npm install .
 cd ..
+wails build
+DISPLAY=:0 build/bin/go2cnc -config ./config.yaml
+    or
 DISPLAY=:0 wails dev

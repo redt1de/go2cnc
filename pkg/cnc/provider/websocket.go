@@ -3,7 +3,7 @@ package provider
 import (
 	"errors"
 	"fmt"
-	"log"
+	"go2cnc/pkg/logme"
 	"strings"
 	"sync"
 	"time"
@@ -42,7 +42,7 @@ func (w *WebSocketProvider) setConnected(is bool) {
 
 // NewWebSocketProvider creates a new instance of WebSocketProvider
 func NewWebSocketProvider(ip string, port int) *WebSocketProvider {
-	log.Println("🔗 Initializing WebSocket Provider...")
+	logme.Println("🔗 Initializing WebSocket Provider...")
 	return &WebSocketProvider{
 		Addr:        fmt.Sprintf("ws://%s:%d", ip, port),
 		stopChan:    make(chan struct{}),
@@ -52,25 +52,25 @@ func NewWebSocketProvider(ip string, port int) *WebSocketProvider {
 
 // Connect establishes a WebSocket connection
 func (w *WebSocketProvider) Connect() error {
-	log.Println("🔗 Connecting to WebSocket:", w.Addr)
+	logme.Println("🔗 Connecting to WebSocket:", w.Addr)
 	w.mutex.Lock()
 	defer w.mutex.Unlock()
 
 	if w.isConnected {
-		log.Println("⚠️ Already connected, skipping reconnection")
+		logme.Println("Already connected, skipping reconnection")
 		return nil
 	}
 
 	var err error
 	w.conn, _, err = websocket.DefaultDialer.Dial(w.Addr, nil)
 	if err != nil {
-		log.Println("❌ WebSocket Connection Failed:", err)
+		logme.Println("WebSocket Connection Failed:", err)
 		return err
 	}
 
 	w.lastMessage = time.Now()
 
-	log.Println("✅ WebSocket Connected:", w.Addr)
+	logme.Println("✅ WebSocket Connected:", w.Addr)
 
 	// Start listening for incoming data
 	go w.listen()
@@ -92,7 +92,7 @@ func (w *WebSocketProvider) listen() {
 		default:
 			_, bMsg, err := w.conn.ReadMessage()
 			if err != nil {
-				log.Println("❌ WebSocket Disconnected:", err)
+				logme.Println("WebSocket Disconnected:", err)
 				w.reconnect()
 				return
 			}
@@ -106,7 +106,7 @@ func (w *WebSocketProvider) listen() {
 			}
 
 			message := strings.TrimSpace(string(bMsg))
-			// log.Println("📥 Received from CNC:", message)
+			// logme.Println("📥 Received from CNC:", message)
 
 			if w.OnData != nil {
 				w.OnData(message)
@@ -127,7 +127,7 @@ func (w *WebSocketProvider) checkConnectionHealth() {
 		case <-ticker.C:
 			w.mutex.Lock()
 			if time.Since(w.lastMessage) > 10*time.Second { // 🔥 If no data for 10 seconds, assume lost connection
-				log.Println("⚠️ No WebSocket data for 10s, assuming connection lost...")
+				logme.Println("No WebSocket data for 10s, assuming connection lost...")
 				w.mutex.Unlock()
 				w.reconnect()
 				return
@@ -137,7 +137,7 @@ func (w *WebSocketProvider) checkConnectionHealth() {
 			w.conn.SetWriteDeadline(time.Now().Add(5 * time.Second))
 			err := w.conn.WriteMessage(websocket.PingMessage, nil)
 			if err != nil {
-				log.Println("⚠️ WebSocket Ping Failed, forcing reconnect:", err)
+				logme.Println("WebSocket Ping Failed, forcing reconnect:", err)
 				w.setConnected(false)
 				w.mutex.Unlock()
 				w.reconnect()
@@ -155,7 +155,7 @@ func (w *WebSocketProvider) Send(msg string) error {
 	defer w.mutex.Unlock()
 
 	if w.conn == nil || !w.isConnected {
-		log.Println("⚠️ Attempted to send, but WebSocket is disconnected.")
+		logme.Println("Attempted to send, but WebSocket is disconnected.")
 		w.setConnected(false)
 		return errors.New("WebSocket not connected")
 	}
@@ -164,13 +164,13 @@ func (w *WebSocketProvider) Send(msg string) error {
 	w.conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
 	err := w.conn.WriteMessage(websocket.TextMessage, []byte(msg+"\n"))
 	if err != nil {
-		log.Println("❌ WebSocket Send Failed:", err)
+		logme.Println("WebSocket Send Failed:", err)
 		w.setConnected(false)
 		w.reconnect()
 		return err
 	}
 
-	log.Println("📤 Sent to CNC:", msg)
+	logme.Println("📤 Sent to CNC:", msg)
 	return nil
 }
 
@@ -180,7 +180,7 @@ func (w *WebSocketProvider) SendRaw(msg []byte) error {
 	defer w.mutex.Unlock()
 
 	if w.conn == nil || !w.isConnected {
-		log.Println("⚠️ Attempted to send, but WebSocket is disconnected.")
+		logme.Println("Attempted to send, but WebSocket is disconnected.")
 		w.setConnected(false)
 		return errors.New("WebSocket not connected")
 	}
@@ -189,13 +189,13 @@ func (w *WebSocketProvider) SendRaw(msg []byte) error {
 	w.conn.SetWriteDeadline(time.Now().Add(3 * time.Second))
 	err := w.conn.WriteMessage(websocket.TextMessage, msg)
 	if err != nil {
-		log.Println("❌ WebSocket Send Failed:", err)
+		logme.Println("WebSocket Send Failed:", err)
 		w.setConnected(false)
 		w.reconnect()
 		return err
 	}
 
-	log.Println("📤 Sent to CNC:", msg)
+	logme.Println("📤 Sent to CNC:", msg)
 	return nil
 }
 
@@ -209,7 +209,7 @@ func (w *WebSocketProvider) Disconnect() {
 		w.conn.Close()
 		w.conn = nil
 		w.setConnected(false)
-		log.Println("🔌 WebSocket Disconnected")
+		logme.Println("🔌 WebSocket Disconnected")
 	}
 }
 
@@ -218,7 +218,7 @@ func (w *WebSocketProvider) reconnect() {
 	w.mutex.Lock()
 	defer w.mutex.Unlock()
 
-	log.Println("🔄 Attempting to reconnect...")
+	logme.Println("🔄 Attempting to reconnect...")
 
 	// Continuous reconnect loop
 	go func() {
@@ -226,7 +226,7 @@ func (w *WebSocketProvider) reconnect() {
 			time.Sleep(5 * time.Second) // Wait before retrying
 			err := w.Connect()
 			if err == nil {
-				log.Println("✅ Reconnected Successfully!")
+				logme.Println("✅ Reconnected Successfully!")
 				return
 			}
 		}
@@ -291,7 +291,7 @@ func ignore(data string) bool {
 
 // // NewWebSocketProvider creates a new instance of WebSocketProvider
 // func NewWebSocketProvider(ip string, port int) *WebSocketProvider {
-// 	log.Println("🔗 Initializing WebSocket Provider...")
+// 	logme.Println("🔗 Initializing WebSocket Provider...")
 // 	return &WebSocketProvider{
 // 		Addr:     fmt.Sprintf("ws://%s:%d", ip, port),
 // 		stopChan: make(chan struct{}),
@@ -304,14 +304,14 @@ func ignore(data string) bool {
 // 	defer w.mutex.Unlock()
 
 // 	if w.isConnected {
-// 		log.Println("⚠️ Already connected, skipping reconnection")
+// 		logme.Println("Already connected, skipping reconnection")
 // 		return nil
 // 	}
 
 // 	var err error
 // 	w.conn, _, err = websocket.DefaultDialer.Dial(w.Addr, nil)
 // 	if err != nil {
-// 		log.Println("❌ WebSocket Connection Failed:", err)
+// 		logme.Println("WebSocket Connection Failed:", err)
 // 		return err
 // 	}
 
@@ -322,7 +322,7 @@ func ignore(data string) bool {
 // 		w.OnConnection(true)
 // 	}
 
-// 	log.Println("✅ WebSocket Connected:", w.Addr)
+// 	logme.Println("✅ WebSocket Connected:", w.Addr)
 
 // 	// Start listening for incoming data
 // 	go w.listen()
@@ -344,7 +344,7 @@ func ignore(data string) bool {
 // 		default:
 // 			_, bMsg, err := w.conn.ReadMessage()
 // 			if err != nil {
-// 				log.Println("❌ WebSocket Disconnected:", err)
+// 				logme.Println("WebSocket Disconnected:", err)
 // 				w.reconnect()
 // 				return
 // 			}
@@ -359,7 +359,7 @@ func ignore(data string) bool {
 // 			}
 
 // 			message := strings.TrimSpace(string(bMsg))
-// 			log.Println("📥 Received from CNC:", message)
+// 			logme.Println("📥 Received from CNC:", message)
 
 // 			if w.OnData != nil {
 // 				w.OnData(message)
@@ -382,7 +382,7 @@ func ignore(data string) bool {
 // 			if w.conn != nil {
 // 				err := w.conn.WriteMessage(websocket.PingMessage, nil)
 // 				if err != nil {
-// 					log.Println("⚠️ WebSocket Ping failed, reconnecting:", err)
+// 					logme.Println("WebSocket Ping failed, reconnecting:", err)
 // 					w.mutex.Unlock()
 // 					w.reconnect()
 // 					return
@@ -400,7 +400,7 @@ func ignore(data string) bool {
 // 	defer w.mutex.Unlock()
 
 // 	if w.conn == nil || !w.isConnected {
-// 		log.Println("⚠️ Attempted to send, but WebSocket is disconnected.")
+// 		logme.Println("Attempted to send, but WebSocket is disconnected.")
 // 		if w.OnConnection != nil {
 // 			w.OnConnection(false)
 // 		}
@@ -409,12 +409,12 @@ func ignore(data string) bool {
 
 // 	err := w.conn.WriteMessage(websocket.TextMessage, []byte(msg+"\n"))
 // 	if err != nil {
-// 		log.Println("❌ WebSocket Send Failed:", err)
+// 		logme.Println("WebSocket Send Failed:", err)
 // 		w.reconnect()
 // 		return err
 // 	}
 
-// 	log.Println("📤 Sent to CNC:", msg)
+// 	logme.Println("📤 Sent to CNC:", msg)
 // 	return nil
 // }
 
@@ -424,7 +424,7 @@ func ignore(data string) bool {
 // 	defer w.mutex.Unlock()
 
 // 	if w.conn == nil || !w.isConnected {
-// 		log.Println("⚠️ Attempted to send raw data, but WebSocket is disconnected.")
+// 		logme.Println("Attempted to send raw data, but WebSocket is disconnected.")
 // 		if w.OnConnection != nil {
 // 			w.OnConnection(false)
 // 		}
@@ -433,12 +433,12 @@ func ignore(data string) bool {
 
 // 	err := w.conn.WriteMessage(websocket.TextMessage, msg)
 // 	if err != nil {
-// 		log.Println("❌ WebSocket Send Failed:", err)
+// 		logme.Println("WebSocket Send Failed:", err)
 // 		w.reconnect()
 // 		return err
 // 	}
 
-// 	log.Println("📤 Sent to CNC:", string(msg))
+// 	logme.Println("📤 Sent to CNC:", string(msg))
 // 	return nil
 // }
 
@@ -455,7 +455,7 @@ func ignore(data string) bool {
 // 		if w.OnConnection != nil {
 // 			w.OnConnection(false)
 // 		}
-// 		log.Println("🔌 WebSocket Disconnected")
+// 		logme.Println("🔌 WebSocket Disconnected")
 // 	}
 // }
 
@@ -468,7 +468,7 @@ func ignore(data string) bool {
 // 		return
 // 	}
 
-// 	log.Println("🔄 Attempting to reconnect...")
+// 	logme.Println("🔄 Attempting to reconnect...")
 
 // 	// Continuous reconnect loop
 // 	go func() {
@@ -476,7 +476,7 @@ func ignore(data string) bool {
 // 			time.Sleep(5 * time.Second) // Wait before retrying
 // 			err := w.Connect()
 // 			if err == nil {
-// 				log.Println("✅ Reconnected Successfully!")
+// 				logme.Println("✅ Reconnected Successfully!")
 // 				return
 // 			}
 // 		}

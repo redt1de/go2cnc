@@ -47,7 +47,7 @@ func withController() {
 	case "serial":
 		cncProvider = provider.NewSerialProvider(c.MachineCfg.SerialPort, c.MachineCfg.Baudrate)
 	default:
-		log.Fatal("❌ Unsupported provider:", c.MachineCfg.SocketProvider)
+		log.Fatal("Unsupported provider:", c.MachineCfg.SocketProvider)
 	}
 
 	// Initialize CNC controller
@@ -57,13 +57,13 @@ func withController() {
 	case "fluidnc":
 		cncController = controller.NewFluidNCController(cncProvider)
 	default:
-		log.Fatal("❌ Unsupported controller:", c.MachineCfg.ControllerType)
+		log.Fatal("Unsupported controller:", c.MachineCfg.ControllerType)
 	}
 
 	// Connect to CNC MachineCfg
 	err = cncController.Connect()
 	if err != nil {
-		log.Fatal("❌ Failed to connect to CNC MachineCfg:", err)
+		log.Fatal("Failed to connect to CNC MachineCfg:", err)
 	}
 
 	///////
@@ -94,7 +94,7 @@ func withController() {
 		// Send the command over WebSocket
 		err := cncController.Send(command)
 		if err != nil {
-			log.Println("❌ Failed to send command:", err)
+			log.Println("Failed to send command:", err)
 		}
 	}
 
@@ -124,7 +124,7 @@ func withProvider() {
 	case "serial":
 		cncProvider = provider.NewSerialProvider(c.MachineCfg.SerialPort, c.MachineCfg.Baudrate)
 	default:
-		log.Fatal("❌ Unsupported provider:", c.MachineCfg.SocketProvider)
+		log.Fatal("Unsupported provider:", c.MachineCfg.SocketProvider)
 	}
 
 	cncProvider.SetOnData(func(data string) {
@@ -134,7 +134,7 @@ func withProvider() {
 	// Connect to CNC MachineCfg
 	err = cncProvider.Connect()
 	if err != nil {
-		log.Fatal("❌ Failed to connect to CNC MachineCfg:", err)
+		log.Fatal("Failed to connect to CNC MachineCfg:", err)
 	}
 
 	///////
@@ -165,7 +165,7 @@ func withProvider() {
 		// Send the command over WebSocket
 		err := cncProvider.Send(command)
 		if err != nil {
-			log.Println("❌ Failed to send command:", err)
+			log.Println("Failed to send command:", err)
 		}
 	}
 

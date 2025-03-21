@@ -3,7 +3,7 @@ package provider
 import (
 	"bufio"
 	"errors"
-	"log"
+	"go2cnc/pkg/logme"
 	"sync"
 	"time"
 
@@ -41,7 +41,7 @@ func (w *SerialProvider) setConnected(is bool) {
 
 // NewSerialProvider creates a new instance of SerialProvider
 func NewSerialProvider(port string, baudRate int) *SerialProvider {
-	log.Println("🔗 Initializing Serial Provider using go-serial...")
+	logme.Println("🔗 Initializing Serial Provider using go-serial...")
 	return &SerialProvider{
 		Port:     port,
 		BaudRate: baudRate,
@@ -68,15 +68,15 @@ func (s *SerialProvider) Connect() error {
 
 	port, err := serial.Open(s.Port, mode)
 	if err != nil {
-		log.Println("❌ Failed to open serial port:", s.Port)
-		log.Println("❌ Failed to open serial port:", err)
+		logme.Println("Failed to open serial port:", s.Port)
+		logme.Println("Failed to open serial port:", err)
 		return err
 	}
 
 	s.serialPort = port
 	s.setConnected(true)
 
-	log.Println("✅ Connected to CNC via Serial on", s.Port)
+	logme.Println("✅ Connected to CNC via Serial on", s.Port)
 
 	// Start listening for serial data in a separate goroutine
 	go s.listen()
@@ -92,13 +92,13 @@ func (s *SerialProvider) listen() {
 		// Read until newline
 		line, err := reader.ReadString('\n')
 		if err != nil {
-			log.Println("❌ Serial read error:", err)
+			logme.Println("Serial read error:", err)
 			s.handleDisconnect() // Handles automatic reconnection
 			return
 		}
 
 		cleanLine := line[:len(line)-1] // Trim newline
-		// log.Println("📥 Received:", cleanLine)
+		// logme.Println("📥 Received:", cleanLine)
 
 		// Send data to OnData callback
 		if s.OnData != nil {
@@ -113,7 +113,7 @@ func (s *SerialProvider) Send(msg string) error {
 	defer s.mu.Unlock()
 
 	if s.serialPort == nil || !s.isConnected {
-		log.Println("⚠️ Attempted to send, but serial port is disconnected.")
+		logme.Println("Attempted to send, but serial port is disconnected.")
 		s.setConnected(false)
 		return errors.New("serial port not connected")
 	}
@@ -128,7 +128,7 @@ func (s *SerialProvider) SendRaw(msg []byte) error {
 	defer s.mu.Unlock()
 
 	if s.serialPort == nil || !s.isConnected {
-		log.Println("⚠️ Attempted to send raw data, but serial port is disconnected.")
+		logme.Println("Attempted to send raw data, but serial port is disconnected.")
 		s.setConnected(false)
 		return errors.New("serial port not connected")
 	}
@@ -142,7 +142,7 @@ func (s *SerialProvider) handleDisconnect() {
 	s.mu.Lock()
 	defer s.mu.Unlock()
 
-	log.Println("🔌 Serial connection lost. Attempting to reconnect...")
+	logme.Println("🔌 Serial connection lost. Attempting to reconnect...")
 
 	s.setConnected(false)
 
@@ -155,10 +155,10 @@ func (s *SerialProvider) handleDisconnect() {
 	// Continuous reconnect loop
 	go func() {
 		for !s.isConnected {
-			log.Println("🔄 Reconnecting to serial port...")
+			logme.Println("🔄 Reconnecting to serial port...")
 			err := s.Connect()
 			if err == nil {
-				log.Println("✅ Reconnected successfully!")
+				logme.Println("✅ Reconnected successfully!")
 				return
 			}
 			time.Sleep(3 * time.Second) // Wait before retrying
@@ -172,7 +172,7 @@ func (s *SerialProvider) Disconnect() {
 	defer s.mu.Unlock()
 
 	if s.serialPort != nil {
-		log.Println("🔌 Closing serial connection...")
+		logme.Println("🔌 Closing serial connection...")
 		s.serialPort.Close()
 		s.serialPort = nil
 		s.setConnected(false)

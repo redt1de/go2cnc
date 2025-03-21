@@ -12,13 +12,23 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
-func getAppOptions(a *app.App, assets embed.FS) *options.App {
+func getAppOptions(a *app.App, assets embed.FS, v int) *options.App {
+	logLevel := logger.ERROR
+	if v > 0 {
+		logLevel = logger.INFO
+	}
+	if v > 1 {
+		logLevel = logger.DEBUG
+	}
+	if v > 2 {
+		logLevel = logger.TRACE
+	}
 	return &options.App{
 		// Title:              "go2cnc",
 		Width:              1024,
 		Height:             600,
 		DisableResize:      true,
-		LogLevelProduction: logger.ERROR,
+		LogLevelProduction: logLevel,
 		// WindowStartState:   options.Maximised,
 		AlwaysOnTop: true,
 		// Fullscreen:         true,
