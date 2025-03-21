@@ -6,7 +6,7 @@ import styles from './App.module.css';
 import ControlView from './views/ControlView';
 import ConsoleView from './views/ConsoleView';
 import RunView from './views/RunView';
-import TestView from './views/TestView';
+import ProbeView from './views/ProbeView';
 import AutolevelView from './views/AutolevelView';
 import DisconnectedOverlay from './util/DisconnectedOverlay';
 import { NavLink } from "react-router-dom"; // ✅ Use NavLink for active styling
@@ -14,26 +14,7 @@ import WebcamView from './views/WebcamView';
 import loadConfig from "./util/Config";
 import { useState, useEffect } from 'react';
 import { CNCProvider } from './context/CNCContext';
-/*
-// import { Greet, EmitEvent } from "../wailsjs/go/main/App";
-// import { EventsEmit, EventsOn } from "@wailsapp/runtime";
-// import { EventsEmit, EventsOn } from "../wailsjs/runtime";
-
-const [messages, setMessages] = useState([]);
-    useEffect(() => {
-        console.log("Setting up event listener...");
-        EventsOn("timerEvent", (message) => {
-            console.log("Received event:", message);
-            setMessages((prev) => [...prev, message]);
-        });
-
-        return () => {
-            console.log("Cleaning up event listener...");
-            // unsubscribe();
-        };
-    }, []);
-
-*/
+import AlarmWatcher from './util/AlarmWatcher';
 
 
 function App() {
@@ -42,11 +23,6 @@ function App() {
   useEffect(() => {
     loadConfig().then(setConfig);
   }, []);
-
-  // if (!config) return <div>Loading...</div>;
-
-
-
 
   return (
 
@@ -63,8 +39,8 @@ function App() {
             <NavLink to="/run" title="Run" className={({ isActive }) => isActive ? styles.active : ""}>
               Run
             </NavLink>
-            <NavLink to="/test" title="test" className={({ isActive }) => isActive ? styles.active : ""}>
-              Test
+            <NavLink to="/probe" title="Probe" className={({ isActive }) => isActive ? styles.active : ""}>
+              Probe
             </NavLink>
             <NavLink to="/autolevel" title="Autolevel" className={({ isActive }) => isActive ? styles.active : ""}>
               ???
@@ -76,14 +52,15 @@ function App() {
 
           <div className={styles.viewContainer}>
             <Routes>
-              <Route path="/" element={<Navigate to="/test" replace />} />
+              <Route path="/" element={<Navigate to="/control" replace />} />
               <Route path="/control" element={<ControlView />} />
               <Route path="/console" element={<ConsoleView />} />
               <Route path="/run" element={<RunView />} />
-              <Route path="/test" element={<TestView />} />
+              <Route path="/probe" element={<ProbeView />} />
               <Route path="/autolevel" element={<AutolevelView />} />
               <Route path="/webcam" element={<WebcamView />} />
             </Routes>
+            <AlarmWatcher />
           </div>
         </Router>
       </div>

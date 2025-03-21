@@ -1,0 +1,74 @@
+.groupContainer {
+    display: grid;
+    height: 340px;
+    width: 350px;
+}
+
+.jogContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    border-radius: 8px;
+    /* overflow: hidden; */
+    gap: 10px;
+    padding-top: 25px;
+}
+
+.inputsContainer {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    border-radius: 8px;
+    /* overflow: hidden; */
+    gap: 10px;
+    padding-top: 25px;
+
+}
+
+.inputsContainer label {
+    /* text-align: center; */
+    font-size: 1.0rem;
+    /* color: #555; */
+}
+
+.inputs {
+    text-align: center;
+    grid-column: 1 / -1;
+    padding-bottom: 15px;
+}
+
+.inputButton {
+    padding: 8px 12px;
+    font-size: 1rem;
+    border: 1px solid #aaa;
+    background: #555;
+    color: white;
+    border-radius: 6px;
+    width: 80px;
+    height: 40px;
+    text-align: center;
+}
+
+
+/*-------------------------------------*/
+
+
+
+/* Common button styles */
+.jogContainer button {
+    width: 60px;
+    height: 60px;
+    font-size: 1.5rem;
+    text-align: center;
+
+    background: #555;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+
+}
+
+.jogContainer button:active {
+    background-color: #777;
+    transform: scale(0.98);
+}

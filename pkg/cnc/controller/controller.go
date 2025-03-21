@@ -10,4 +10,6 @@ type Controller interface {
 	SetEmitter(func(eventName string, optionalData ...interface{}))
 	onData(data string)
 	onConnection(isConnected bool)
+	ClearProbeHistory()
+	GetProbeHistory() []ProbeResult
 }

@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import styles from './css/SpindleGroup.module.css';
 // import { useWebSocket } from "../websocket/WebSocketProvider";
-import { Send } from "../../wailsjs/go/main/App";
+import { Send } from "../../wailsjs/go/app/App";
 import KeypadModal from '../util/KeypadModal';
 import { useCNC } from '../context/CNCContext';
 
@@ -83,7 +83,7 @@ export default function SpindleGroup() {
                         </tr>
                         <tr>
                             <td className={styles.toolLabel}>TLO</td>
-                            <td className={styles.toolTdV}>{(status && status.tool?.tlo) ?? -1}</td>
+                            <td className={styles.toolTdV}>{(status && status.tool?.tlo.toFixed(3)) ?? -1}</td>
                         </tr>
                         <tr>
                             <td className={styles.toolLabel}>S</td>

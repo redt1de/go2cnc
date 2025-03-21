@@ -1,6 +1,5 @@
 .zeroContainer {
-    /* width: 120px;
-    height: 220px; */
+    width: 120px;
 
     display: grid;
     grid-template-columns: repeat(1, 1fr);

@@ -15,17 +15,64 @@
 
 .stepSizeLabel {
     margin-right: 5px;
-    font-size: 1.5rem;
+    font-size: 1rem;
     color: #fff;
 }
 
-.stepSizeSelect {
+/* .stepSizeSelect {
     font-size: 1.5rem;
-    background: #666;
-    color: #fff;
+    background: #000000;
+    color: #0a0a0a;
     border: 1px solid #aaa;
     border-radius: 4px;
+} */
+
+
+/* Ensure select box styles apply correctly */
+.stepSizeSelect {
+    appearance: none;
+    background-color: #555;
+    color: #ffffff;
+    border: 1px solid #aaa;
+    padding: 5px 10px;
+    font-size: 1rem;
+    border-radius: 4px;
+    /* cursor: pointer; */
 }
+
+/* Ensure the dropdown arrow is styled */
+/* .stepSizeSelect::-ms-expand {
+    display: none;
+} */
+
+/* Style when hovered/focused */
+.stepSizeSelect:hover,
+.stepSizeSelect:focus {
+    background-color: #3a3a3a;
+    border-color: #888;
+}
+
+.stepSizeSelect option {
+    background-color: #555;
+    /* Dark background */
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+/* Style selected option */
+.stepSizeSelect option:checked {
+    background-color: #444;
+    color: #ffffff;
+}
+
+/* Improve hover effect */
+.stepSizeSelect option:hover {
+    background-color: #555;
+}
+
+/*-------------------------------------*/
+
+
 
 /* Common button styles */
 .jogContainer button {
@@ -45,3 +92,5 @@
     background-color: #777;
     transform: scale(0.98);
 }
+
+.centerButtons {}

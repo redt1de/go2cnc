@@ -15,19 +15,6 @@ import styles from './css/ControlView.module.css';
 import ConsoleGroup from '../components/ConsoleGroup';
 
 export default function ControlView() {
-    // const [machineMessages, setMachineMessages] = useState([
-    //     'Initializing...',
-    //     'Waiting for data...'
-    // ]);
-
-    // useEffect(() => {
-    //     // Example: mock new messages arriving every 2 seconds
-    //     const interval = setInterval(() => {
-    //         setMachineMessages(prev => [...prev, `New message at ${Date.now()}`]);
-    //     }, 2000);
-    //     return () => clearInterval(interval);
-    // }, []);
-
 
     return (
         <div className={styles.controlView}>

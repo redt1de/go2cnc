@@ -1,7 +1,7 @@
 pendant_cfg:
   server_address: :8080 # NOT USED AT THIS TIME
 machine_cfg:
-  controller_type: "grbl" # grbl|fluidnc|cncjs
+  controller_type: "fluidnc" # grbl|fluidnc|cncjs
   socket_provider: "websocket" # serial|websocket|socket.io
   socket_address: "192.168.0.134" # IP to websocket/socket.io server
   socket_port: 81 # Port to websocket/socket.io server

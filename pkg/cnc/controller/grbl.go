@@ -17,8 +17,6 @@ type GrblController struct {
 	wcoRequestPending    bool
 	polling              bool
 	statusInterval       time.Duration
-	modalInterval        time.Duration
-	wcoInterval          time.Duration
 }
 
 func NewGrblController(provider provider.Provider) *GrblController {
@@ -29,12 +27,33 @@ func NewGrblController(provider provider.Provider) *GrblController {
 		},
 	}
 	g.Machine = &Machine{
-		Status: Status{},
-		// Modal:  Modal{},
+		Status:       Status{},
+		ProbeHistory: []ProbeResult{},
 	}
+
 	g.Provider.SetOnData(g.onData)
 	g.Provider.SetOnConnection(g.onConnection)
+	g.SetPolling(1000)
 	return g
+}
+
+func (g *GrblController) SetPolling(millis int) {
+	if millis > 1 {
+		g.polling = true
+		g.statusInterval = time.Duration(millis) * time.Millisecond
+	} else {
+		g.polling = false
+	}
+
+}
+
+func (g *GrblController) startPolling() {
+	go func() {
+		for g.polling {
+			g.ForceUpdate()
+			time.Sleep(g.statusInterval)
+		}
+	}()
 }
 
 func (g *GrblController) SetEmitter(emitter func(eventName string, optionalData ...interface{})) {
@@ -48,12 +67,14 @@ func (g *GrblController) onData(data string) {
 
 func (g *GrblController) onConnection(isConnected bool) {
 	// log.Println("🔗 Emitting connection event:", isConnected)
-	g.Emitter("connectionEvent", isConnected)
-
+	// g.Emitter("connectionEvent", isConnected)
+	g.emitConn()
 	if isConnected {
 		go func() {
 			time.Sleep(3 * time.Second) // needs a delay to ensure mutex is released, and connection is stable
 			g.ForceUpdate()
+			g.startPolling()
+
 		}()
 	}
 
@@ -105,44 +126,6 @@ func ignore(data string) bool {
 	}
 	return false
 }
-func (g *GrblController) parseData(data string) {
-	if ignore(data) {
-		return
-	}
-	// log.Println("🔍 recieved data:", data)
-
-	switch {
-	case strings.HasPrefix(data, "<"):
-		if g.statusRequestPending {
-			g.statusRequestPending = false
-			data = data + " (SILENCE)"
-		}
-		g.parseStatusReport(data)
-	case strings.HasPrefix(data, "[GC:"):
-		if g.modalRequestPending {
-			g.modalRequestPending = false
-			data = data + " (SILENCE)"
-		}
-		g.parseGCodeParserState(data)
-	case strings.HasPrefix(data, "[PRB:"):
-		g.parseProbeResult(data)
-	case strings.HasPrefix(data, "[G"):
-		if g.wcoRequestPending {
-			data = data + " (SILENCE)"
-		}
-		g.parseWorkOffsets(data)
-	case strings.HasPrefix(data, "[TLO:"): // TLO should be the last item in wco list
-		if g.wcoRequestPending {
-			g.wcoRequestPending = false
-			data = data + " (SILENCE)"
-		}
-		g.parseWorkOffsets(data)
-
-	}
-
-	g.shouldConsole(data)
-	g.emitStatus()
-}
 
 func (g *GrblController) shouldConsole(data string) {
 	if data == "ok" {
@@ -164,25 +147,23 @@ func (g *GrblController) emitConsole(data string) {
 func (g *GrblController) emitStatus() {
 	g.Emitter("statusEvent", g.GetStatus())
 }
+
 func (g *GrblController) emitConn() {
 	g.Emitter("connectionEvent", g.Provider.IsConnected())
+}
+
+func (g *GrblController) emitProbeHitory() {
+	g.Emitter("probeEvent", g.Machine.ProbeHistory)
 }
 
 // GetWorkPosition calculates the current work position by subtracting the active work coordinate offset (WCO)
 // from the machine position (MPos). It returns the calculated work position as a Coordinate struct.
 func (g *GrblController) GetWorkPosition() Coordinate {
 	g.Machine.Status.Wpos = Coordinate{} // Reset work position
-
-	// Get current machine position
 	mpos := g.Machine.Status.Mpos
-
-	// Get the active work coordinate system
 	activeWCS := g.Machine.Status.ActiveWCS
-
-	// Get the corresponding work offset (WCO) from the map
 	wco, exists := g.Machine.Status.Wco[activeWCS]
 	if !exists {
-		log.Printf("⚠️ No WCO found for active WCS (%s). Assuming zero offsets.\n", activeWCS)
 		wco = Coordinate{} // Default to zero offset
 	}
 
@@ -196,12 +177,11 @@ func (g *GrblController) GetWorkPosition() Coordinate {
 	// Store and return calculated Work Position
 	g.Machine.Status.Wpos = workPos
 
-	log.Printf("📐 Calculated Work Position (WPos): X=%.3f, Y=%.3f, Z=%.3f\n", workPos.X, workPos.Y, workPos.Z)
 	return workPos
 }
 
 func (g *GrblController) ForceUpdate() {
-	log.Println("📐 Forceing Status Update...")
+	// log.Println("📐 Forceing Status Update...")
 
 	g.requestModal()
 	g.requestWCO()
@@ -230,4 +210,13 @@ func (g *GrblController) requestWCO() {
 	}
 	g.wcoRequestPending = true
 	g.Send("$# (SILENCE)")
+}
+
+func (g *GrblController) ClearProbeHistory() {
+	g.Machine.ProbeHistory = []ProbeResult{}
+	g.emitProbeHitory()
+}
+
+func (g *GrblController) GetProbeHistory() []ProbeResult {
+	return g.Machine.ProbeHistory
 }

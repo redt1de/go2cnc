@@ -1,0 +1,115 @@
+.probeContainer {
+    width: 390px;
+    height: 360px;
+    /* background-color: #000; */
+    font-family: monospace;
+    font-size: 12px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    /* padding: 10px; */
+    /* border: 2px solid #aaa; */
+    border-radius: 4px;
+    /* display: flex;
+    flex-direction: column; */
+    display: grid;
+    grid-template-columns: repeat(1, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    align-items: center;
+}
+
+/* Table styling similar to toolTable */
+.probeTable {
+    border-collapse: collapse;
+    text-align: center;
+    background-color: #333;
+    color: #fff;
+    width: 100%;
+    border-radius: 0px;
+}
+
+/* Header labels similar to toolLabel */
+.probeTable th {
+    border: 1px solid #555;
+    padding: 10px;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Table data cells similar to toolTd */
+.probeTd {
+    border: 1px solid #555;
+    padding: 10px;
+    font-size: 0.8rem;
+    height: 18px;
+}
+
+/* Success and Fail colors */
+.probeTd.success {
+    border: 1px solid #555;
+    padding: 10px;
+    color: #0f0;
+    /* Green for successful probes */
+}
+
+.probeTd.fail {
+    border: 1px solid #555;
+    padding: 10px;
+    color: #f00;
+    /* Red for failed probes */
+}
+
+/* Z-axis values similar to toolTdV */
+.probeTdV {
+    border: 1px solid #555;
+    padding: 10px;
+    font-size: 0.8rem;
+    color: #0f0;
+}
+
+/* Pagination Styling */
+.pagination {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.probeContainer button {
+    width: 100px;
+    height: 40px;
+    font-size: 1.5rem;
+    text-align: center;
+    background: #555;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+    margin-top: 3px;
+}
+
+
+.pageButton:disabled {
+    background-color: #777;
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pageIndicator {
+    font-size: 1rem;
+    color: #fff;
+}
+
+
+.clearContainer {
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.clearBtn {
+    width: 45px;
+    height: 45px;
+    align-items: center;
+}

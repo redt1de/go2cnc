@@ -1,19 +1,18 @@
-# README
+## Notes
+- current focus is fluidnc + websocket, plain Grbl needs auto polling to be useful
+- serial provider is functional, needs testing
 
-## About
 
-This is the official Wails React template.
 
-You can configure the project by editing `wails.json`. More information about the project settings can be found
-here: https://wails.io/docs/reference/project-config
+## TODO
+- [ ] need to organize controllers differently:
+    - instead of having fluidnc wrap grbl, have a seperate grbl interface what wraps a generic GrblController.  currently its very messy and confusing.
+- [ ] add socket.io provider 
+- [ ] add telnet provider
+- [ ] add UART provider (raw PI pins)
+- [ ] add cncjs controller, needs socket.io provider
+- [ ] forceupdate only needs status, and a periodic check of $G and $#
 
-## Live Development
 
-To run in live development mode, run `wails dev` in the project directory. This will run a Vite development
-server that will provide very fast hot reload of your frontend changes. If you want to develop in a browser
-and have access to your Go methods, there is also a dev server that runs on http://localhost:34115. Connect
-to this in your browser, and you can call your Go code from devtools.
 
-## Building
 
-To build a redistributable, production mode package, use `wails build`.

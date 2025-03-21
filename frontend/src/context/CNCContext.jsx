@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Send, SendRaw } from "../../wailsjs/go/main/App";
+import { Send, SendRaw, ClearProbeHistory } from "../../wailsjs/go/app/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime"
 
 // Create CNC Context
@@ -10,6 +10,7 @@ export const CNCProvider = ({ children }) => {
     const [consoleMessages, setConsoleMessages] = useState([]);
     const [status, setStatus] = useState({});
     const [isConnected, setIsConnected] = useState(false);
+    const [probeHistory, setProbeHistory] = useState([]);
 
     useEffect(() => {
         console.log("CNCProvider mounted, setting up event listeners...");
@@ -31,6 +32,14 @@ export const CNCProvider = ({ children }) => {
             console.log("Connection Event:", connected);
             setIsConnected(connected);
         });
+
+        // Listen for Probe Results
+        const unsubscribeProbe = EventsOn("probeEvent", (probeHist) => {
+            console.log("Probe Event:", probeHist);
+            // setProbeHistory((prev) => [...prev, probeResult]);
+            setProbeHistory(probeHist[0]);
+        });
+
 
         // Listen for Connection Status Updates
         const unsubscribeGeneric = EventsOn("genericEvent", (connected) => {
@@ -61,6 +70,19 @@ export const CNCProvider = ({ children }) => {
         }
     };
 
+    const clearProbeHistory = async () => {
+        console.log("Clearing probe history...");
+        try {
+            const response = await ClearProbeHistory();
+            console.log("Clear probe history response:", response);
+            setProbeHistory([]);
+            return response;
+        } catch (error) {
+            console.error("Clear probe history failed:", error);
+            return null;
+        }
+    }
+
     const sendRaw = async (command) => {
         console.log("Sending command:", command);
         try {
@@ -73,8 +95,17 @@ export const CNCProvider = ({ children }) => {
         }
     };
 
+    // function handleTest() {
+    //     Test().then((result) => {
+    //         alert(`Test() returned: ${result}`); // Show the result in an alert
+    //     }).catch((error) => {
+    //         console.error("Error calling Test():", error);
+    //     });
+
+
+
     return (
-        <CNCContext.Provider value={{ consoleMessages, status, isConnected, sendCommand, sendRaw }}>
+        <CNCContext.Provider value={{ consoleMessages, probeHistory, status, isConnected, sendCommand, sendRaw, clearProbeHistory }}>
             {children}
         </CNCContext.Provider>
     );

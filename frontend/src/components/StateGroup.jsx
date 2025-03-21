@@ -24,26 +24,15 @@ export default function StateGroup() {
         return stateMap[gState.toLowerCase()] || styles.idle; // Defaults to "idle"
     };
 
-    // ✅ Extract  messages from console output
-    // useEffect(() => {
-    //     const lastMessage = consoleMessages.find(
-    //         (msg) => msg.filter(msg => typeof msg === "string")
-    //             .startsWith("[MSG:") || msg.startsWith("[DBG:")
-    //     );
-
-    //     if (lastMessage) {
-    //         setInfoMessage(
-    //             lastMessage.replace(/\[(MSG|DBG):/, "").replace("]", "")
-    //         );
-    //     }
-    // }, [consoleMessages]);
 
     useEffect(() => {
         console.log("consoleMessages:", consoleMessages); // Debugging
 
         const lastMessage = consoleMessages
-            .filter(msg => typeof msg === "string") // ✅ Ensure only strings
-            .find(msg => msg.startsWith("[MSG:") || msg.startsWith("[DBG:"));
+            .slice() // Copy array to avoid mutating state
+            .reverse() // ✅ Reverse the array to start from the last element
+            .map(msg => String(msg)) // ✅ Ensure all messages are strings
+            .find(msg => msg.startsWith("[MSG:") || msg.startsWith("[DBG:")); // ✅ Get the latest message
 
         if (lastMessage) {
             setInfoMessage(

@@ -1,41 +1,38 @@
 import React, { useState } from "react";
-import styles from "./css/HomingModal.module.css";
+import styles from "./css/AxisModal.module.css"; // ✅ Reuse existing CSS
 
 /**
- * HomingModal Props:
- * - onOk(command: string): Called when user confirms selection
- * - onCancel(): Called when user cancels
+ * AxisModal Props:
+ * - axes: string[] — which axes to show (e.g. ['X', 'Y', 'Z', 'A'])
+ * - onOk(selectedAxes: string[]): returns an array of selected axis letters
+ * - onCancel(): cancel callback
  */
-export default function HomingModal({ onOk, onCancel }) {
+export default function AxisModal({ axes = ["X", "Y", "Z"], onOk, onCancel }) {
     const [selectedAxes, setSelectedAxes] = useState([]);
 
-    // ✅ Toggle axis selection
     const toggleAxis = (axis) => {
         setSelectedAxes((prev) =>
             prev.includes(axis)
-                ? prev.filter((a) => a !== axis) // Remove if already selected
-                : [...prev, axis] // Add if not selected
+                ? prev.filter((a) => a !== axis)
+                : [...prev, axis]
         );
     };
 
-    // ✅ Handle immediate homing with "All" button
-    const homeAll = () => {
-        onOk("$H"); // ✅ Immediately send homing command
+    const handleOk = () => {
+        onOk(selectedAxes);
     };
 
-    // ✅ Handle OK button
-    const handleOk = () => {
-        const command = selectedAxes.length > 0 ? `$H${selectedAxes.join("")}` : "$H";
-        onOk(command);
+    const handleAll = () => {
+        onOk([...axes]); // ✅ Return all provided axes
     };
 
     return (
         <div className={styles.overlay}>
             <div className={styles.modalBox}>
-                <div className={styles.title}>Select Axes to Home</div>
+                <div className={styles.title}>Select Axes</div>
 
                 <div className={styles.buttonGroup}>
-                    {["X", "Y", "Z"].map((axis) => (
+                    {axes.map((axis) => (
                         <button
                             key={axis}
                             className={`${styles.axisButton} ${selectedAxes.includes(axis) ? styles.selected : ""}`}
@@ -44,7 +41,7 @@ export default function HomingModal({ onOk, onCancel }) {
                             {axis}
                         </button>
                     ))}
-                    <button className={styles.allButton} onClick={homeAll}>
+                    <button className={styles.allButton} onClick={handleAll}>
                         All
                     </button>
                 </div>
