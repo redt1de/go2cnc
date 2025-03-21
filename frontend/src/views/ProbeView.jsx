@@ -33,6 +33,7 @@ export default function ProbeView() {
 
 
         LogInfo("Sending command: " + command);
+        sendCommand(command);
         setShowAxisModal(false);
     };
 
@@ -40,6 +41,27 @@ export default function ProbeView() {
         setCurrentField(field);
         setShowKeypad(true);
     };
+
+    const retract = 2;
+
+    const probeInside = () => { // this only works for FluidNC
+        sendCommand(`G91 G38.2 X-${probeDistance} F${feedRate}`)
+        sendCommand(`#<x_min>=#<_x>`)
+        sendCommand(`G91 G0 X${retract}`)
+        sendCommand(`G91 G38.2 X${probeDistance} F${feedRate}`)
+        sendCommand(`#<x_max>=#<_x>`)
+        sendCommand(`G91 G0 X-${retract}`)
+        sendCommand(`#<center>=[[#<x_max>-#<x_min>]/2]`)
+        sendCommand(`G91 G0 X[-#<center>+${retract}]`)
+        sendCommand(`G91 G38.2 Y-${probeDistance} F${feedRate}`)
+        sendCommand(`#<y_min>=#<_y>`)
+        sendCommand(`G91 G0 Y${retract}`)
+        sendCommand(`G91 G38.2 Y${probeDistance} F${feedRate}`)
+        sendCommand(`#<y_max>=#<_y>`)
+        sendCommand(`G91 G0 Y-${retract}`)
+        sendCommand(`#<center>=[[#<y_max>-#<y_min>]/2]`)
+        sendCommand(`G91 G0 Y[-#<center>+${retract}]`)
+    }
 
     const handleOk = (value) => {
         if (currentField === "feedRate") setFeedRate(value);
@@ -75,9 +97,38 @@ export default function ProbeView() {
         } else if (type === "utility") {
             // Placeholder for utility action logic
             LogInfo("Executing probe utility: " + value);
-            alert("Utility actions are not implemented yet.");
+
+            if (value === "Inside") {
+                probeInside();
+            } else {
+                alert("Utility actions are not implemented yet.");
+            }
         }
     };
+
+    /*
+    G91 G38.2 X-50 F100
+    #<x_min>=#<_x>
+    G91 G0 X2 
+    
+    G91 G38.2 X50 F100
+    #<x_max>=#<_x>
+    G91 G0 X-2
+    
+    #<center>=[[#<x_max>-#<x_min>]/2]
+    G91 G0 X[-#<center>+2]
+    
+    G91 G38.2 Y-50 F100
+    #<y_min>=#<_y>
+    G91 G0 Y2
+    
+    G91 G38.2 Y50 F100
+    #<y_max>=#<_y>
+    G91 G0 Y-2 
+    
+    #<center>=[[#<y_max>-#<y_min>]/2]
+    G91 G0 Y[-#<center>+2]
+    */
 
     return (
         <div className={styles.container}>

@@ -11,10 +11,22 @@ export default function MachineGroup() {
     const { consoleMessages, status, isConnected, sendCommand, sendRaw } = useCNC();
 
 
+
     const handleOk = (axes) => {
-        const command = axes.length > 0 ? `$H${axes.join("")}` : "$H";
-        sendCommand(command);
-        LogInfo("Homing axes: " + command);
+        if ("Z" in axes && "X" in axes && "Y" in axes) {
+            sendCommand(`$H`);
+        }
+        if ("Z" in axes) {
+            sendCommand(`$HZ`);
+        }
+        if ("X" in axes) {
+            sendCommand(`$HX`);
+        }
+        if ("Y" in axes) {
+            sendCommand(`$HY`);
+        }
+
+
         setShowModal(false);
     };
 
