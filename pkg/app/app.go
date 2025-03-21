@@ -39,6 +39,7 @@ func (a *App) Startup(ctx context.Context) {
 	a.cncController = cnc.InitController(&c.MachineCfg)
 	a.cncController.SetEmitter(a.Emitter)
 
+	runtime.LogInfo(ctx, "CNC Controller started...")
 	err = a.cncController.Connect()
 	if err != nil {
 		logme.Error("Failed to connect to CNC:", err)

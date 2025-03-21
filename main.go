@@ -3,7 +3,6 @@ package main
 import (
 	"embed"
 	"flag"
-	"fmt"
 
 	"go2cnc/pkg/app"
 	"go2cnc/pkg/logme"
@@ -14,31 +13,29 @@ import (
 //go:embed all:frontend/dist
 var assets embed.FS
 
-// Verbosity is a custom flag.Value implementation
-type Verbosity int
+var (
+	verbosity  int
+	configFile string
+)
 
-func (v *Verbosity) String() string {
-	return fmt.Sprintf("%d", *v)
-}
+func init() {
 
-func (v *Verbosity) Set(s string) error {
-	*v += Verbosity(len(s))
-	return nil
 }
 
 func main() {
-	var verbose Verbosity
-	flag.Var(&verbose, "v", "Increase verbosity (use -v, -vv, -vvv, etc.)")
-	flag.StringVar(&app.ConfigFile, "config", "./config.yaml", "Path to the configuration file")
-
+	flag.IntVar(&verbosity, "v", 0, "Verbosity level")
+	flag.StringVar(&configFile, "config", "./config.yaml", "Path to the configuration file")
 	flag.Parse()
+
+	verbosity = 5
+	app.ConfigFile = configFile
 
 	// Create an instance of the app structure
 	app := app.NewApp()
 
-	logs := logme.NewLogger(int(verbose))
+	logs := logme.NewLogger(verbosity)
 
-	opts := getAppOptions(app, assets, int(verbose))
+	opts := getAppOptions(app, assets, verbosity)
 	opts.Logger = logs
 
 	// Create application with options

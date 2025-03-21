@@ -42,7 +42,7 @@ func (w *WebSocketProvider) setConnected(is bool) {
 
 // NewWebSocketProvider creates a new instance of WebSocketProvider
 func NewWebSocketProvider(ip string, port int) *WebSocketProvider {
-	logme.Println("🔗 Initializing WebSocket Provider...")
+	logme.Info("Initializing WebSocket Provider...")
 	return &WebSocketProvider{
 		Addr:        fmt.Sprintf("ws://%s:%d", ip, port),
 		stopChan:    make(chan struct{}),
@@ -52,7 +52,7 @@ func NewWebSocketProvider(ip string, port int) *WebSocketProvider {
 
 // Connect establishes a WebSocket connection
 func (w *WebSocketProvider) Connect() error {
-	logme.Println("🔗 Connecting to WebSocket:", w.Addr)
+	logme.Info("Connecting to WebSocket:", w.Addr)
 	w.mutex.Lock()
 	defer w.mutex.Unlock()
 
@@ -70,7 +70,7 @@ func (w *WebSocketProvider) Connect() error {
 
 	w.lastMessage = time.Now()
 
-	logme.Println("✅ WebSocket Connected:", w.Addr)
+	logme.Success("WebSocket Connected:", w.Addr)
 
 	// Start listening for incoming data
 	go w.listen()

@@ -67,11 +67,14 @@ export default function ProbeView() {
         const { type, value } = activeProbeTarget;
         if (type === "direction") {
             const cleaned = value.replace('+', ''); // ✅ Remove "+"
-            LogInfo("Executing probe: " + `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
-            console.log("🔧 Executing probe:", `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
+            const cmd = `G91 ${probeMode} ${cleaned}${probeDistance} F${feedRate}`;
+            LogInfo("Executing probe: " + cmd);
+            // console.log("🔧 Executing probe:", `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
+
         } else if (type === "utility") {
             // Placeholder for utility action logic
-            LogInfo("Executing probe: " + value);
+            LogInfo("Executing probe utility: " + value);
+            alert("Utility actions are not implemented yet.");
         }
     };
 
