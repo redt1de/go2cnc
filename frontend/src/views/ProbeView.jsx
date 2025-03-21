@@ -69,6 +69,7 @@ export default function ProbeView() {
             const cleaned = value.replace('+', ''); // ✅ Remove "+"
             const cmd = `G91 ${probeMode} ${cleaned}${probeDistance} F${feedRate}`;
             LogInfo("Executing probe: " + cmd);
+            sendCommand(cmd);
             // console.log("🔧 Executing probe:", `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
 
         } else if (type === "utility") {
