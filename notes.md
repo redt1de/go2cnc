@@ -34,3 +34,11 @@ cd frontend
 npm install react-ace @fortawesome/free-solid-svg-icons @fortawesome/react-fontawesome react-router-dom
 
 wails build
+
+
+---------------------------------
+git clone https://github.com/redt1de/go2cnc
+cd go2cnc
+cd frontend npm install .
+cd ..
+DISPLAY=:0 wails dev
