@@ -4,6 +4,8 @@ import {state} from '../models';
 
 export function ClearProbeHistory():Promise<void>;
 
+export function GetLastProbe():Promise<state.ProbeResult>;
+
 export function GetProbeHistory():Promise<Array<state.ProbeResult>>;
 
 export function SendAsync(arg1:string):Promise<void>;
@@ -12,4 +14,6 @@ export function SendAsyncRaw(arg1:any):Promise<void>;
 
 export function SendWait(arg1:string):Promise<Array<string>>;
 
-export function TestFunc():Promise<void>;
+export function TestIngest():Promise<void>;
+
+export function TestSender():Promise<void>;

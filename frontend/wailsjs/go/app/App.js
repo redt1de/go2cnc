@@ -6,6 +6,10 @@ export function ClearProbeHistory() {
   return window['go']['app']['App']['ClearProbeHistory']();
 }
 
+export function GetLastProbe() {
+  return window['go']['app']['App']['GetLastProbe']();
+}
+
 export function GetProbeHistory() {
   return window['go']['app']['App']['GetProbeHistory']();
 }
@@ -22,6 +26,10 @@ export function SendWait(arg1) {
   return window['go']['app']['App']['SendWait'](arg1);
 }
 
-export function TestFunc() {
-  return window['go']['app']['App']['TestFunc']();
+export function TestIngest() {
+  return window['go']['app']['App']['TestIngest']();
+}
+
+export function TestSender() {
+  return window['go']['app']['App']['TestSender']();
 }

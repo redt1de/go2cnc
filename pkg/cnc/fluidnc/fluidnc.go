@@ -1,14 +1,14 @@
 package fluidnc
 
 import (
-	"bufio"
 	"context"
 	"errors"
 	"fmt"
 	"go2cnc/pkg/cnc/grbl"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/logme"
-	"os"
+	"go2cnc/pkg/util"
+	"math/rand"
 	"strings"
 	"sync"
 	"time"
@@ -119,6 +119,10 @@ func (f *FluidNC) GetProbeHistory() []state.ProbeResult {
 	return f.state.ProbeHistory
 }
 
+func (f *FluidNC) GetLastProbe() state.ProbeResult {
+	return f.state.ProbeHistory[len(f.state.ProbeHistory)-1]
+}
+
 // ------------------------- Methods -----------------------
 
 func (f *FluidNC) SendAsync(msg string) {
@@ -185,9 +189,36 @@ func (f *FluidNC) SendWait(msg string) ([]string, error) {
 }
 
 // ------------------------------------------------------------
-func (f *FluidNC) TestFunc() {
+var testBool = true
+
+func (f *FluidNC) TestSender() {
+	dataset, err := util.ReadLines("test_data.out.txt")
+	if err != nil {
+		logme.Error("TestFunc -> error reading file:", err)
+		return
+	}
+	for _, line := range dataset {
+		switch line {
+		case "DELAY":
+			time.Sleep(1 * time.Second)
+			continue
+		case "FAKEPROBE":
+			x := util.GenerateRandomPosition()
+			y := util.GenerateRandomPosition()
+			z := util.GenerateRandomPosition()
+
+			f.handleMessage(fmt.Sprintf("[PRB:%.3f,%.3f,%.3f:1]", x, y, z))
+			continue
+		}
+
+		// logme.Debug("to onmessage: ", line)
+		f.SendAsync(line)
+	}
+}
+
+func (f *FluidNC) TestIngest() {
 	// read file
-	dataset, err := readLines("test_data.txt")
+	dataset, err := util.ReadLines("test_data.in.txt")
 	if err != nil {
 		logme.Error("TestFunc -> error reading file:", err)
 		return
@@ -196,29 +227,36 @@ func (f *FluidNC) TestFunc() {
 	logme.Debug("FluidNC TestFunc...")
 	go func() {
 		for _, line := range dataset {
-			if line == "DELAY" {
-				logme.Debug("Delaying...")
-				time.Sleep(3 * time.Second)
+			switch line {
+			case "DELAY":
+				time.Sleep(1 * time.Second)
+				continue
+			case "FAKEPROBE":
+				x := util.GenerateRandomPosition()
+				y := util.GenerateRandomPosition()
+				z := util.GenerateRandomPosition()
+
+				f.handleMessage(fmt.Sprintf("[PRB:%.3f,%.3f,%.3f:1]", x, y, z))
 				continue
 			}
+
 			// logme.Debug("to onmessage: ", line)
 			f.handleMessage(line)
 		}
 	}()
 
+	// if testBool {
+	// 	f.handleMessage("[PRB:-11.00,0.200,0.300:1]")
+	// 	testBool = false
+	// } else {
+	// 	f.handleMessage("[PRB:12.00,0.200,0.300:1]")
+	// 	testBool = true
+	// }
+
 }
 
-func readLines(path string) ([]string, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	var lines []string
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		lines = append(lines, scanner.Text())
-	}
-	return lines, scanner.Err()
+func randFloat(min, max float64, n int) float64 {
+	// Seed the random number generator to ensure different results each time
+	rand.Seed(time.Now().UnixNano())
+	return min + rand.Float64()*(max-min)
 }

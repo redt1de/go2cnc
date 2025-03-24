@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
-import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, TestFunc } from "../../wailsjs/go/app/App";
-import { EventsOn, LogDebug } from "../../wailsjs/runtime/runtime"
+import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender } from "../../wailsjs/go/app/App";
+import { EventsOn, LogError } from "../../wailsjs/runtime/runtime"
 
 // Create CNC Context
 const CNCContext = createContext();
@@ -68,10 +68,10 @@ export const CNCProvider = ({ children }) => {
     }, []);
 
 
-    const testFunc = async () => {
+    const testIngest = async () => {
         console.log("Testing function...");
         try {
-            const response = await TestFunc();
+            const response = await TestIngest();
             console.log("Test function response:", response);
             return response;
         } catch (error) {
@@ -79,6 +79,20 @@ export const CNCProvider = ({ children }) => {
             return null;
         }
     }
+
+    const testSender = async () => {
+        console.log("Testing function...");
+        try {
+            const response = await TestSender();
+            console.log("Test function response:", response);
+            return response;
+        } catch (error) {
+            console.error("Test function failed:", error);
+            return null;
+        }
+    }
+
+
     const clearProbeHistory = async () => {
         console.log("Clearing probe history...");
         try {
@@ -119,24 +133,43 @@ export const CNCProvider = ({ children }) => {
     };
 
 
+    // const sendWait = async (command) => {
+    //     console.log("Sending (wait) command:", command);
+    //     try {
+    //         const response = await SendWait(command);
+    //         console.log("SendWait response:", response);
+    //         return response; // an array of response lines
+    //     } catch (error) {
+    //         console.error("SendWait command failed:", error);
+    //         return null;
+    //     }
+    // };
     const sendWait = async (command) => {
         console.log("Sending (wait) command:", command);
         try {
             const response = await SendWait(command);
             console.log("SendWait response:", response);
-            return response; // an array of response lines
+            return { success: true, data: response };
         } catch (error) {
-            console.error("SendWait command failed:", error);
-            return null;
+            LogError("SendWait command failed:", error);
+            return { success: false, error };
+        }
+    };
+
+    const getLastProbe = async () => {
+        try {
+            const response = await GetLastProbe();
+            return { success: true, data: response };
+        } catch (error) {
+            LogError("GetLastProbe command failed:", error);
+            return { success: false, error };
         }
     };
 
 
 
-
-
     return (
-        <CNCContext.Provider value={{ consoleMessages, consoleMessagesRef, probeHistory, status, isConnected, testFunc, sendAsync, sendAsyncRaw, sendWait, clearProbeHistory }}>
+        <CNCContext.Provider value={{ consoleMessages, consoleMessagesRef, probeHistory, status, isConnected, getLastProbe, testSender, testIngest, sendAsync, sendAsyncRaw, sendWait, clearProbeHistory }}>
             {children}
         </CNCContext.Provider>
     );

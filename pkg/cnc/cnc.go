@@ -18,6 +18,8 @@ type Controller interface {
 
 	ClearProbeHistory() // ClearProbeHistory clears the probe history
 	GetProbeHistory() []state.ProbeResult
+	GetLastProbe() state.ProbeResult
 
-	TestFunc()
+	TestIngest()
+	TestSender()
 }

@@ -10,7 +10,7 @@ import { useCommandRunner } from '../context/QueueRunner';
 import { ClearProbeHistory } from "../../wailsjs/go/app/App";
 
 export default function ProbeView() {
-    const { sendCommand, testFunc, status, probeHistory } = useCNC();
+    const { sendAsync, sendWait, getLastProbe, testIngest, testSender, status, probeHistory } = useCNC();
 
     const [showAxisModal, setShowAxisModal] = useState(false);
 
@@ -18,6 +18,9 @@ export default function ProbeView() {
     const [feedRate, setFeedRate] = useState("100");
     const [probeDistance, setProbeDistance] = useState("25");
     const [probeMode, setProbeMode] = useState("G38.2");
+    const [zparams, setZparams] = useState(false);
+    const [zMin, setZmin] = useState("0");
+    const [zMax, setZmax] = useState("15");
 
     // Input modal
     const [showKeypad, setShowKeypad] = useState(false);
@@ -43,57 +46,56 @@ export default function ProbeView() {
     const handleOpenKeypad = (field) => {
         setCurrentField(field);
         setShowKeypad(true);
+
     };
 
     const retract = 2;
 
-    const probeInside = () => { // this only works for FluidNC
-        // sendCommand(`#<_pdist>=${probeDistance}`)
-        // sendCommand(`#<_pfeed>=${feedRate}`)
-        // sendCommand(`#<_pretract>=${retract}`)
-        // sendCommand(`$SD/Run=Macros/probe_inner.nc`)
+    const probeInside = async () => {
+        ClearProbeHistory();
+        testIngest();
 
-        // LogInfo("Executing probe utility: Inside");
-        // handleProbeSequence();
-        // LogInfo("Probe utility: Done");
-        testFunc();
+        return;
+        const stored_mpos = status?.mpos;
+
+
+        // const result = sendWait(`G91 G38.2 X-${probeDistance} F${feedRate}`);
+        testIngest();
+        let result = await sendWait(`G4 P1`);
+        if (!result.success) {
+            LogError("Probe failed: " + result.error.message);
+            return;
+        }
+        let pr = await getLastProbe();
+        const xmin = pr.data.x;
+
+
+        testIngest();
+        result = await sendWait(`G4 P1`);
+        if (!result.success) {
+            LogError("Probe failed: " + result.error.message);
+            return;
+        }
+        pr = await getLastProbe();
+        const xmax = pr.data.x;
+        let c = (xmax - xmin) / 2;
+        console.log("Command succeeded: c=g91 g0x", c);
+
+
+        // sendWait(`G90 G53 G0 X${stored_mpos.x}`);
+
+
+
+        // const result2 = sendWait(`G91 G38.2 X${probeDistance} F${feedRate}`);
+        // console.log("Probe result:", result2);
+        // sendWait(`G90 G53 G0 X${stored_mpos.x}`);
+
 
     }
 
-    /*
-    store mpos
-    `G91 G38.2 X-${probeDistance} F${feedRate}`
-    `G90 G53 G0 X${stored_mpos.x}`
-    */
 
-    const handleProbeSequence = async () => {
-        ClearProbeHistory();
-        const stored_mpos = status?.mpos;
-        await runCommandQueue([
-            () => `G91 G38.2 X-${probeDistance} F${feedRate}`,
-            () => `G90 G53 G0 X${stored_mpos.x}`,
 
-            () => `G91 G38.2 X${probeDistance} F${feedRate}`,
-            () => `G90 G53 G0 X${stored_mpos.x}`,
-            // () => `G91 G38.2 Y-${probeDistance} F${feedRate}`,
-            // () => `G90 G53 G0 Y${stored_mpos.y}`,
-
-            // () => `G91 G38.2 Y${probeDistance} F${feedRate}`,
-            // () => `G90 G53 G0 Y${stored_mpos.y}`,
-        ]);
-
-        // make sure length of probeHistory is 2
-        if (probeHistory.length !== 2) {
-            LogError("Probe history is not 2, something went wrong.");
-            return;
-        }
-        // subtrace x[1] from x[2]
-        const x1 = probeHistory[0].x;
-        const x2 = probeHistory[1].x;
-        const x = x2 - x1;
-        LogInfo("X distance:", x);
-    };
-
+    // ------------------------------------------------------------------------
     const handleOk = (value) => {
         if (currentField === "feedRate") setFeedRate(value);
         if (currentField === "probeDistance") setProbeDistance(value);
@@ -106,14 +108,27 @@ export default function ProbeView() {
                 ? { type: null, value: null }
                 : { type: "direction", value: dir }
         );
+        setZparams(false);
     };
 
+    // const toggleUtility = (util) => {
+    //     setActiveProbeTarget((prev) =>
+    //         prev.type === "utility" && prev.value === util
+    //             ? { type: null, value: null }
+    //             : { type: "utility", value: util }
+    //     );
+    // };
+
     const toggleUtility = (util) => {
-        setActiveProbeTarget((prev) =>
-            prev.type === "utility" && prev.value === util
-                ? { type: null, value: null }
-                : { type: "utility", value: util }
-        );
+        const isSame = activeProbeTarget.type === "utility" && activeProbeTarget.value === util;
+
+        if (isSame) {
+            setActiveProbeTarget({ type: null, value: null });
+            setZparams(false); // deselecting the utility disables Z params
+        } else {
+            setActiveProbeTarget({ type: "utility", value: util });
+            setZparams(util === "Outside"); // enable Z params only for "Outside"
+        }
     };
 
     const executeProbe = () => {
@@ -137,29 +152,6 @@ export default function ProbeView() {
         }
     };
 
-    /*
-    G91 G38.2 X-50 F100
-    #<x_min>=#<_x>
-    G91 G0 X2 
-    
-    G91 G38.2 X50 F100
-    #<x_max>=#<_x>
-    G91 G0 X-2
-    
-    #<center>=[[#<x_max>-#<x_min>]/2]
-    G91 G0 X[-#<center>+2]
-    
-    G91 G38.2 Y-50 F100
-    #<y_min>=#<_y>
-    G91 G0 Y2
-    
-    G91 G38.2 Y50 F100
-    #<y_max>=#<_y>
-    G91 G0 Y-2 
-    
-    #<center>=[[#<y_max>-#<y_min>]/2]
-    G91 G0 Y[-#<center>+2]
-    */
 
     return (
         <div className={styles.container}>
@@ -249,6 +241,34 @@ export default function ProbeView() {
                         <label>Max Distance:</label>
                         <button className={styles.inputButton} onClick={() => handleOpenKeypad("probeDistance")}>
                             {probeDistance} mm
+                        </button>
+                    </div>
+                </Frame>
+            </div>
+
+            {/* z Parameters */}
+            <div
+                style={{ position: 'absolute', bottom: '10px', left: '310px' }}
+                className={!zparams ? "disabledGroup" : ""}
+            >
+                <Frame className={!zparams ? "disabledGroup" : ""} title="Z height">
+                    <div className={styles.paramGroup}>
+                        <label className={!zparams ? "disabledGroup" : ""}>Z Min:</label>
+                        <button
+                            className={styles.inputButton}
+                            onClick={() => handleOpenKeypad("zmin")}
+                            disabled={!zparams}
+                        >
+                            {zMin} mm/min
+                        </button>
+
+                        <label>Z Max:</label>
+                        <button
+                            className={styles.inputButton}
+                            onClick={() => handleOpenKeypad("zmax")}
+                            disabled={!zparams}
+                        >
+                            {zMax} mm
                         </button>
                     </div>
                 </Frame>

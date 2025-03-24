@@ -8,8 +8,12 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func (a *App) TestFunc() {
-	a.Cnc.TestFunc()
+func (a *App) TestIngest() {
+	a.Cnc.TestIngest()
+}
+
+func (a *App) TestSender() {
+	a.Cnc.TestSender()
 }
 
 func (a *App) ClearProbeHistory() {
@@ -18,6 +22,10 @@ func (a *App) ClearProbeHistory() {
 
 func (a *App) GetProbeHistory() []state.ProbeResult {
 	return a.Cnc.GetProbeHistory()
+}
+
+func (a *App) GetLastProbe() state.ProbeResult {
+	return a.Cnc.GetLastProbe()
 }
 
 func (a *App) SendAsync(msg string) {
