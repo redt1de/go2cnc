@@ -251,9 +251,9 @@ export default function ProbeView() {
                 style={{ position: 'absolute', bottom: '10px', left: '310px' }}
                 className={!zparams ? "disabledGroup" : ""}
             >
-                <Frame className={!zparams ? "disabledGroup" : ""} title="Z height">
-                    <div className={styles.paramGroup}>
-                        <label className={!zparams ? "disabledGroup" : ""}>Z Min:</label>
+                <Frame disabled={!zparams} title="Z height">
+                    <div className={zparams ? styles.paramGroup : styles.disabledGroup} >
+                        <label >Z Probe:</label>
                         <button
                             className={styles.inputButton}
                             onClick={() => handleOpenKeypad("zmin")}
@@ -262,7 +262,7 @@ export default function ProbeView() {
                             {zMin} mm/min
                         </button>
 
-                        <label>Z Max:</label>
+                        <label>Z Safe:</label>
                         <button
                             className={styles.inputButton}
                             onClick={() => handleOpenKeypad("zmax")}

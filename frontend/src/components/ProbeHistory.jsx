@@ -33,10 +33,10 @@ export default function ProbeHistory() {
             <table className={styles.probeTable}>
                 <thead>
                     <tr>
-                        <th className={styles.probeLabel}>X</th>
-                        <th className={styles.probeLabel}>Y</th>
-                        <th className={styles.probeLabel}>Z</th>
-                        <th className={styles.probeLabel}>Success</th>
+                        <th className={`${styles.probeLabel} ${styles.colXYZ}`}>X</th>
+                        <th className={`${styles.probeLabel} ${styles.colXYZ}`}>Y</th>
+                        <th className={`${styles.probeLabel} ${styles.colXYZ}`}>Z</th>
+                        <th className={`${styles.probeLabel} ${styles.colSuccess}`}>Success</th>
                     </tr>
                 </thead>
 
@@ -50,20 +50,20 @@ export default function ProbeHistory() {
 
                         return (
                             <tr key={index}>
-                                <td className={styles.probeTd}>{x.toFixed(3)}</td>
-                                <td className={styles.probeTd}>{y.toFixed(3)}</td>
-                                <td className={styles.probeTd}>{z.toFixed(3)}</td>
-                                <td className={`${styles.probeTd} ${success ? styles.success : styles.fail}`}>{success ? "✔" : "✖"}</td>
+                                <td className={`${styles.probeTd} ${styles.colXYZ}`}>{x.toFixed(3)}</td>
+                                <td className={`${styles.probeTd} ${styles.colXYZ}`}>{y.toFixed(3)}</td>
+                                <td className={`${styles.probeTd} ${styles.colXYZ}`}>{z.toFixed(3)}</td>
+                                <td className={`${styles.probeTd} ${styles.colXYZ} ${success ? styles.success : styles.fail}`}>{success ? "✔" : "✖"}</td>
                             </tr>
                         );
                     })}
                     {/* Add empty rows if fewer than PAGE_SIZE */}
                     {Array.from({ length: PAGE_SIZE - paginatedHistory.length }).map((_, index) => (
                         <tr key={`empty-${index}`}>
-                            <td className={styles.probeTd}> </td>
-                            <td className={styles.probeTd}> </td>
-                            <td className={styles.probeTd}> </td>
-                            <td className={styles.probeTd}> </td>
+                            <td className={`${styles.probeTd} ${styles.colXYZ}`}> </td>
+                            <td className={`${styles.probeTd} ${styles.colXYZ}`}> </td>
+                            <td className={`${styles.probeTd} ${styles.colXYZ}`}> </td>
+                            <td className={`${styles.probeTd} ${styles.colXYZ}`}> </td>
                         </tr>
                     ))}
 

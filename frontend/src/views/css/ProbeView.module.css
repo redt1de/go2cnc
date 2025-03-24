@@ -77,6 +77,32 @@
     text-align: right;
 }
 
+.disabledGroup {
+    display: grid;
+    grid-template-columns: auto auto;
+    gap: 10px;
+    justify-content: center;
+    opacity: 0.5;
+    pointer-events: none;
+    /* color: #5f5f5f; */
+}
+
+.disabledGroup label {
+    padding-top: 15px;
+    text-align: right;
+}
+
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+
+
+
+
+
 .inputButton {
     padding: 8px 12px;
     font-size: 1.2rem;
