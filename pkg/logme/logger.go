@@ -20,6 +20,26 @@ const (
 	TRACE = 3
 )
 
+const (
+	colorNone   = "\033[0m"
+	colorRed    = "\033[0;31m"
+	colorGreen  = "\033[0;32m"
+	colorYellow = "\033[0;33m"
+	colorBlue   = "\033[0;34m"
+	colorPurple = "\033[0;35m"
+	colorCyan   = "\033[0;36m"
+	colorWhite  = "\033[0;37m"
+	colorGray   = "\033[0;90m"
+)
+
+const (
+	MsgWarn    = colorYellow + "⚠️  [WARN] " + colorNone
+	MsgError   = colorRed + "❌ [ERROR] " + colorNone
+	MsgFatal   = colorRed + "❌ [FATAL] " + colorNone
+	MsgDebug   = colorCyan + "🔧 [DEBUG] " + colorNone
+	MsgSuccess = colorGreen + "✅ [SUCCESS] " + colorNone
+)
+
 func NewLogger(level int) *logMe {
 
 	logLevel := ERROR
@@ -45,7 +65,7 @@ func (l *logMe) Print(message string) {
 }
 
 func (l *logMe) Success(message string) {
-	log.Println("✅ [SUCCESS] " + message + getCaller())
+	log.Println(MsgSuccess + message + getCaller())
 
 }
 
@@ -66,7 +86,7 @@ func (l *logMe) Debug(message string) {
 	if l.Level < DEBUG {
 		return
 	}
-	log.Println("🔧 [DEBUG]", message+getCaller())
+	log.Println(MsgDebug, message+getCaller())
 }
 
 func (l *logMe) Info(message string) {
@@ -80,17 +100,17 @@ func (l *logMe) Warning(message string) {
 	if l.Level < INFO {
 		return
 	}
-	log.Println("⚠️ [WARN]", message+getCaller())
+	log.Println(MsgWarn, message+getCaller())
 }
 
 func (l *logMe) Error(message string) {
 
-	log.Println("❌ [ERROR]", message+getCaller())
+	log.Println(MsgError, message+getCaller())
 }
 
 func (l *logMe) Fatal(message string) {
 
-	log.Println("❌ [FATAL]", message+getCaller())
+	log.Println(MsgFatal, message+getCaller())
 }
 
 func Trace(a ...any)   { Log.Trace(fmt.Sprint(a...)) }
@@ -120,7 +140,7 @@ func getCaller() string {
 			if strings.HasSuffix(frame.File, "dispatcher/dispatcher.go") {
 				return " (FRONTEND)"
 			}
-			return fmt.Sprintf(" (%s:%d)", trimPath(frame.File), frame.Line)
+			return fmt.Sprintf(" %s(%s:%d)%s", colorGray, trimPath(frame.File), frame.Line, colorNone)
 		}
 		// fmt.Println(trimPath(frame.File))
 		if !more {

@@ -3,18 +3,20 @@ import Frame from "../util/Frame";
 import KeypadModal from "../util/KeypadModal";
 import styles from "./css/ProbeView.module.css";
 import { useCNC } from "../context/CNCContext";
-import { LogInfo } from "../../wailsjs/runtime";
+import { LogInfo, LogError } from "../../wailsjs/runtime";
 import AxisModal from "../util/AxisModal";
 import ProbeHistory from "../components/ProbeHistory";
+import { useCommandRunner } from '../context/QueueRunner';
+import { ClearProbeHistory } from "../../wailsjs/go/app/App";
 
 export default function ProbeView() {
-    const { sendCommand } = useCNC();
+    const { sendCommand, testFunc, status, probeHistory } = useCNC();
 
     const [showAxisModal, setShowAxisModal] = useState(false);
 
     // Inputs
     const [feedRate, setFeedRate] = useState("100");
-    const [probeDistance, setProbeDistance] = useState("10");
+    const [probeDistance, setProbeDistance] = useState("25");
     const [probeMode, setProbeMode] = useState("G38.2");
 
     // Input modal
@@ -23,6 +25,7 @@ export default function ProbeView() {
 
     // Unified probe target (direction or utility)
     const [activeProbeTarget, setActiveProbeTarget] = useState({ type: "direction", value: "Z-" });
+    const { runCommandQueue } = useCommandRunner();
 
     const handleZeroSelect = (axes) => {
         console.log("User selected axes:", axes);
@@ -45,23 +48,51 @@ export default function ProbeView() {
     const retract = 2;
 
     const probeInside = () => { // this only works for FluidNC
-        sendCommand(`G91 G38.2 X-${probeDistance} F${feedRate}`)
-        sendCommand(`#<x_min>=#<_x>`)
-        sendCommand(`G91 G0 X${retract}`)
-        sendCommand(`G91 G38.2 X${probeDistance * 2} F${feedRate}`)
-        sendCommand(`#<x_max>=#<_x>`)
-        sendCommand(`G91 G0 X-${retract}`)
-        sendCommand(`#<center>=[[#<x_max>-#<x_min>]/2]`)
-        sendCommand(`G91 G0 X[-#<center>+${retract}]`)
-        sendCommand(`G91 G38.2 Y-${probeDistance} F${feedRate}`)
-        sendCommand(`#<y_min>=#<_y>`)
-        sendCommand(`G91 G0 Y${retract}`)
-        sendCommand(`G91 G38.2 Y${probeDistance * 2} F${feedRate}`)
-        sendCommand(`#<y_max>=#<_y>`)
-        sendCommand(`G91 G0 Y-${retract}`)
-        sendCommand(`#<center>=[[#<y_max>-#<y_min>]/2]`)
-        sendCommand(`G91 G0 Y[-#<center>+${retract}]`)
+        // sendCommand(`#<_pdist>=${probeDistance}`)
+        // sendCommand(`#<_pfeed>=${feedRate}`)
+        // sendCommand(`#<_pretract>=${retract}`)
+        // sendCommand(`$SD/Run=Macros/probe_inner.nc`)
+
+        // LogInfo("Executing probe utility: Inside");
+        // handleProbeSequence();
+        // LogInfo("Probe utility: Done");
+        testFunc();
+
     }
+
+    /*
+    store mpos
+    `G91 G38.2 X-${probeDistance} F${feedRate}`
+    `G90 G53 G0 X${stored_mpos.x}`
+    */
+
+    const handleProbeSequence = async () => {
+        ClearProbeHistory();
+        const stored_mpos = status?.mpos;
+        await runCommandQueue([
+            () => `G91 G38.2 X-${probeDistance} F${feedRate}`,
+            () => `G90 G53 G0 X${stored_mpos.x}`,
+
+            () => `G91 G38.2 X${probeDistance} F${feedRate}`,
+            () => `G90 G53 G0 X${stored_mpos.x}`,
+            // () => `G91 G38.2 Y-${probeDistance} F${feedRate}`,
+            // () => `G90 G53 G0 Y${stored_mpos.y}`,
+
+            // () => `G91 G38.2 Y${probeDistance} F${feedRate}`,
+            // () => `G90 G53 G0 Y${stored_mpos.y}`,
+        ]);
+
+        // make sure length of probeHistory is 2
+        if (probeHistory.length !== 2) {
+            LogError("Probe history is not 2, something went wrong.");
+            return;
+        }
+        // subtrace x[1] from x[2]
+        const x1 = probeHistory[0].x;
+        const x2 = probeHistory[1].x;
+        const x = x2 - x1;
+        LogInfo("X distance:", x);
+    };
 
     const handleOk = (value) => {
         if (currentField === "feedRate") setFeedRate(value);

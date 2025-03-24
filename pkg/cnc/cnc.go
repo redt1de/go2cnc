@@ -1,44 +1,23 @@
 package cnc
 
-import (
-	"go2cnc/pkg/logme"
+import "go2cnc/pkg/cnc/state"
 
-	"go2cnc/pkg/cnc/controller"
-	"go2cnc/pkg/cnc/provider"
-)
+type Controller interface {
+	Connect()
+	IsConnected() bool
 
-type MachineCfg struct {
-	Auth           string `json:"auth" yaml:"auth"`
-	SocketProvider string `json:"socketProvider" yaml:"socket_provider"`
-	SocketAddress  string `json:"socketAddress" yaml:"socket_address"`
-	SocketPort     int    `json:"socketPort" yaml:"socket_port"`
-	Baudrate       int    `json:"baudrate" yaml:"baudrate"`
-	ControllerType string `json:"controllerType" yaml:"controller_type"`
-	SerialPort     string `json:"serialPort" yaml:"serial_port"`
-}
+	GetState() *state.State
+	OnMessage(handler func(msg string))
+	OnConnection(handler func(iscon bool))
+	OnUpdate(handler func(status *state.State))
+	OnProbe(handler func(restul []state.ProbeResult))
 
-func InitController(m *MachineCfg) controller.Controller {
-	// Initialize CNC provider
-	var cncProvider provider.Provider
-	switch m.SocketProvider {
-	case "websocket":
-		cncProvider = provider.NewWebSocketProvider(m.SocketAddress, m.SocketPort)
-	case "serial":
-		cncProvider = provider.NewSerialProvider(m.SerialPort, m.Baudrate)
-	default:
-		logme.Fatal("Unsupported provider: " + m.SocketProvider)
-	}
+	SendAsync(msg string)                  // SendAsync sends a message to the CNC controller and returns immediately
+	SendAsyncRaw(msg []byte)               // SendAsyncRaw sends a raw message to the CNC controller and returns immediately
+	SendWait(msg string) ([]string, error) // SendWait sends a message to the CNC controller and waits for error/ok, and returns the resulting messages
 
-	// Initialize CNC controller
-	var cncController controller.Controller
-	switch m.ControllerType {
-	case "grbl":
-		cncController = controller.NewGrblController(cncProvider)
-	case "fluidnc":
-		cncController = controller.NewFluidNCController(cncProvider)
-	default:
-		logme.Fatal("Unsupported controller: " + m.ControllerType)
-	}
+	ClearProbeHistory() // ClearProbeHistory clears the probe history
+	GetProbeHistory() []state.ProbeResult
 
-	return cncController
+	TestFunc()
 }

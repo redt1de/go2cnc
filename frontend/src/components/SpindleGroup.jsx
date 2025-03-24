@@ -1,7 +1,6 @@
 import React, { useState, useContext } from 'react';
 import styles from './css/SpindleGroup.module.css';
 // import { useWebSocket } from "../websocket/WebSocketProvider";
-import { Send } from "../../wailsjs/go/app/App";
 import KeypadModal from '../util/KeypadModal';
 import { useCNC } from '../context/CNCContext';
 
@@ -9,7 +8,7 @@ export default function SpindleGroup() {
     const [showKeypad, setShowKeypad] = useState(false);
     const [prompt, setPrompt] = useState('Enter Value');
     const [currentCommand, setCurrentCommand] = useState('');
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { status, sendAsync } = useCNC();
 
 
     const handleOpenKeypad = (command) => {
@@ -47,17 +46,17 @@ export default function SpindleGroup() {
             case 'm3':
                 // e.g., "M3 S{value}"
                 console.log(`Send command: M3 S${value}`);
-                sendCommand(`M3 S${value}`);
+                sendAsync(`M3 S${value}`);
                 break;
             case 'm4':
                 // e.g., "M4 S{value}"
                 console.log(`Send command: M4 S${value}`);
-                sendCommand(`M4 S${value}`);
+                sendAsync(`M4 S${value}`);
                 break;
             case 'm6':
                 // e.g., "M6 T{value}"
                 console.log(`Send command: M6 T${value}`);
-                sendCommand(`M6 T${value}`);
+                sendAsync(`M6 T${value}`);
                 break;
             default:
                 console.log('Unknown command');
@@ -69,7 +68,7 @@ export default function SpindleGroup() {
     // Example simple M5 logic (stop spindle) - no keypad
     const handleM5 = () => {
         console.log('Send command: M5 (stop spindle)');
-        sendCommand(`M5`);
+        sendAsync(`M5`);
     };
 
     return (

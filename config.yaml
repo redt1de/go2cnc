@@ -1,10 +1,8 @@
-pendant_cfg:
-  server_address: :8080 # NOT USED AT THIS TIME
-machine_cfg:
-  controller_type: "fluidnc" # grbl|fluidnc|cncjs
-  socket_provider: "websocket" # serial|websocket|socket.io
-  socket_address: "192.168.0.134" # IP to websocket/socket.io server
-  socket_port: 81 # Port to websocket/socket.io server
-  baudrate: 115200 # Serial port baudrate
-  serial_port: "/dev/ttyUSB0" # Serial port
-  auth: "TODO"
+ui:
+  probeMacro1: "G38.2 Z-50 F100"
+pendantCfg:
+  serverAddress: ""
+fluidnc:
+  api_url: "http://fluidnc.local"
+  # ws_url: "ws://fluidnc.local:81"
+  ws_url: "ws://localhost:81"

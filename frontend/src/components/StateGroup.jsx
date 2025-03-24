@@ -3,7 +3,7 @@ import styles from "./css/StateGroup.module.css";
 import { useCNC } from '../context/CNCContext';
 
 export default function StateGroup() {
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { consoleMessages, status, sendAsync } = useCNC();
     const [infoMessage, setInfoMessage] = useState("");
 
     // ✅ Ensure gState is always a valid string

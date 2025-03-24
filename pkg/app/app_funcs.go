@@ -1,30 +1,32 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
-	"go2cnc/pkg/cnc/controller"
+	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/logme"
-	"log"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-func (a *App) Send(cmd string) {
-	if cmd == "dump" {
-		b, err := json.MarshalIndent(a.cncController.GetStatus(), "", "    ")
-		if err != nil {
-			log.Fatal(err)
-		}
-		fmt.Println(string(b))
-
-		return
-	}
-
-	a.cncController.Send(cmd)
+func (a *App) TestFunc() {
+	a.Cnc.TestFunc()
 }
 
-func (a *App) SendRaw(cmd interface{}) {
+func (a *App) ClearProbeHistory() {
+	a.Cnc.ClearProbeHistory()
+}
+
+func (a *App) GetProbeHistory() []state.ProbeResult {
+	return a.Cnc.GetProbeHistory()
+}
+
+func (a *App) SendAsync(msg string) {
+	a.Cnc.SendAsync(msg)
+	runtime.EventsEmit(a.ctx, "consoleEvent", fmt.Sprintf("> %s", msg))
+
+}
+
+func (a *App) SendAsyncRaw(cmd interface{}) {
 	var data []byte
 
 	switch v := cmd.(type) {
@@ -42,28 +44,13 @@ func (a *App) SendRaw(cmd interface{}) {
 	}
 
 	// Send the correctly formatted byte slice
-	a.cncController.SendRaw(data)
+	a.Cnc.SendAsyncRaw(data)
+	runtime.EventsEmit(a.ctx, "consoleEvent", fmt.Sprintf("> 0x%x", data))
 }
 
-func (a *App) ClearProbeHistory() {
-	a.cncController.ClearProbeHistory()
+func (a *App) SendWait(msg string) ([]string, error) {
+	runtime.EventsEmit(a.ctx, "consoleEvent", fmt.Sprintf("> %s", msg))
+	return a.Cnc.SendWait(msg)
 }
 
-func (a *App) Emitter(eventName string, optionalData ...interface{}) {
-	// log.Println("📡 Emitting event:", eventName)
-	runtime.EventsEmit(a.ctx, eventName, optionalData)
-}
-
-func (a *App) Test() string {
-	// a.cncController.FakeDataTest()
-	// b, err := json.MarshalIndent(a.cncController.GetProbeHistory(), "", "    ")
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-	// fmt.Println(string(b))
-
-	// a.cncController.().ProbeTest()
-	casted := a.cncController.(*controller.FluidNCController)
-	casted.ProbeTest()
-	return "Hello frontend"
-}
+// //////////////////////////////////////////////////////////////////////////////

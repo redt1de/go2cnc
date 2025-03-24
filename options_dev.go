@@ -30,9 +30,12 @@ func getAppOptions(a *app.App, assets embed.FS, v int) *options.App {
 		DisableResize:      true,
 		LogLevelProduction: logLevel,
 		// WindowStartState:   options.Maximised,
-		AlwaysOnTop: true,
+		// AlwaysOnTop: true,
 		// Fullscreen:         true,
 		// Frameless:          true,
+		Debug: options.Debug{
+			OpenInspectorOnStartup: true,
+		},
 
 		AssetServer: &assetserver.Options{
 			Assets: assets,

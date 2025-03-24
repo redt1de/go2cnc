@@ -6,7 +6,7 @@ export default function WebcamView() {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
     const [error, setError] = useState(null);
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { consoleMessages, status, isConnected, sendAsync } = useCNC();
 
     useEffect(() => {
         async function startWebcam() {

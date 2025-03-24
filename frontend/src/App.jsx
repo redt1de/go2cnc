@@ -2,19 +2,19 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import styles from './App.module.css';
-// import { CNCProvider } from "../backups/machine/providers/CNCProvider";
+import { NavLink } from "react-router-dom"; // ✅ Use NavLink for active styling
+import loadConfig from "./util/Config";
+import { useState, useEffect } from 'react';
+//
+import { CNCProvider } from './context/CNCContext';
 import ControlView from './views/ControlView';
 import ConsoleView from './views/ConsoleView';
 import RunView from './views/RunView';
 import ProbeView from './views/ProbeView';
 import AutolevelView from './views/AutolevelView';
-import DisconnectedOverlay from './util/DisconnectedOverlay';
-import { NavLink } from "react-router-dom"; // ✅ Use NavLink for active styling
 import WebcamView from './views/WebcamView';
-import loadConfig from "./util/Config";
-import { useState, useEffect } from 'react';
-import { CNCProvider } from './context/CNCContext';
 import AlarmWatcher from './util/AlarmWatcher';
+import DisconnectedOverlay from './util/DisconnectedOverlay';
 
 
 function App() {

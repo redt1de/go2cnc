@@ -6,18 +6,22 @@ export function ClearProbeHistory() {
   return window['go']['app']['App']['ClearProbeHistory']();
 }
 
-export function Emitter(arg1, arg2) {
-  return window['go']['app']['App']['Emitter'](arg1, arg2);
+export function GetProbeHistory() {
+  return window['go']['app']['App']['GetProbeHistory']();
 }
 
-export function Send(arg1) {
-  return window['go']['app']['App']['Send'](arg1);
+export function SendAsync(arg1) {
+  return window['go']['app']['App']['SendAsync'](arg1);
 }
 
-export function SendRaw(arg1) {
-  return window['go']['app']['App']['SendRaw'](arg1);
+export function SendAsyncRaw(arg1) {
+  return window['go']['app']['App']['SendAsyncRaw'](arg1);
 }
 
-export function Test() {
-  return window['go']['app']['App']['Test']();
+export function SendWait(arg1) {
+  return window['go']['app']['App']['SendWait'](arg1);
+}
+
+export function TestFunc() {
+  return window['go']['app']['App']['TestFunc']();
 }

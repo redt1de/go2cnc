@@ -10,6 +10,7 @@ export default function ProbeHistory() {
     const [showDialog, setShowDialog] = useState(false);
 
     // Calculate total pages
+    // console.log('>>>>> probeHistory:', probeHistory);
     const totalPages = Math.ceil(probeHistory.length / PAGE_SIZE);
 
     // Slice the probe history for the current page

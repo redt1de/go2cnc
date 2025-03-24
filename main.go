@@ -23,6 +23,7 @@ func init() {
 }
 
 func main() {
+
 	flag.IntVar(&verbosity, "v", 0, "Verbosity level")
 	flag.StringVar(&configFile, "config", "./config.yaml", "Path to the configuration file")
 	flag.Parse()

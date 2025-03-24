@@ -14,7 +14,7 @@ import StateGroup from '../components/StateGroup';
 import { useCNC } from '../context/CNCContext';
 
 export default function ConsoleView() {
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { consoleMessages, status, isConnected, sendAsync } = useCNC();
 
 
     return (
@@ -29,7 +29,7 @@ export default function ConsoleView() {
             <div style={{ position: 'absolute', bottom: '0px', left: '10px' }}>
                 <GPadGroup onEnter={(input) => {
                     console.log('🚀 Sending Gcode:', input);
-                    sendCommand(input);
+                    sendAsync(input);
 
                 }} />
             </div>

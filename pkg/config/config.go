@@ -1,31 +1,42 @@
 package config
 
 import (
+	"go2cnc/pkg/cnc/fluidnc"
 	"io/ioutil"
-
-	"go2cnc/pkg/cnc"
 
 	"gopkg.in/yaml.v3"
 )
 
-const DefaultYamlConfig = `
-pendant_cfg:
-  server_address: :8080
-machine_cfg:
-  controller_type: "grbl"
-  socket_provider: "serial"
-  socket_address: "192.168.0.134"
-  socket_port: 81
-  baudrate: 115200
-  serial_port: "/dev/ttyUSB0"
-  auth: "TODO"
-  `
+const testCfgProxy = `
+ui:
+ probeMacro1: "G38.2 Z-50 F100"
+pendantCfg:
+ serverAddress: ""
+fluidnc:
+ api_url: "http://fluidnc.local"
+ ws_url: "ws://localhost:81"
+`
+const testCfg = `
+ui:
+ probeMacro1: "G38.2 Z-50 F100"
+pendantCfg:
+ serverAddress: ""
+fluidnc:
+ api_url: "http://fluidnc.local"
+ ws_url: "ws://fluidnc.local:81"
+`
 
 type Config struct {
+	Ui         Ui `json:"ui" yaml:"ui"`
 	PendantCfg struct {
 		ServerAddr string `json:"serverAddress" yaml:"server_address"`
 	} `json:"pendantCfg" yaml:"pendant_cfg"`
-	MachineCfg cnc.MachineCfg `json:"machineCfg" yaml:"machine_cfg"`
+
+	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
+}
+
+type Ui struct {
+	ProbeMacro1 string `json:"probeMacro1" yaml:"probe_macro_1"`
 }
 
 func LoadYamlConfig(fpath string) (*Config, error) {

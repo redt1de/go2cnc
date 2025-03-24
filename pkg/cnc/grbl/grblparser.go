@@ -1,53 +1,48 @@
-package controller
+package grbl
 
 import (
+	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/logme"
 	"regexp"
 	"strconv"
 	"strings"
 )
 
-func (g *GrblController) parseData(data string) {
-	if ignore(data) {
-		return
-	}
-	// logme.Println("🔍 recieved data:", data)
+const (
+	CHANGE_NONE = iota
+	CHANGE_STATUS
+	CHANGE_PARSER_STATE
+	CHANGE_PROBE_RESULT
+	CHANGE_WORK_OFFSETS
+)
 
+func ParseGrblData(data string, g *state.State) (bool, int) {
+	section := CHANGE_NONE
 	switch {
 	case strings.HasPrefix(data, "<"):
-		if g.statusRequestPending {
-			g.statusRequestPending = false
-			data = data + " (SILENCE)"
-		}
-		g.parseStatusReport(data)
+		parseStatusReport(data, g)
+		section = CHANGE_STATUS
 	case strings.HasPrefix(data, "[GC:"):
-		if g.modalRequestPending {
-			g.modalRequestPending = false
-			data = data + " (SILENCE)"
-		}
-		g.parseGCodeParserState(data)
+		parseGCodeParserState(data, g)
+		section = CHANGE_PARSER_STATE
 	case strings.HasPrefix(data, "[PRB:"):
-		g.parseProbeResult(data)
+		parseProbeResult(data, g)
+		section = CHANGE_PROBE_RESULT
 	case strings.HasPrefix(data, "[G"):
-		if g.wcoRequestPending {
-			data = data + " (SILENCE)"
-		}
-		g.parseWorkOffsets(data)
+		parseWorkOffsets(data, g)
+		section = CHANGE_WORK_OFFSETS
 	case strings.HasPrefix(data, "[TLO:"): // TLO should be the last item in wco list
-		if g.wcoRequestPending {
-			g.wcoRequestPending = false
-			data = data + " (SILENCE)"
-		}
-		g.parseWorkOffsets(data)
+		parseWorkOffsets(data, g)
+		section = CHANGE_WORK_OFFSETS
+	default:
+		return false, 0
 
 	}
-
-	g.shouldConsole(data)
-	g.emitStatus()
+	return true, section
 }
 
 // parseProbeResult parses Grbl probe results ([PRB:...])
-func (g *GrblController) parseProbeResult(data string) {
+func parseProbeResult(data string, g *state.State) {
 	re := regexp.MustCompile(`\[PRB:([-\d.]+),([-\d.]+),([-\d.]+):([01])\]`)
 	matches := re.FindStringSubmatch(data)
 
@@ -61,15 +56,16 @@ func (g *GrblController) parseProbeResult(data string) {
 	z, _ := strconv.ParseFloat(matches[3], 64)
 	success := matches[4] == "1"
 
-	probe := ProbeResult{X: x, Y: y, Z: z, Success: success}
+	probe := state.ProbeResult{X: x, Y: y, Z: z, Success: success}
 
 	// Append to probe history
-	g.Machine.ProbeHistory = append(g.Machine.ProbeHistory, probe)
-	g.emitProbeHitory()
+	// g.ProbeHistory = append(g.ProbeHistory, probe)
+	g.AddProbeResult(probe)
+	// g.emitProbeHitory()
 }
 
 // parseStatusReport parses Grbl's real-time status reports
-func (g *GrblController) parseStatusReport(rawdata string) {
+func parseStatusReport(rawdata string, g *state.State) {
 	// Remove `< >` brackets
 	data := strings.Trim(rawdata, "<>")
 
@@ -87,31 +83,31 @@ func (g *GrblController) parseStatusReport(rawdata string) {
 
 		switch key {
 		case "Idle", "Run", "Hold", "Jog", "Alarm", "Door", "Check", "Home":
-			g.Machine.Status.ActiveState = key
+			g.ActiveState = key
 
 		case "MPos":
 			// Machine Position
 			mpos := strings.Split(value, ",")
 			if len(mpos) == 3 {
-				g.Machine.Status.Mpos.X, _ = strconv.ParseFloat(mpos[0], 64)
-				g.Machine.Status.Mpos.Y, _ = strconv.ParseFloat(mpos[1], 64)
-				g.Machine.Status.Mpos.Z, _ = strconv.ParseFloat(mpos[2], 64)
+				g.Mpos.X, _ = strconv.ParseFloat(mpos[0], 64)
+				g.Mpos.Y, _ = strconv.ParseFloat(mpos[1], 64)
+				g.Mpos.Z, _ = strconv.ParseFloat(mpos[2], 64)
 			}
 
 		case "WPos":
 			// Work Position
 			wpos := strings.Split(value, ",")
 			if len(wpos) == 3 {
-				g.Machine.Status.Wpos.X, _ = strconv.ParseFloat(wpos[0], 64)
-				g.Machine.Status.Wpos.Y, _ = strconv.ParseFloat(wpos[1], 64)
-				g.Machine.Status.Wpos.Z, _ = strconv.ParseFloat(wpos[2], 64)
+				g.Wpos.X, _ = strconv.ParseFloat(wpos[0], 64)
+				g.Wpos.Y, _ = strconv.ParseFloat(wpos[1], 64)
+				g.Wpos.Z, _ = strconv.ParseFloat(wpos[2], 64)
 			}
 
 		case "WCO": // tracking work offsets stored in Status.Wco[Status.ActiveWCS]
 
 			// logme.Println("Satus includes WCO, triggering ForceUpdate()  ($G + $# + ?)")
 
-			// Work Coordinate Offset
+			// Work state.Coordinate Offset
 			// wco := strings.Split(value, ",")
 			// if len(wco) == 3 {
 			// 	wcoX, _ := strconv.ParseFloat(wco[0], 64)
@@ -119,38 +115,38 @@ func (g *GrblController) parseStatusReport(rawdata string) {
 			// 	wcoZ, _ := strconv.ParseFloat(wco[2], 64)
 
 			// 	// Compute Work Position (WPos) if MPos is available
-			// 	mposX, _ := strconv.ParseFloat(g.Machine.Status.Mpos.X, 64)
-			// 	mposY, _ := strconv.ParseFloat(g.Machine.Status.Mpos.Y, 64)
-			// 	mposZ, _ := strconv.ParseFloat(g.Machine.Status.Mpos.Z, 64)
+			// 	mposX, _ := strconv.ParseFloat(g.Mpos.X, 64)
+			// 	mposY, _ := strconv.ParseFloat(g.Mpos.Y, 64)
+			// 	mposZ, _ := strconv.ParseFloat(g.Mpos.Z, 64)
 
-			// 	g.Machine.Status.Wpos.X = strconv.FormatFloat(mposX-wcoX, 'f', 3, 64)
-			// 	g.Machine.Status.Wpos.Y = strconv.FormatFloat(mposY-wcoY, 'f', 3, 64)
-			// 	g.Machine.Status.Wpos.Z = strconv.FormatFloat(mposZ-wcoZ, 'f', 3, 64)
+			// 	g.Wpos.X = strconv.FormatFloat(mposX-wcoX, 'f', 3, 64)
+			// 	g.Wpos.Y = strconv.FormatFloat(mposY-wcoY, 'f', 3, 64)
+			// 	g.Wpos.Z = strconv.FormatFloat(mposZ-wcoZ, 'f', 3, 64)
 			// }
 
 		case "FS":
 			// Feedrate and Spindle Speed
 			fs := strings.Split(value, ",")
 			if len(fs) == 2 {
-				g.Machine.Status.Feedrate, _ = strconv.Atoi(fs[0])
-				g.Machine.Status.Tool.Speed, _ = strconv.Atoi(fs[1])
+				g.Feedrate, _ = strconv.Atoi(fs[0])
+				g.Tool.Speed, _ = strconv.Atoi(fs[1])
 			}
 
 		case "Ov":
 			// Override values (Feedrate, Rapid, Spindle)
 			ov := strings.Split(value, ",")
-			g.Machine.Status.Ov = []int{}
+			g.Overrides = []int{}
 			for _, val := range ov {
 				num, _ := strconv.Atoi(val)
-				g.Machine.Status.Ov = append(g.Machine.Status.Ov, num)
+				g.Overrides = append(g.Overrides, num)
 			}
 
 		case "Buf", "Bf":
 			// Buffer info (Planner buffer, RX buffer)
 			buf := strings.Split(value, ",")
 			if len(buf) == 2 {
-				g.Machine.Status.Buf.Planner, _ = strconv.Atoi(buf[0])
-				g.Machine.Status.Buf.Rx, _ = strconv.Atoi(buf[1])
+				g.Buf.Planner, _ = strconv.Atoi(buf[0])
+				g.Buf.Rx, _ = strconv.Atoi(buf[1])
 			}
 
 		case "Pn":
@@ -163,7 +159,7 @@ func (g *GrblController) parseStatusReport(rawdata string) {
 }
 
 // parseGCodeParserState parses Grbl's G-code parser state ($G)
-func (g *GrblController) parseGCodeParserState(data string) {
+func parseGCodeParserState(data string, g *state.State) {
 	re := regexp.MustCompile(`\[GC:(.+)\]`)
 	matches := re.FindStringSubmatch(data)
 
@@ -177,28 +173,28 @@ func (g *GrblController) parseGCodeParserState(data string) {
 	for _, token := range tokens {
 		switch {
 		case strings.HasPrefix(token, "G"):
-			// Store active work coordinate system
+			// Store active work state.Coordinate system
 			if token == "G54" || token == "G55" || token == "G56" || token == "G57" || token == "G58" || token == "G59" {
-				g.Machine.Status.ActiveWCS = token
-				g.Machine.Status.Modal.Wcs = token
+				g.WCS = token
+				g.Modal.Wcs = token
 			}
-			g.Machine.Status.Modal.Motion = token
+			g.Modal.Motion = token
 
 		case strings.HasPrefix(token, "M"):
-			g.Machine.Status.Modal.Program = token
+			g.Modal.Program = token
 		case strings.HasPrefix(token, "T"):
-			g.Machine.Status.Tool.Number, _ = strconv.Atoi(strings.TrimPrefix(token, "T"))
+			g.Tool.Number, _ = strconv.Atoi(strings.TrimPrefix(token, "T"))
 		case strings.HasPrefix(token, "S"):
-			g.Machine.Status.Tool.Speed, _ = strconv.Atoi(strings.TrimPrefix(token, "S"))
+			g.Tool.Speed, _ = strconv.Atoi(strings.TrimPrefix(token, "S"))
 		case strings.HasPrefix(token, "F"):
-			g.Machine.Status.Feedrate, _ = strconv.Atoi(strings.TrimPrefix(token, "F"))
+			g.Feedrate, _ = strconv.Atoi(strings.TrimPrefix(token, "F"))
 		}
 	}
 }
 
-// parseWorkOffsets parses Grbl's work coordinate offsets ($#)
-func (g *GrblController) parseWorkOffsets(data string) {
-	// Updated regex to capture all coordinate systems (G54-G59, G28, G30, G92, TLO)
+// parseWorkOffsets parses Grbl's work state.Coordinate offsets ($#)
+func parseWorkOffsets(data string, g *state.State) {
+	// Updated regex to capture all state.Coordinate systems (G54-G59, G28, G30, G92, TLO)
 	re := regexp.MustCompile(`\[(G[5-9][0-9]?|G28|G30|G92|TLO):([-\d.]+)(?:,([-\d.]+),([-\d.]+))?\]`)
 	matches := re.FindAllStringSubmatch(data, -1)
 
@@ -208,8 +204,8 @@ func (g *GrblController) parseWorkOffsets(data string) {
 	}
 
 	// Ensure Wco map is initialized
-	if g.Machine.Status.Wco == nil {
-		g.Machine.Status.Wco = make(map[string]Coordinate)
+	if g.WCO == nil {
+		g.WCO = make(map[string]state.Coordinate)
 	}
 
 	for _, match := range matches {
@@ -217,7 +213,7 @@ func (g *GrblController) parseWorkOffsets(data string) {
 			continue
 		}
 
-		wcs := match[1] // Coordinate system name (G54, G28, etc.)
+		wcs := match[1] // state.Coordinate system name (G54, G28, etc.)
 		x, _ := strconv.ParseFloat(match[2], 64)
 		y, z := 0.0, 0.0
 
@@ -227,12 +223,12 @@ func (g *GrblController) parseWorkOffsets(data string) {
 		}
 
 		// Store offsets in Status.Wco map
-		g.Machine.Status.Wco[wcs] = Coordinate{X: x, Y: y, Z: z}
-		// logme.Printf("📡 Work Coordinate %s: X=%.3f, Y=%.3f, Z=%.3f\n", wcs, x, y, z)
+		g.WCO[wcs] = state.Coordinate{X: x, Y: y, Z: z}
+		// logme.Printf("📡 Work state.Coordinate %s: X=%.3f, Y=%.3f, Z=%.3f\n", wcs, x, y, z)
 
 		// Special handling for Tool Length Offset (TLO)
 		if wcs == "TLO" {
-			g.Machine.Status.Tool.TLO = x
+			g.Tool.TLO = x
 			// logme.Printf("📡 Tool Length Offset (TLO): %.3f\n", x)
 		}
 	}

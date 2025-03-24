@@ -2,7 +2,7 @@ import React, { useContext } from "react"; import styles from './css/MDI.module.
 import { useCNC } from '../context/CNCContext';
 
 export default function MDI({ positions = {} }) {
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { status } = useCNC();
 
     return (
         <div className={styles.mdiContainer}>

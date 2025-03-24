@@ -1,10 +1,10 @@
 import React, { useContext } from "react";
 import styles from "./css/DisconnectedOverlay.module.css";
-// import { useWebSocket } from "../websocket/WebSocketProvider";
+import { useCNC } from "../context/CNCContext";
 
 export default function DisconnectedOverlay() {
-    // const { consoleMessages, status, sendCommand } = useWebSocket();
-    const isConnected = true; // TODO: Implement connection status
+    const { isConnected } = useCNC();
+
 
 
     if (isConnected) {

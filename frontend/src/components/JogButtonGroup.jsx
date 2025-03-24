@@ -6,14 +6,13 @@ import YesNoDialog from "../util/YesNoDialog";
 
 export default function JogButtonGroup() {
     const [stepSize, setStepSize] = useState('10.0');
-    const { consoleMessages, status, isConnected, sendCommand } = useCNC();
+    const { sendAsync } = useCNC();
 
     const [showDialog, setShowDialog] = useState(false);
 
     const handleConfirm = () => {
         setShowDialog(false);
-        console.log('sendCommanding G0 Z0');
-        sendCommand(`G90 G0 Z0`);
+        sendAsync(`G90 G0 Z0`);
     };
 
     const handleCancel = () => {
@@ -49,18 +48,18 @@ export default function JogButtonGroup() {
             </div>
 
             <div className={styles.jogContainer}>
-                <button onClick={() => sendCommand(`G91 G0 X-${stepSize} Y${stepSize}`)}>↖</button>
-                <button onClick={() => sendCommand(`G91 G0 Y${stepSize}`)} >▲</button>
-                <button onClick={() => sendCommand(`G91 G0 X${stepSize} Y${stepSize}`)}>↗</button>
-                <button onClick={() => sendCommand(`G91 G0 Z${stepSize}`)}>Z+</button>
-                <button onClick={() => sendCommand(`G91 G0 X-${stepSize}`)}>◄</button>
-                <button onClick={() => sendCommand(`G90 G0 X0 Y0`)}>O</button>
-                <button onClick={() => sendCommand(`G91 G0 X${stepSize}`)}>►</button>
+                <button onClick={() => sendAsync(`G91 G0 X-${stepSize} Y${stepSize}`)}>↖</button>
+                <button onClick={() => sendAsync(`G91 G0 Y${stepSize}`)} >▲</button>
+                <button onClick={() => sendAsync(`G91 G0 X${stepSize} Y${stepSize}`)}>↗</button>
+                <button onClick={() => sendAsync(`G91 G0 Z${stepSize}`)}>Z+</button>
+                <button onClick={() => sendAsync(`G91 G0 X-${stepSize}`)}>◄</button>
+                <button onClick={() => sendAsync(`G90 G0 X0 Y0`)}>O</button>
+                <button onClick={() => sendAsync(`G91 G0 X${stepSize}`)}>►</button>
                 <button onClick={() => setShowDialog(true)}>O</button>
-                <button onClick={() => sendCommand(`G91 G0 X-${stepSize} Y-${stepSize}`)}>↙</button>
-                <button onClick={() => sendCommand(`G91 G0 Y-${stepSize}`)}>▼</button>
-                <button onClick={() => sendCommand(`G91 G0 X${stepSize} Y-${stepSize}`)}>↘</button>
-                <button onClick={() => sendCommand(`G91 G0 Z-${stepSize}`)}>Z-</button>
+                <button onClick={() => sendAsync(`G91 G0 X-${stepSize} Y-${stepSize}`)}>↙</button>
+                <button onClick={() => sendAsync(`G91 G0 Y-${stepSize}`)}>▼</button>
+                <button onClick={() => sendAsync(`G91 G0 X${stepSize} Y-${stepSize}`)}>↘</button>
+                <button onClick={() => sendAsync(`G91 G0 Z-${stepSize}`)}>Z-</button>
 
             </div>
         </div>
