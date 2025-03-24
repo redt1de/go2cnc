@@ -28,8 +28,8 @@ func main() {
 	flag.StringVar(&configFile, "config", "./config.yaml", "Path to the configuration file")
 	flag.Parse()
 
-	verbosity = 5
 	app.ConfigFile = configFile
+	verbosity = 5
 
 	// Create an instance of the app structure
 	app := app.NewApp()

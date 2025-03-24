@@ -2,8 +2,12 @@ import React from "react";
 import Frame from "../util/Frame";
 import RunExplorerGroup from "../components/RunExplorerGroup";
 import styles from "./css/RunView.module.css";
+import { useCNC } from "../context/CNCContext";
 
 export default function RunView() {
+    const { listFiles } = useCNC();
+    listFiles("sd", ""); // TODO
+
     const handleRun = (file) => {
         alert(`Running: ${file.name}`);
     };

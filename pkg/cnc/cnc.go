@@ -22,4 +22,7 @@ type Controller interface {
 
 	TestIngest()
 	TestSender()
+
+	ListFiles(drive, path string) (string, error)
+	GetFile(drive, path string) (string, error)
 }

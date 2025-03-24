@@ -6,12 +6,20 @@ export function ClearProbeHistory() {
   return window['go']['app']['App']['ClearProbeHistory']();
 }
 
+export function GetFile(arg1, arg2) {
+  return window['go']['app']['App']['GetFile'](arg1, arg2);
+}
+
 export function GetLastProbe() {
   return window['go']['app']['App']['GetLastProbe']();
 }
 
 export function GetProbeHistory() {
   return window['go']['app']['App']['GetProbeHistory']();
+}
+
+export function ListFiles(arg1, arg2) {
+  return window['go']['app']['App']['ListFiles'](arg1, arg2);
 }
 
 export function SendAsync(arg1) {

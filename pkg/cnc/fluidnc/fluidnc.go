@@ -67,12 +67,11 @@ func (f *FluidNC) OnMessage(handler func(msg string)) {
 	f.onMessage = handler
 }
 
-func (f *FluidNC) handleMessage(msg string) {
+func (f *FluidNC) handleMessage(msg string, silent bool) {
 	didChange, section := grbl.ParseGrblData(msg, f.state)
 	// logme.Debug("handle message: ", didChange, section)
 	if didChange {
 		if section == grbl.CHANGE_PROBE_RESULT {
-
 			f.onProbe(f.state.ProbeHistory)
 			f.onUpdate(f.state)
 		}
@@ -83,7 +82,9 @@ func (f *FluidNC) handleMessage(msg string) {
 
 	// TODO: fluidnc specific parser
 
-	f.onMessage(msg)
+	if !silent {
+		f.onMessage(msg)
+	}
 }
 
 // called when the websocket connects or disconnects
@@ -207,7 +208,7 @@ func (f *FluidNC) TestSender() {
 			y := util.GenerateRandomPosition()
 			z := util.GenerateRandomPosition()
 
-			f.handleMessage(fmt.Sprintf("[PRB:%.3f,%.3f,%.3f:1]", x, y, z))
+			f.handleMessage(fmt.Sprintf("[PRB:%.3f,%.3f,%.3f:1]", x, y, z), false)
 			continue
 		}
 
@@ -236,12 +237,12 @@ func (f *FluidNC) TestIngest() {
 				y := util.GenerateRandomPosition()
 				z := util.GenerateRandomPosition()
 
-				f.handleMessage(fmt.Sprintf("[PRB:%.3f,%.3f,%.3f:1]", x, y, z))
+				f.handleMessage(fmt.Sprintf("[PRB:%.3f,%.3f,%.3f:1]", x, y, z), false)
 				continue
 			}
 
 			// logme.Debug("to onmessage: ", line)
-			f.handleMessage(line)
+			f.handleMessage(line, false)
 		}
 	}()
 

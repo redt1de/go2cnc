@@ -4,9 +4,13 @@ import {state} from '../models';
 
 export function ClearProbeHistory():Promise<void>;
 
+export function GetFile(arg1:string,arg2:string):Promise<string>;
+
 export function GetLastProbe():Promise<state.ProbeResult>;
 
 export function GetProbeHistory():Promise<Array<state.ProbeResult>>;
+
+export function ListFiles(arg1:string,arg2:string):Promise<string>;
 
 export function SendAsync(arg1:string):Promise<void>;
 

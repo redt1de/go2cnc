@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
-import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender } from "../../wailsjs/go/app/App";
+import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender, ListFiles, GetFile } from "../../wailsjs/go/app/App";
 import { EventsOn, LogError } from "../../wailsjs/runtime/runtime"
 
 // Create CNC Context
@@ -156,6 +156,20 @@ export const CNCProvider = ({ children }) => {
         }
     };
 
+    ////////////////////////////////////////
+
+    const listFiles = async (drive, path) => {
+        try {
+            const response = await ListFiles(drive, path);
+            console.log("ListFiles response:", response);
+            return { success: true, data: response };
+        } catch (error) {
+            LogError("ListFiles command failed:", error);
+            return { success: false, error };
+        }
+    };
+    ///////////////////////////////////////////
+
     const getLastProbe = async () => {
         try {
             const response = await GetLastProbe();
@@ -169,7 +183,7 @@ export const CNCProvider = ({ children }) => {
 
 
     return (
-        <CNCContext.Provider value={{ consoleMessages, consoleMessagesRef, probeHistory, status, isConnected, getLastProbe, testSender, testIngest, sendAsync, sendAsyncRaw, sendWait, clearProbeHistory }}>
+        <CNCContext.Provider value={{ consoleMessages, consoleMessagesRef, probeHistory, status, isConnected, listFiles, getLastProbe, testSender, testIngest, sendAsync, sendAsyncRaw, sendWait, clearProbeHistory }}>
             {children}
         </CNCContext.Provider>
     );

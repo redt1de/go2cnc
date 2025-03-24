@@ -8,6 +8,15 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+func (a *App) ListFiles(drive, path string) (string, error) {
+	logme.Debug("ListFiles -> drive: ", drive, " path:", path)
+	return a.Cnc.ListFiles(drive, path)
+}
+
+func (a *App) GetFile(drive, path string) (string, error) {
+	return a.Cnc.GetFile(drive, path)
+}
+
 func (a *App) TestIngest() {
 	a.Cnc.TestIngest()
 }

@@ -69,7 +69,7 @@ func (f *FluidNC) readLoop() {
 			continue
 		}
 
-		f.handleMessage(text)
+		f.handleMessage(text, (len(f.waitQueue) > 0))
 
 		f.waitMu.Lock()
 		if len(f.waitQueue) > 0 {
@@ -80,6 +80,8 @@ func (f *FluidNC) readLoop() {
 				// Command response is complete
 				f.waitQueue = f.waitQueue[1:]
 			}
+		} else {
+
 		}
 		f.waitMu.Unlock()
 	}
