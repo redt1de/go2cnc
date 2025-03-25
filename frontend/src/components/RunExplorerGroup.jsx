@@ -1,33 +1,63 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-gcode";
 import "ace-builds/src-noconflict/theme-monokai";
 import styles from "./css/RunExplorerGroup.module.css";
+import { ListFiles } from "../../wailsjs/go/app/App"; // Adjust path as needed
 
 export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
-    const [isMacroMode, setIsMacroMode] = useState(false);
+    const [drive, setDrive] = useState("SD");
+    const [fileList, setFileList] = useState([]);
     const [selectedFile, setSelectedFile] = useState(null);
+    const [currentPath, setCurrentPath] = useState("");
 
-    const testFiles = [
-        { name: "file1.gcode", size: "1.2 KB", content: "G21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM3aaaaaaa0\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 Fsssssss500\nM30zzzzzzzzzzzz" },
-        { name: "file2.gcode", size: "2.4 KB", content: "G21\nG91\nG1 Y-5 F600\nM5" }
-    ];
+    // Fetch file list whenever drive changes
+    // useEffect(() => {
+    //     const fetchFiles = async () => {
+    //         try {
+    //             const response = await ListFiles(drive, "");
+    //             const parsed = JSON.parse(response);
+    //             if (parsed.files) {
+    //                 setFileList(parsed.files);
+    //             } else {
+    //                 setFileList([]);
+    //             }
+    //         } catch (err) {
+    //             console.error("Failed to fetch file list:", err);
+    //             setFileList([]);
+    //         }
+    //     };
 
-    const testMacros = [
-        { name: "Macro1", size: "200 B", content: "M3 S1000\nG1 X5 Y5 F500\nM5" },
-        { name: "Macro2", size: "250 B", content: "G90\nG0 X0 Y0 Z10\nM30" }
-    ];
+    //     fetchFiles();
+    // }, [drive]);
+    useEffect(() => {
+        const fetchFiles = async () => {
+            try {
+                const response = await ListFiles(drive, currentPath);
+                const parsed = JSON.parse(response);
+                if (parsed.files) {
+                    setFileList(parsed.files);
+                } else {
+                    setFileList([]);
+                }
+            } catch (err) {
+                console.error("Failed to fetch file list:", err);
+                setFileList([]);
+            }
+        };
 
-    const sourceList = isMacroMode ? testMacros : testFiles;
+        fetchFiles();
+    }, [drive, currentPath]);
 
-    const handleToggle = () => {
-        setIsMacroMode((prev) => !prev);
+    const handleToggleDrive = () => {
+        setDrive((prev) => (prev === "SD" ? "USB" : "SD"));
         setSelectedFile(null);
+        setCurrentPath("");
     };
 
     const handleRun = () => {
         if (!selectedFile) {
-            alert("No file or macro selected!");
+            alert("No file selected!");
             return;
         }
         onRun(selectedFile);
@@ -35,7 +65,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
 
     const handleDryRun = () => {
         if (!selectedFile) {
-            alert("No file or macro selected!");
+            alert("No file selected!");
             return;
         }
         onDryRun(selectedFile);
@@ -43,60 +73,68 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
 
     const handleAutoLevel = () => {
         if (!selectedFile) {
-            alert("No file or macro selected!");
+            alert("No file selected!");
             return;
         }
         onAutoLevel(selectedFile);
     };
+    const displayFiles = currentPath
+        ? [{ name: "..", size: "-1" }, ...fileList]
+        : fileList;
 
     return (
         <div className={styles.container}>
+            <div className={styles.pathDisplay}>Current Path: /{currentPath}</div>
             {/* File Explorer */}
             <div className={styles.explorerContainer}>
+
+
                 {/* File List */}
                 <div className={styles.fileList}>
-                    {sourceList.map((file, index) => (
+
+                    {/* {fileList.map((file, index) => ( */}
+                    {displayFiles.map((file, index) => (
                         <div
                             key={index}
                             className={`${styles.fileItem} ${selectedFile?.name === file.name ? styles.selected : ""}`}
-                            onClick={() => setSelectedFile(file)}
+                            // onClick={() => setSelectedFile(file)}
+                            onClick={() => {
+                                if (file.size === "-1") {
+                                    // It's a directory
+                                    const newPath = currentPath ? `${currentPath}/${file.name}` : file.name;
+                                    setCurrentPath(newPath);
+                                    setSelectedFile(null);
+                                } else {
+                                    setSelectedFile(file);
+                                }
+                                if (file.name === "..") {
+                                    const parts = currentPath.split("/").filter(Boolean);
+                                    parts.pop(); // go up one level
+                                    setCurrentPath(parts.join("/"));
+                                    setSelectedFile(null);
+                                }
+                            }}
                         >
                             <span className={styles.fileName}>{file.name}</span>
-                            <span className={styles.fileSize}>{file.size}</span>
+                            <span className={styles.fileSize}>{file.size === "-1" ? "DIR" : `${file.size} B`}</span>
                         </div>
                     ))}
                 </div>
 
-                {/* G-Code Editor */}
+                {/* G-Code Editor (placeholder) */}
                 <div className={styles.fileViewer}>
                     {selectedFile ? (
-                        <AceEditor
-                            mode="gcode"
-                            theme="monokai"
-                            name="gcode-editor"
-                            value={selectedFile.content}
-                            readOnly={true}
-                            fontSize={14}
-                            showPrintMargin={false}
-                            showGutter={true}
-                            highlightActiveLine={true}
-                            setOptions={{
-                                showLineNumbers: true,
-                                tabSize: 4,
-                                useWorker: false
-                            }}
-                            className={styles.aceEditor}
-                        />
+                        <p>Selected: <strong>{selectedFile.name}</strong></p>
                     ) : (
-                        <p>Select a file or macro to view its contents.</p>
+                        <p>Select a file to preview it here.</p>
                     )}
                 </div>
             </div>
 
             {/* Control Buttons */}
             <div className={styles.controlContainer}>
-                <button className={styles.toggleButton} onClick={handleToggle}>
-                    {isMacroMode ? "Macros" : "Files"}
+                <button className={styles.toggleButton} onClick={handleToggleDrive}>
+                    Drive: {drive}
                 </button>
                 <button className={styles.runButton} onClick={handleRun}>Run</button>
                 <button className={styles.dryRunButton} onClick={handleDryRun}>Dry Run</button>
@@ -105,4 +143,3 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
         </div>
     );
 }
-

@@ -3,10 +3,20 @@ import Frame from "../util/Frame";
 import RunExplorerGroup from "../components/RunExplorerGroup";
 import styles from "./css/RunView.module.css";
 import { useCNC } from "../context/CNCContext";
+import { ListFiles } from "../../wailsjs/go/app/App";
 
 export default function RunView() {
-    const { listFiles } = useCNC();
-    listFiles("sd", ""); // TODO
+    // const { listFiles } = useCNC();
+    const listFiles = async (drive, path) => {
+        try {
+            const response = await ListFiles(drive, path);
+            console.log("ListFiles response:", response);
+            return { success: true, data: response };
+        } catch (error) {
+            LogError("ListFiles command failed:", error);
+            return { success: false, error };
+        }
+    };
 
     const handleRun = (file) => {
         alert(`Running: ${file.name}`);
