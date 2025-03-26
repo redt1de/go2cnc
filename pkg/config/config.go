@@ -27,7 +27,7 @@ fluidnc:
 `
 
 type Config struct {
-	Ui         Ui `json:"ui" yaml:"ui"`
+	Ui         UiCfg `json:"ui" yaml:"ui"`
 	PendantCfg struct {
 		ServerAddr string `json:"serverAddress" yaml:"server_address"`
 	} `json:"pendantCfg" yaml:"pendant_cfg"`
@@ -35,8 +35,8 @@ type Config struct {
 	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
 }
 
-type Ui struct {
-	ProbeMacro1 string `json:"probeMacro1" yaml:"probe_macro_1"`
+type UiCfg struct {
+	MacroPath string `json:"macroPath" yaml:"macro_path"`
 }
 
 func LoadYamlConfig(fpath string) (*Config, error) {

@@ -7,7 +7,7 @@ import { LogInfo, LogError } from "../../wailsjs/runtime";
 import AxisModal from "../util/AxisModal";
 import ProbeHistory from "../components/ProbeHistory";
 import { useCommandRunner } from '../context/QueueRunner';
-import { ClearProbeHistory } from "../../wailsjs/go/app/App";
+import { ClearProbeHistory, Config } from "../../wailsjs/go/app/App";
 
 export default function ProbeView() {
     const { sendAsync, sendWait, getLastProbe, testIngest, testSender, status, probeHistory } = useCNC();
@@ -53,7 +53,9 @@ export default function ProbeView() {
 
     const probeInside = async () => {
         ClearProbeHistory();
-        testIngest();
+        // testIngest();
+        let cfg = await Config();
+        console.log("Config:", cfg);
 
         return;
         const stored_mpos = status?.mpos;

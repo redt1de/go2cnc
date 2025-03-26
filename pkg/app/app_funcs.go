@@ -3,18 +3,32 @@ package app
 import (
 	"fmt"
 	"go2cnc/pkg/cnc/state"
+	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
+// Config() returns the UiCfg configuration
+func (a *App) Config() *config.UiCfg {
+	return a.UiCfg
+}
+
 func (a *App) ListFiles(drive, path string) (string, error) {
 	logme.Debug("ListFiles -> drive: ", drive, " path:", path)
-	return a.Cnc.ListFiles(drive, path)
+	if drive == "USB" {
+		return listFilesUSB(path)
+	}
+	return a.Cnc.ListFiles(path)
+
 }
 
 func (a *App) GetFile(drive, path string) (string, error) {
-	return a.Cnc.GetFile(drive, path)
+	logme.Debug("GetFile -> drive: ", drive, " path:", path)
+	if drive == "USB" {
+		return getFileUSB(path)
+	}
+	return a.Cnc.GetFile(path)
 }
 
 func (a *App) TestIngest() {

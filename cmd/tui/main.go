@@ -84,7 +84,7 @@ func main() {
 		case "exit":
 			os.Exit(0)
 		case "cat":
-			a, err := Cnc.GetFile("sd", "center.nc")
+			a, err := Cnc.GetFile("center.nc")
 			// a, err := Cnc.GetFile("usb", "sha256sum.README") //// /media/redt1de/Parrot home 6.3.2/sha256sum.README
 			if err != nil {
 				logme.Error("GetFile -> error:", err)
@@ -93,7 +93,7 @@ func main() {
 			fmt.Println(a)
 			continue
 		case "list":
-			a, err := Cnc.ListFiles("usb", "")
+			a, err := Cnc.ListFiles("")
 			if err != nil {
 				logme.Error("ListFiles -> error:", err)
 				continue

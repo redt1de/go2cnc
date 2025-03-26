@@ -1,5 +1,5 @@
 ui:
-  probeMacro1: "G38.2 Z-50 F100"
+  macro_path: "Macros/"
 pendantCfg:
   serverAddress: ""
 fluidnc:

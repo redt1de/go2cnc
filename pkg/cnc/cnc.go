@@ -23,6 +23,19 @@ type Controller interface {
 	TestIngest()
 	TestSender()
 
-	ListFiles(drive, path string) (string, error)
-	GetFile(drive, path string) (string, error)
+	ListFiles(path string) (string, error)
+	GetFile(path string) (string, error)
+}
+
+type FileList struct {
+	Files      []FileInfo `json:"files"`
+	Path       string     `json:"path"`
+	Total      string     `json:"total"`
+	Used       string     `json:"used"`
+	Occupation string     `json:"occupation"`
+}
+
+type FileInfo struct {
+	Name string `json:"name"`
+	Size string `json:"size"` // Note: size is a string in the JSON
 }

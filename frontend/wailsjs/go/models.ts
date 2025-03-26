@@ -1,3 +1,20 @@
+export namespace config {
+	
+	export class UiCfg {
+	    macroPath: string;
+	
+	    static createFrom(source: any = {}) {
+	        return new UiCfg(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.macroPath = source["macroPath"];
+	    }
+	}
+
+}
+
 export namespace state {
 	
 	export class ProbeResult {

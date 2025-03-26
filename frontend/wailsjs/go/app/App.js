@@ -6,6 +6,10 @@ export function ClearProbeHistory() {
   return window['go']['app']['App']['ClearProbeHistory']();
 }
 
+export function Config() {
+  return window['go']['app']['App']['Config']();
+}
+
 export function GetFile(arg1, arg2) {
   return window['go']['app']['App']['GetFile'](arg1, arg2);
 }

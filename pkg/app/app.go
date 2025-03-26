@@ -17,8 +17,9 @@ var ConfigFile string
 
 // App struct
 type App struct {
-	ctx context.Context
-	Cnc cnc.Controller
+	ctx   context.Context
+	Cnc   cnc.Controller
+	UiCfg *config.UiCfg
 }
 
 // NewApp creates a new App application struct
@@ -29,7 +30,6 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {
-	// TODO: need config
 	runtime.LogSetLogLevel(ctx, 5)
 	logme.Info("Starting up CNC controller")
 	a.ctx = ctx
@@ -37,6 +37,8 @@ func (a *App) Startup(ctx context.Context) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	a.UiCfg = &c.Ui
 
 	///////////////////////////////////////////////////////////////
 	a.Cnc = fluidnc.NewFluidNcController(c.FluidNCConfig)
