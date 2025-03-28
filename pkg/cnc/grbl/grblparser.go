@@ -71,9 +71,10 @@ func parseStatusReport(rawdata string, g *state.State) {
 
 	// Split the report into key-value pairs
 	fields := strings.Split(data, "|")
-
+	hasJob := false
 	// Iterate through fields and update machine status
 	for _, field := range fields {
+
 		parts := strings.SplitN(field, ":", 2)
 		key := parts[0]
 		value := ""
@@ -82,6 +83,16 @@ func parseStatusReport(rawdata string, g *state.State) {
 		}
 
 		switch key {
+		// parse Running file SD:13.45,/sd/test.nc
+		case "SD":
+			hasJob = true
+			parts := strings.Split(value, ",")
+			if len(parts) == 2 {
+				g.Job.Active = true
+				g.Job.Progress, _ = strconv.ParseFloat(parts[0], 64)
+				g.Job.Path = parts[1]
+			}
+
 		case "Idle", "Run", "Hold", "Jog", "Alarm", "Door", "Check", "Home":
 			g.ActiveState = key
 
@@ -155,6 +166,11 @@ func parseStatusReport(rawdata string, g *state.State) {
 		default:
 			logme.Println("Unknown Grbl status field:", key, " in ", rawdata)
 		}
+	}
+	if !hasJob {
+		g.Job.Active = false
+		g.Job.Path = ""
+		g.Job.Progress = 0.0
 	}
 }
 

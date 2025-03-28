@@ -5,6 +5,7 @@ import (
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
+	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -12,6 +13,25 @@ import (
 // Config() returns the UiCfg configuration
 func (a *App) Config() *config.UiCfg {
 	return a.UiCfg
+}
+
+func (a *App) RunFile(drivepathcsv string) error {
+	tmp := strings.Split(drivepathcsv, ",")
+	if len(tmp) != 2 {
+		logme.Error("RunFile: Invalid file arg format. Expected 'drive,path'")
+		return fmt.Errorf("invalid drivepathcsv format")
+	}
+	drive := tmp[0]
+	path := tmp[1]
+
+	logme.Debug("RunFile -> drive: ", drive, " path:", path)
+	if drive == "USB" {
+		// a.Cnc.SendFile()
+		// a.Cnc.RunFile()
+
+	}
+
+	return a.Cnc.RunFile(path)
 }
 
 func (a *App) ListFiles(drive, path string) (string, error) {

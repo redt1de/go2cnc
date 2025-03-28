@@ -8,15 +8,15 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
     const [isMacroMode, setIsMacroMode] = useState(false);
     const [selectedFile, setSelectedFile] = useState(null);
 
-    const testFiles = [
-        { name: "file1.gcode", size: "1.2 KB", content: "G21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM3aaaaaaa0\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 Fsssssss500\nM30zzzzzzzzzzzz" },
-        { name: "file2.gcode", size: "2.4 KB", content: "G21\nG91\nG1 Y-5 F600\nM5" }
-    ];
+    // const testFiles = [
+    //     { name: "file1.gcode", size: "1.2 KB", content: "G21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 F500\nM30\nG90\nG1 X10 F500\nM3aaaaaaa0\nG21\nG90\nG1 X10 F500\nM30\nG21\nG90\nG1 X10 Fsssssss500\nM30zzzzzzzzzzzz" },
+    //     { name: "file2.gcode", size: "2.4 KB", content: "G21\nG91\nG1 Y-5 F600\nM5" }
+    // ];
 
-    const testMacros = [
-        { name: "Macro1", size: "200 B", content: "M3 S1000\nG1 X5 Y5 F500\nM5" },
-        { name: "Macro2", size: "250 B", content: "G90\nG0 X0 Y0 Z10\nM30" }
-    ];
+    // const testMacros = [
+    //     { name: "Macro1", size: "200 B", content: "M3 S1000\nG1 X5 Y5 F500\nM5" },
+    //     { name: "Macro2", size: "250 B", content: "G90\nG0 X0 Y0 Z10\nM30" }
+    // ];
 
     const sourceList = isMacroMode ? testMacros : testFiles;
 

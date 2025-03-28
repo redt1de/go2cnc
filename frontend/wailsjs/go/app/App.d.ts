@@ -15,6 +15,8 @@ export function GetProbeHistory():Promise<Array<state.ProbeResult>>;
 
 export function ListFiles(arg1:string,arg2:string):Promise<string>;
 
+export function RunFile(arg1:string):Promise<void>;
+
 export function SendAsync(arg1:string):Promise<void>;
 
 export function SendAsyncRaw(arg1:any):Promise<void>;

@@ -49,11 +49,31 @@ export default function StateGroup() {
                 {gState.toUpperCase()}
             </label>
 
-            <label className={styles.infoLabel} htmlFor="info">Msg:</label>
+            {/* <label className={styles.infoLabel} htmlFor="info">Msg:</label> */}
             <label className={styles.info} id="info">
                 {infoMessage || ""}
             </label>
-        </div>
+            {/* ----------------------------------------- */}
+            {(true || status?.job?.active) && (
+                < div className={styles.progressContainer}>
+                    <div className={styles.progressBar}>
+
+                        <div
+                            className={styles.progressFill}
+                            style={{ width: `${status.job.progress}%` }}
+                        />
+                        <span className={styles.progressText}>
+                            {status.job.path?.split("/").pop() || "No File"}
+                        </span>
+
+                    </div>
+                </div>
+
+            )
+            }
+
+
+        </div >
     );
 }
 

@@ -15,6 +15,12 @@ type State struct {
 		Planner int `json:"planner"`
 		Rx      int `json:"rx"`
 	} `json:"buf"`
+	Job struct {
+		Active   bool    `json:"active"`
+		Path     string  `json:"path"`
+		Progress float64 `json:"progress"`
+	} `json:"job"`
+
 	Modal Modal `json:"modal"`
 }
 

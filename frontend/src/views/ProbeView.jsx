@@ -51,7 +51,7 @@ export default function ProbeView() {
 
     const retract = 2;
 
-    const probeInside = async () => {
+    const probeHole = async () => {
         ClearProbeHistory();
         // testIngest();
         let cfg = await Config();
@@ -146,8 +146,8 @@ export default function ProbeView() {
             // Placeholder for utility action logic
             LogInfo("Executing probe utility: " + value);
 
-            if (value === "Inside") {
-                probeInside();
+            if (value === "Hole") {
+                probeHole();
             } else {
                 alert("Utility actions are not implemented yet.");
             }
@@ -280,7 +280,8 @@ export default function ProbeView() {
             <div style={{ position: 'absolute', top: '120px', left: '310px' }}>
                 <Frame title="Utility">
                     <div className={styles.utilGroup}>
-                        {["Inside", "Outside", "Find Center"].map((utility) => (
+                        {/* {["Inside", "Outside", "Find Center"].map((utility) => ( */}
+                        {["Hole"].map((utility) => (
                             <button
                                 key={utility}
                                 className={`${styles.utilToggleButton} ${activeProbeTarget.type === "utility" && activeProbeTarget.value === utility ? styles.active : ""}`}

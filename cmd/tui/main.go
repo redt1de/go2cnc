@@ -11,6 +11,7 @@ import (
 	"go2cnc/pkg/logme"
 	"log"
 	"os"
+	"strings"
 	"time"
 )
 
@@ -79,11 +80,20 @@ func main() {
 	scanner := bufio.NewScanner(os.Stdin)
 	for scanner.Scan() {
 		line := scanner.Text()
+		parts := strings.Split(line, " ")
+		if len(parts) == 0 {
+			continue
+		}
 
-		switch line {
+		switch parts[0] {
 		case "exit":
 			os.Exit(0)
 		case "cat":
+			if len(parts) < 2 {
+				logme.Error("cat: no file specified")
+				continue
+			}
+
 			a, err := Cnc.GetFile("center.nc")
 			// a, err := Cnc.GetFile("usb", "sha256sum.README") //// /media/redt1de/Parrot home 6.3.2/sha256sum.README
 			if err != nil {
@@ -99,6 +109,15 @@ func main() {
 				continue
 			}
 			fmt.Println(a)
+			continue
+
+		case "sendfile":
+			err := Cnc.SendFile("/tmp/test.nc")
+			if err != nil {
+				logme.Error("SendFile -> error:", err)
+				continue
+			}
+			fmt.Println("File sent")
 			continue
 		}
 

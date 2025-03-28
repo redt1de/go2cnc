@@ -4,5 +4,5 @@ pendantCfg:
   serverAddress: ""
 fluidnc:
   api_url: "http://fluidnc.local"
-  # ws_url: "ws://fluidnc.local:81"
-  ws_url: "ws://localhost:81"
+  ws_url: "ws://fluidnc.local:81"
+  # ws_url: "ws://localhost:81"

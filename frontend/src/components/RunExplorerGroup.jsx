@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import AceEditor from "react-ace";
 import "ace-builds/src-noconflict/mode-gcode";
 import "ace-builds/src-noconflict/theme-monokai";
 import styles from "./css/RunExplorerGroup.module.css";
-import { ListFiles, GetFile } from "../../wailsjs/go/app/App"; // Adjust path as needed
+import { ListFiles, GetFile, RunFile } from "../../wailsjs/go/app/App"; // Adjust path as needed
 
 export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
     const [drive, setDrive] = useState("SD");
@@ -12,6 +13,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
     const [currentPath, setCurrentPath] = useState("");
     const [fileContent, setFileContent] = useState("");
     const [loadingFile, setLoadingFile] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchFiles = async () => {
@@ -38,12 +40,24 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
         setCurrentPath("");
     };
 
-    const handleRun = () => {
+    const handleRun = async () => {
         if (!selectedFile) {
             alert("No file selected!");
             return;
         }
-        onRun(selectedFile);
+        let csvstr = `${drive},${currentPath}/${selectedFile.name}`;
+        console.log("Running file:", csvstr);
+        try {
+            const response = await RunFile(csvstr);
+            console.log("RunFile response:", response);
+            navigate("/control", { replace: true });
+            return response;
+        } catch (error) {
+            console.error("RunFile failed:", error);
+            return null;
+        }
+
+
     };
 
     const handleDryRun = () => {
@@ -80,7 +94,6 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
                         <div
                             key={index}
                             className={`${styles.fileItem} ${selectedFile?.name === file.name ? styles.selected : ""}`}
-                            // onClick={() => setSelectedFile(file)}
                             onClick={async () => {
                                 if (file.name === "..") {
                                     const parts = currentPath.split("/").filter(Boolean);
@@ -99,6 +112,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
                                     return;
                                 }
 
+                                console.log("Selected file:", drive, currentPath, file.name);
                                 // It's a file — fetch contents
                                 setSelectedFile(file);
                                 setLoadingFile(true);   // Start loading
@@ -156,9 +170,9 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
                 <button className={styles.toggleButton} onClick={handleToggleDrive}>
                     Drive: {drive}
                 </button>
-                <button className={styles.runButton} onClick={handleRun}>Run</button>
-                <button className={styles.dryRunButton} onClick={handleDryRun}>Dry Run</button>
-                <button className={styles.autoLevelButton} onClick={handleAutoLevel}>Auto-Level</button>
+                <button className={styles.runButton} onClick={handleRun} disabled={!selectedFile} >Run</button>
+                <button className={styles.dryRunButton} onClick={handleDryRun} disabled={!selectedFile}>Dry Run</button>
+                <button className={styles.autoLevelButton} onClick={handleAutoLevel} disabled={true}>Auto-Level</button>
             </div>
         </div>
     );

@@ -55,7 +55,7 @@ export default function ConsoleGroup() {
 
     return (
         <div className={styles.consoleContainer} ref={scrollRef}>
-            <button onClick={() => sendAsync("?")}>Send Test</button>
+            {/* <button onClick={() => sendAsync("?")}>Send Test</button> */}
             {consoleMessages.length > 0 ? (
                 consoleMessages.map((msg, i) => (
                     <div key={i} className={styles.consoleLine}>
