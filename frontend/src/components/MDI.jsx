@@ -10,7 +10,7 @@ export default function MDI({ positions = {} }) {
             <table className={styles.mdiTable}>
                 <thead>
                     <tr>
-                        <th></th>
+                        <th>{status?.wcs ?? "G54"}</th>
                         <th>Work</th>
                         <th>Machine</th>
                     </tr>

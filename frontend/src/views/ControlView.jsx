@@ -53,7 +53,7 @@ export default function ControlView() {
             </div>
 
             <div style={{ position: 'absolute', bottom: '0px', left: '310px' }}>
-                <Frame title="Zero">
+                <Frame title="Set">
                     <ZeroGroup />
                 </Frame>
             </div>

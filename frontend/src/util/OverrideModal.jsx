@@ -5,8 +5,13 @@ import { useCNC } from "../context/CNCContext";
 export default function OverridesModal({ onClose }) {
     const { status, sendAsync, sendAsyncRaw } = useCNC();
 
-    const spindle = status?.ov?.[1] ?? 100;
+    // FS:500,8000 contains real-time feed rate, followed by spindle speed, data as the values.
+    // Ov:100,100,110 indicates current override values in percent of programmed values for feed, rapids, and spindle speed, respectively.
+
     const feed = status?.ov?.[0] ?? 100;
+    const rapid = status?.ov?.[1] ?? 100;
+    const spindle = status?.ov?.[2] ?? 100;
+
 
     const sendOverride = (type, amount) => {
         let byte = null;
@@ -23,7 +28,12 @@ export default function OverridesModal({ onClose }) {
             else if (amount === -10) byte = 0x92; // Coarse -
             else if (amount === 1) byte = 0x93; // Fine +
             else if (amount === -1) byte = 0x94; // Fine -
+        } else if (type === "rapid") {
+            if (amount === 100) byte = 0x95; // Reset
+            else if (amount === 50) byte = 0x96; // Coarse +
+            else if (amount === 25) byte = 0x97; // Coarse -
         }
+
 
         if (byte !== null) {
             console.log("Sending override command:", byte);
@@ -59,6 +69,18 @@ export default function OverridesModal({ onClose }) {
                         <button className={styles.btn} onClick={() => sendOverride("feed", 100)}>100%</button>
                         <button className={styles.btn} onClick={() => sendOverride("feed", 1)}>+1%</button>
                         <button className={styles.btn} onClick={() => sendOverride("feed", 10)}>+10%</button>
+                    </div>
+                </div>
+
+                <div style={{ marginBottom: "15px" }}>
+                    <label style={{ color: "#fff" }}>
+                        Rapid: <strong>{rapid}%</strong>
+                    </label>
+                    <div className={styles.buttons}>
+                        <button className={styles.btn} onClick={() => sendOverride("rapid", 25)}>25%</button>
+                        <button className={styles.btn} onClick={() => sendOverride("rapid", 50)}>50%</button>
+                        <button className={styles.btn} onClick={() => sendOverride("rapid", 100)}>100%</button>
+
                     </div>
                 </div>
 
