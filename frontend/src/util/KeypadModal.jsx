@@ -48,14 +48,17 @@ export default function KeypadModal({ promptText, onOk, onCancel, initialValue =
                             {num}
                         </button>
                     ))}
-                    <button className={styles.keyButton} onClick={handleBackspace}>⌫</button>
+                    {/* <button className={styles.keyButton} onClick={handleBackspace}>⌫</button> */}
+                    <button className={styles.keyButton} onClick={() => handleDigit("-")}>-</button>
                     <button className={styles.keyButton} onClick={() => handleDigit("0")}>0</button>
+                    <button className={styles.keyButton} onClick={() => handleDigit(".")}>.</button>
 
                 </div>
 
                 <div className={styles.actions}>
-                    <button className={styles.cancelButton} onClick={handleCancel}>Cancel</button>
-                    <button className={styles.okButton} onClick={handleOk}>OK</button>
+                    <button className={styles.keyButton} onClick={handleCancel}>X</button>
+                    <button className={styles.keyButton} onClick={handleBackspace}>⌫</button>
+                    <button className={styles.keyButton} onClick={handleOk}>OK</button>
                 </div>
             </div>
         </div>

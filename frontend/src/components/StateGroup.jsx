@@ -60,10 +60,10 @@ export default function StateGroup() {
 
                         <div
                             className={styles.progressFill}
-                            style={{ width: `${status.job.progress}%` }}
+                            style={{ width: `${status?.job?.progress}%` }}
                         />
                         <span className={styles.progressText}>
-                            {status.job.path?.split("/").pop() || "No File"}
+                            {status?.job?.path?.split("/").pop() || "No File"}
                         </span>
 
                     </div>
