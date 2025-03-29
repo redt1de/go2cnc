@@ -72,6 +72,7 @@ export default function RunView() {
                 <Frame title="Files">
                     <div className={styles.explorerContainer}>
                         <FileBrowser
+                            // forceDrive="MACROS"
                             onFileSelect={handleFileSelect}
                             onPathChange={(newPath) => {
                                 setPath(newPath);

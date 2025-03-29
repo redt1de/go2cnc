@@ -32,6 +32,65 @@ func getFileUSB(path string) (string, error) {
 	return string(data), nil
 }
 
+// (a *App) listMacros()  will list all files in the configured macro path (a.UiCfg.MacroPath) and return a JSON string
+func (a *App) listMacros() (string, error) {
+	macroPath := a.UiCfg.MacroPath
+	if macroPath == "" {
+		logme.Error("ListMacros -> macro path is empty")
+		return "", errors.New("macro path is empty")
+	}
+
+	entries, err := os.ReadDir(macroPath)
+	if err != nil {
+		logme.Error("ListMacros -> os.ReadDir -> error:", err)
+		return "", err
+	}
+
+	var files []cnc.FileInfo
+
+	for _, entry := range entries {
+		info, err := entry.Info()
+		if err != nil {
+			continue
+		}
+		files = append(files, cnc.FileInfo{
+			Name: entry.Name(),
+			Size: fmt.Sprintf("%d", info.Size()),
+		})
+	}
+
+	reft := &cnc.FileList{
+		Files:      files,
+		Path:       macroPath,
+		Total:      "N/A", // You could calculate total disk space
+		Used:       "N/A", // Convert bytes to string like "52.0 KB"
+		Occupation: "0",   // Optional: you can compute % usage
+
+	}
+
+	ret, err := json.Marshal(reft)
+	if err != nil {
+		logme.Error("ListMacros -> error:", err)
+		return "", err
+	}
+	logme.Debug("ListMacros -> ret:", string(ret))
+	return string(ret), nil
+}
+
+func (a *App) getMacro(path string) (string, error) {
+	macroPath := a.UiCfg.MacroPath
+	if macroPath == "" {
+		logme.Error("ListMacros -> macro path is empty")
+		return "", errors.New("macro path is empty")
+	}
+	content, err := os.ReadFile(filepath.Join(macroPath, path))
+	if err != nil {
+		logme.Error("GetMacro -> os.Read -> error:", err)
+		return "", err
+	}
+	return string(content), nil
+}
+
 func listFilesUSB(path string) (string, error) {
 	drives, err := util.DetectUSB()
 	if err != nil {

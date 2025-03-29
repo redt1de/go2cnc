@@ -5,6 +5,7 @@ import (
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
+	"os"
 	"path/filepath"
 	"strings"
 
@@ -53,14 +54,24 @@ func (a *App) ListFiles(drive, path string) (string, error) {
 	if drive == "USB" {
 		return listFilesUSB(path)
 	}
-	return a.Cnc.ListFiles(path)
+	if drive == "MACROS" {
+		return a.listMacros()
+	}
 
+	return a.Cnc.ListFiles(path)
+}
+
+func (a *App) SaveMacro(name, content string) error {
+	return os.WriteFile(filepath.Join(a.UiCfg.MacroPath, name), []byte(content), 0644)
 }
 
 func (a *App) GetFile(drive, path string) (string, error) {
 	logme.Debug("GetFile -> drive: ", drive, " path:", path)
 	if drive == "USB" {
 		return getFileUSB(path)
+	}
+	if drive == "MACROS" {
+		return a.getMacro(path)
 	}
 	return a.Cnc.GetFile(path)
 }

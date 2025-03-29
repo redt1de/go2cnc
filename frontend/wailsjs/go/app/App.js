@@ -30,6 +30,10 @@ export function RunFile(arg1) {
   return window['go']['app']['App']['RunFile'](arg1);
 }
 
+export function SaveMacro(arg1, arg2) {
+  return window['go']['app']['App']['SaveMacro'](arg1, arg2);
+}
+
 export function SendAsync(arg1) {
   return window['go']['app']['App']['SendAsync'](arg1);
 }

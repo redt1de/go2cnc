@@ -1,5 +1,5 @@
 ui:
-  macro_path: "Macros/"
+  macro_path: "/tmp/macros"
 pendantCfg:
   serverAddress: ""
 fluidnc:

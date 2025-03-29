@@ -11,7 +11,7 @@ import ControlView from './views/ControlView';
 import ConsoleView from './views/ConsoleView';
 import RunView from './views/RunView';
 import ProbeView from './views/ProbeView';
-import AutolevelView from './views/AutolevelView';
+import MacroView from './views/MacroView';
 import WebcamView from './views/WebcamView';
 import AlarmWatcher from './util/AlarmWatcher';
 import DisconnectedOverlay from './util/DisconnectedOverlay';
@@ -42,8 +42,8 @@ function App() {
             <NavLink to="/probe" title="Probe" className={({ isActive }) => isActive ? styles.active : ""}>
               Probe
             </NavLink>
-            <NavLink to="/autolevel" title="Autolevel" className={({ isActive }) => isActive ? styles.active : ""}>
-              ???
+            <NavLink to="/macros" title="Macros" className={({ isActive }) => isActive ? styles.active : ""}>
+              Macros
             </NavLink>
             <NavLink to="/webcam" title="Webcam" className={({ isActive }) => isActive ? styles.active : ""}>
               Webcam
@@ -57,7 +57,7 @@ function App() {
               <Route path="/console" element={<ConsoleView />} />
               <Route path="/run" element={<RunView />} />
               <Route path="/probe" element={<ProbeView />} />
-              <Route path="/autolevel" element={<AutolevelView />} />
+              <Route path="/macros" element={<MacroView />} />
               <Route path="/webcam" element={<WebcamView />} />
             </Routes>
             <AlarmWatcher />

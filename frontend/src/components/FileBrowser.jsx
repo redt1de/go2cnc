@@ -2,15 +2,24 @@ import React, { useEffect, useState } from "react";
 import styles from "./css/FileBrowser.module.css";
 import { ListFiles } from "../../wailsjs/go/app/App";
 
-export default function FileBrowser({ onFileSelect, onPathChange, selectedFile }) {
-    const [drive, setDrive] = useState("SD");
+export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, forceDrive = "", refreshTrigger = 0 }) {
+    const [drive, setDrive] = useState(forceDrive || "SD");
     const [fileList, setFileList] = useState([]);
     const [currentPath, setCurrentPath] = useState("");
 
     useEffect(() => {
+        if (forceDrive) {
+            setDrive(forceDrive);
+        }
+    }, [forceDrive]);
+
+    useEffect(() => {
+
+
         const fetchFiles = async () => {
             try {
                 const response = await ListFiles(drive, currentPath);
+                console.log("ListFiles response:", response);
                 const parsed = JSON.parse(response);
                 setFileList(currentPath ? [{ name: "..", size: "-1" }, ...parsed.files] : parsed.files || []);
             } catch (err) {
@@ -19,7 +28,8 @@ export default function FileBrowser({ onFileSelect, onPathChange, selectedFile }
             }
         };
         fetchFiles();
-    }, [drive, currentPath]);
+    }, [drive, currentPath, refreshTrigger]);
+
 
     const handleClick = (file) => {
         if (file.name === "..") {
@@ -53,14 +63,17 @@ export default function FileBrowser({ onFileSelect, onPathChange, selectedFile }
                 </div>
             ))}
             <div className={styles.controlContainer}>
-                <button className={styles.toggleButton} onClick={() => {
-                    setDrive((prev) => (prev === "SD" ? "USB" : "SD"));
-                    setCurrentPath("");
-                    onFileSelect(null);
-                    onPathChange("", null);
-                }}>
-                    Drive: {drive}
-                </button>
+
+                {!forceDrive && (
+                    <button className={styles.toggleButton} onClick={() => {
+                        setDrive((prev) => (prev === "SD" ? "USB" : "SD"));
+                        setCurrentPath("");
+                        onFileSelect(null);
+                        onPathChange("", null);
+                    }}>
+                        Drive: {drive}
+                    </button>
+                )}
             </div>
         </div>
     );
