@@ -3,8 +3,9 @@ import Frame from "../util/Frame";
 import RunExplorerGroup from "../components/RunExplorerGroup";
 import styles from "./css/RunView.module.css";
 import { useCNC } from "../context/CNCContext";
-import { ListFiles, GetFile } from "../../wailsjs/go/app/App";
+import { ListFiles, GetFile, RunFile } from "../../wailsjs/go/app/App";
 import { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import FileBrowser from "../components/FileBrowser";
 import FileViewer from "../components/FileViewer";
@@ -14,6 +15,7 @@ export default function RunView() {
     const [fileContent, setFileContent] = useState("");
     const [loadingFile, setLoadingFile] = useState(false);
     const [path, setPath] = useState("");
+    const navigate = useNavigate();
 
     const listFiles = async (drive, path) => {
         try {
@@ -25,6 +27,27 @@ export default function RunView() {
             return { success: false, error };
         }
     };
+
+    const handleRun = async () => {
+        if (!selectedFile) {
+            alert("No file selected!");
+            return;
+        }
+        let csvstr = `${drive},${currentPath}/${selectedFile.name}`;
+        console.log("Running file:", csvstr);
+        try {
+            const response = await RunFile(csvstr);
+            console.log("RunFile response:", response);
+            navigate("/control", { replace: true });
+            return response;
+        } catch (error) {
+            console.error("RunFile failed:", error);
+            return null;
+        }
+
+
+    };
+
 
     const handleFileSelect = async (file, drive, currentPath) => {
         setSelectedFile(file);
@@ -73,7 +96,7 @@ export default function RunView() {
                 <Frame title="Actions">
                     <div className={styles.actionContainer}>
                         <button disabled={!selectedFile} >DryRun</button>
-                        <button disabled={!selectedFile} >Run</button>
+                        <button onClick={handleRun} disabled={!selectedFile} >Run</button>
                         <button disabled={!selectedFile} >Autolevel</button>
                         <button disabled={!selectedFile} >Test</button>
                     </div>
