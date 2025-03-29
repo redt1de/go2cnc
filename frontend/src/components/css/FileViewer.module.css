@@ -1,0 +1,108 @@
+.fileViewer {
+    background: #222;
+    color: #fff;
+    padding: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    min-width: 0;
+    border-radius: 8px;
+}
+
+.pathDisplay {
+    padding: 10px;
+}
+
+/* .aceEditor {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 5px;
+    background: #111;
+} */
+
+.spinner {
+    border: 4px solid #444;
+    border-top: 4px solid #fff;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    animation: spin 1s linear infinite;
+    margin: auto;
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.controlContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    width: 90%;
+    margin-top: 10px;
+}
+
+.toggleButton {
+    background: #555;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.toggleButton:hover {
+    background: #777;
+}
+
+
+
+
+/*  */
+
+.editorWrapper {
+    position: relative;
+    flex-grow: 1;
+    height: 100%;
+}
+
+.aceEditor {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 5px;
+    background: #111;
+}
+
+.floatingControls {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    display: flex;
+    gap: 8px;
+}
+
+.smallBtn {
+    width: 80px;
+    height: 40px;
+    background: #444;
+    color: white;
+    border: 1px solid #888;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.smallBtn:hover {
+    background: #666;
+}

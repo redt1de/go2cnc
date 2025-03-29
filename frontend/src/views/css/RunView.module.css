@@ -1,11 +1,37 @@
-.runViewContainer {
-    position: absolute;
-    top: 0px;
-    left: 0;
-    width: 1024px;
-    height: 600px;
-    background: black;
+.explorerContainer {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: row;
+    width: 980px;
+    height: 380px;
+    gap: 10px;
+    align-items: stretch;
+    /* Ensure both children fill height */
+}
+
+
+.actionContainer {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(1, 1fr);
+    justify-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+    gap: 10px;
+    width: 980px;
+}
+
+.actionContainer button {
+    width: 120px;
+    height: 60px;
+    font-size: 1.5rem;
+    text-align: center;
+    background: #555;
+    color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 8px;
+}
+
+.actionContainer button:active {
+    background-color: #777;
+    transform: scale(0.98);
 }

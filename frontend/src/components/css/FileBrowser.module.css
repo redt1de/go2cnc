@@ -1,0 +1,59 @@
+.fileList {
+    background: #333;
+    color: white;
+    overflow-y: auto;
+    border-right: 1px solid #444;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    width: 300px;
+    min-width: 300px;
+    max-width: 300px;
+    flex-shrink: 0;
+    border-radius: 8px;
+}
+
+.fileItem {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    cursor: pointer;
+    border-bottom: 1px solid #555;
+}
+
+.selected {
+    background: #777;
+    font-weight: bold;
+}
+
+.fileName {
+    flex-grow: 1;
+}
+
+.fileSize {
+    color: #aaa;
+}
+
+.controlContainer {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px;
+    width: 90%;
+    margin-top: 10px;
+}
+
+.toggleButton {
+    background: #555;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    min-width: 100px;
+}
+
+.toggleButton:hover {
+    background: #777;
+}
