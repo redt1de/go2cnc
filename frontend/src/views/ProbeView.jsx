@@ -19,6 +19,7 @@ export default function ProbeView() {
     const [probeDistance, setProbeDistance] = useState("25");
     const [probeMode, setProbeMode] = useState("G38.2");
     const [zparams, setZparams] = useState(false);
+    const [kpAdv, setKpAdv] = useState(false);
     const [zMin, setZmin] = useState("0");
     const [zMax, setZmax] = useState("15");
 
@@ -44,6 +45,11 @@ export default function ProbeView() {
     };
 
     const handleOpenKeypad = (field) => {
+        if (field === "zmin" || field === "zmax") {
+            setKpAdv(true);
+        } else {
+            setKpAdv(false);
+        }
         setCurrentField(field);
         setShowKeypad(true);
 
@@ -101,6 +107,9 @@ export default function ProbeView() {
     const handleOk = (value) => {
         if (currentField === "feedRate") setFeedRate(value);
         if (currentField === "probeDistance") setProbeDistance(value);
+        if (currentField === "zmin") setZmin(value);
+        if (currentField === "zmax") setZmax(value);
+        setCurrentField("");
         setShowKeypad(false);
     };
 
@@ -261,7 +270,7 @@ export default function ProbeView() {
                             onClick={() => handleOpenKeypad("zmin")}
                             disabled={!zparams}
                         >
-                            {zMin} mm/min
+                            {zMin} mm
                         </button>
 
                         <label>Z Safe:</label>
@@ -281,7 +290,7 @@ export default function ProbeView() {
                 <Frame title="Utility">
                     <div className={styles.utilGroup}>
                         {/* {["Inside", "Outside", "Find Center"].map((utility) => ( */}
-                        {["Hole"].map((utility) => (
+                        {["Hole", "Outside"].map((utility) => (
                             <button
                                 key={utility}
                                 className={`${styles.utilToggleButton} ${activeProbeTarget.type === "utility" && activeProbeTarget.value === utility ? styles.active : ""}`}
@@ -317,6 +326,7 @@ export default function ProbeView() {
             {/* Keypad */}
             {showKeypad && (
                 <KeypadModal
+                    advanced={kpAdv}
                     promptText={`Enter ${currentField}`}
                     onOk={handleOk}
                     onCancel={() => setShowKeypad(false)}

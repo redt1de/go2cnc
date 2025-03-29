@@ -8,7 +8,7 @@ import styles from './css/KeypadModal.module.css';
  *  - onCancel(): called when user cancels
  *  - initialValue?: string (optional, the starting text in the input)
  */
-export default function KeypadModal({ promptText, onOk, onCancel, initialValue = '', simple = true }) {
+export default function KeypadModal({ promptText, onOk, onCancel, initialValue = '', advanced = false }) {
     const [value, setValue] = useState(initialValue);
 
     const handleDigit = (digit) => {
@@ -51,7 +51,7 @@ export default function KeypadModal({ promptText, onOk, onCancel, initialValue =
                     {/* <button className={styles.keyButton} onClick={handleBackspace}>⌫</button> */}
 
 
-                    {!simple ? (
+                    {advanced ? (
                         <button className={styles.keyButton} onClick={() => handleDigit("-")}>-</button>
                     ) : (
                         <div></div>
@@ -60,7 +60,7 @@ export default function KeypadModal({ promptText, onOk, onCancel, initialValue =
 
                     <button className={styles.keyButton} onClick={() => handleDigit("0")}>0</button>
 
-                    {!simple ? (
+                    {advanced ? (
                         <button className={styles.keyButton} onClick={() => handleDigit(".")}>.</button>
                     ) : (
                         <div></div>
