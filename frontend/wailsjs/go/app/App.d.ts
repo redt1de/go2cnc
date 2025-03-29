@@ -26,3 +26,5 @@ export function SendWait(arg1:string):Promise<Array<string>>;
 export function TestIngest():Promise<void>;
 
 export function TestSender():Promise<void>;
+
+export function UploadFile(arg1:string,arg2:string):Promise<void>;

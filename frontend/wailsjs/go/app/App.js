@@ -49,3 +49,7 @@ export function TestIngest() {
 export function TestSender() {
   return window['go']['app']['App']['TestSender']();
 }
+
+export function UploadFile(arg1, arg2) {
+  return window['go']['app']['App']['UploadFile'](arg1, arg2);
+}

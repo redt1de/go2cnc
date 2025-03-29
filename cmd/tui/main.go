@@ -112,7 +112,7 @@ func main() {
 			continue
 
 		case "sendfile":
-			err := Cnc.SendFile("/tmp/test.nc")
+			err := Cnc.UploadFile("Macros/test1.nc", "(print,hello)")
 			if err != nil {
 				logme.Error("SendFile -> error:", err)
 				continue

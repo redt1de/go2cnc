@@ -5,6 +5,7 @@ import (
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
+	"path/filepath"
 	"strings"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
@@ -13,6 +14,10 @@ import (
 // Config() returns the UiCfg configuration
 func (a *App) Config() *config.UiCfg {
 	return a.UiCfg
+}
+
+func (a *App) UploadFile(name, content string) error {
+	return a.Cnc.UploadFile(name, content)
 }
 
 func (a *App) RunFile(drivepathcsv string) error {
@@ -26,11 +31,20 @@ func (a *App) RunFile(drivepathcsv string) error {
 
 	logme.Debug("RunFile -> drive: ", drive, " path:", path)
 	if drive == "USB" {
-		// a.Cnc.SendFile()
-		// a.Cnc.RunFile()
-
+		content, err := getFileUSB(path)
+		if err != nil {
+			logme.Error("RunFile: Error getting file from USB:", err)
+			return err
+		}
+		fname := filepath.Base(path)
+		n := filepath.Join("/", fname)
+		err = a.Cnc.UploadFile(n, content)
+		if err != nil {
+			logme.Error("RunFile: Error uploading file to CNC:", err)
+			return err
+		}
+		path = n
 	}
-
 	return a.Cnc.RunFile(path)
 }
 

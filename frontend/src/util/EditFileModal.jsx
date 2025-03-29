@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import styles from "./css/EditFileModal.module.css";
 import AceEditor from "react-ace";
-import Keyboard from "react-simple-keyboard";
-import "react-simple-keyboard/build/css/index.css";
 import "ace-builds/src-noconflict/mode-gcode";
 import "ace-builds/src-noconflict/theme-monokai";
 
@@ -43,14 +41,6 @@ export default function EditFileModal({ initialContent, onClose, onSave }) {
                     />
                 </div>
 
-                <div className={styles.keyboardContainer}>
-                    {/* <Keyboard
-                        value={text}
-                        inputName="text"
-                        onChange={(input) => setText(input)}
-                    /> */}
-                    <Keyboard onKeyPress={(input) => console.log(input)} inputName="default" />
-                </div>
 
                 <div className={styles.buttonBar}>
                     <button className={styles.btn} onClick={handleSave}>Save</button>

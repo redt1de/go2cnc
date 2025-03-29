@@ -25,7 +25,7 @@ type Controller interface {
 
 	ListFiles(path string) (string, error)
 	GetFile(path string) (string, error)
-	SendFile(path string) error
+	UploadFile(fpath, content string) error
 	RunFile(path string) error
 }
 

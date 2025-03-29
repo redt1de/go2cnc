@@ -14,7 +14,6 @@ export default function RunView() {
     const [fileContent, setFileContent] = useState("");
     const [loadingFile, setLoadingFile] = useState(false);
     const [path, setPath] = useState("");
-    // const { listFiles } = useCNC();
 
     const listFiles = async (drive, path) => {
         try {
@@ -51,7 +50,11 @@ export default function RunView() {
                     <div className={styles.explorerContainer}>
                         <FileBrowser
                             onFileSelect={handleFileSelect}
-                            onPathChange={(newPath) => setPath(newPath)}
+                            onPathChange={(newPath) => {
+                                setPath(newPath);
+                                setFileContent("")
+                                setSelectedFile(null);
+                            }}
                             selectedFile={selectedFile}
                         />
                         <FileViewer
@@ -59,6 +62,7 @@ export default function RunView() {
                             fileContent={fileContent}
                             loading={loadingFile}
                             path={path}
+                            allowEdit={true}
                         />
                     </div>
                 </Frame>

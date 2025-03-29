@@ -6,7 +6,6 @@ import (
 	"go2cnc/pkg/logme"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"path/filepath"
 	"strings"
 	"time"
@@ -14,38 +13,30 @@ import (
 
 func (f *FluidNC) RunFile(filePath string) error {
 	cmd := fmt.Sprintf("$SD/Run=%s", filePath)
-	// j, err := f.SendWait(cmd)
-	// if err != nil {
-	// 	logme.Error("RunFile-> SendWait -> error:", err)
-	// }
 	f.SendAsync(cmd)
-
 	return nil
 }
 
-func (f *FluidNC) SendFile(filePath string) error {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return fmt.Errorf("failed to read file: %w", err)
-	}
+func (f *FluidNC) UploadFile(fpath, content string) error {
+	filename := filepath.Base(fpath)
+	targetPath := filepath.Dir(fpath)
 
-	filename := filepath.Base(filePath)
-	targetPath := "/"
+	logme.Debug("UploadFile -> filename:", filename, " targetPath:", targetPath)
 
 	var buf bytes.Buffer
 	writer := multipart.NewWriter(&buf)
 
 	// Required form fields
 	writer.WriteField("path", targetPath)
-	writer.WriteField(filename+"S", fmt.Sprintf("%d", len(content))) // Size
-	writer.WriteField(filename+"T", time.Now().Format(time.RFC3339)) // Timestamp
+	writer.WriteField(fpath+"S", fmt.Sprintf("%d", len(content))) // Size
+	writer.WriteField(fpath+"T", time.Now().Format(time.RFC3339)) // Timestamp
 
 	// Create file field
-	formFile, err := writer.CreateFormFile("myfiles", filename)
+	formFile, err := writer.CreateFormFile("myfiles", fpath)
 	if err != nil {
 		return fmt.Errorf("failed to create form file: %w", err)
 	}
-	_, err = formFile.Write(content)
+	_, err = formFile.Write([]byte(content))
 	if err != nil {
 		return fmt.Errorf("failed to write file content: %w", err)
 	}
@@ -86,6 +77,11 @@ func (f *FluidNC) GetFile(path string) (string, error) {
 		logme.Error("GetFile-> SendWait -> error:", err)
 		return "", err
 	}
+	// remove last item if its ok
+	if len(j) > 0 && j[len(j)-1] == "ok" {
+		j = j[:len(j)-1]
+	}
+
 	return strings.Join(j, "\n"), nil
 
 }

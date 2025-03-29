@@ -21,18 +21,6 @@ export default function ConsoleGroup() {
 
     const scrollRef = useRef(null);
 
-    // useEffect(() => {
-    //     EventsOn("consoleEvent", (message) => {
-    //         console.log("Received event:", message);
-    //         setConsoleMessages((prev) => [...prev, message]);
-    //     });
-
-    //     return () => {
-    //         // console.log("Cleaning up event listener...");
-    //         // unsubscribe();
-    //     };
-    // }, []);
-
     // ✅ Auto-scroll when messages update
     useEffect(() => {
         if (scrollRef.current) {

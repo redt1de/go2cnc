@@ -5,21 +5,39 @@ import "ace-builds/src-noconflict/theme-monokai";
 import styles from "./css/FileViewer.module.css";
 import EditFileModal from "../util/EditFileModal";
 import { useState } from "react";
+import { UploadFile } from "../../wailsjs/go/app/App";
 
-export default function FileViewer({ selectedFile, fileContent, loading, path }) {
-    const [showEditModal, setShowEditModal] = useState(false);
+export default function FileViewer({ selectedFile, fileContent, loading, path, allowEdit = false }) {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedContent, setEditedContent] = useState(fileContent);
+
+    React.useEffect(() => {
+        setEditedContent(fileContent);
+    }, [fileContent]);
+
+    const handleSave = async () => {
+        try {
+            if (!selectedFile || !editedContent) return;
+
+            const fileName = path ? `${path}/${selectedFile.name}` : selectedFile.name;
+
+            console.log("Saving file:", fileName);
+            await UploadFile(fileName, editedContent);
+
+            alert("File saved successfully!");
+            setIsEditing(false);
+        } catch (err) {
+            console.error("Failed to save file:", err);
+            alert("Failed to save file.");
+        }
+    };
 
     return (
 
+
+
         <div className={styles.fileViewer}>
-            {showEditModal && (
-                <EditFileModal
-                    initialContent={fileContent}
-                    onSave={(newText) => setFileContent(newText)}
-                    onClose={() => setShowEditModal(false)}
-                />
-            )}
-            <div className={styles.pathDisplay}>Current Path: /{path}</div>
+            <div className={styles.pathDisplay}>Current Path: {path}/{selectedFile?.name} {isEditing && "(edit)" || ""} </div>
 
             {loading ? (
                 <div className={styles.spinner}></div>
@@ -30,8 +48,10 @@ export default function FileViewer({ selectedFile, fileContent, loading, path })
                             mode="gcode"
                             theme="monokai"
                             name="gcode-editor"
-                            value={fileContent}
-                            readOnly={true}
+                            // value={fileContent}
+                            value={editedContent}
+                            onChange={setEditedContent}
+                            readOnly={!allowEdit || !isEditing}
                             fontSize={14}
                             showPrintMargin={false}
                             showGutter={true}
@@ -43,10 +63,21 @@ export default function FileViewer({ selectedFile, fileContent, loading, path })
                             }}
                             className={styles.aceEditor}
                         />
-                        <div className={styles.floatingControls}>
-                            <button className={styles.smallBtn} onClick={() => { setShowEditModal(true) }}>Edit</button>
-                            <button className={styles.smallBtn}>Save</button>
-                        </div>
+
+
+                        {allowEdit && (
+                            <div className={styles.floatingControls}>
+
+                                {isEditing && (
+                                    <button className={styles.smallBtn} onClick={() => { handleSave() }}>Save</button>
+                                ) || (
+                                        <button className={styles.smallBtn} onClick={() => { setIsEditing(true) }}>Edit</button>
+                                    )}
+
+
+                            </div>
+                        )}
+
                     </div>
                 </>
             ) : (
