@@ -19,7 +19,7 @@
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
-.buttons {
+.buttonsContainer {
     margin-top: 15px;
     display: flex;
     justify-content: space-around;
@@ -37,8 +37,17 @@
     border-radius: 8px;
 }
 
+
+.doneContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 15px;
+}
+
 .done {
     height: 60px;
+    width: 120px;
     padding: 8px 15px;
     border: none;
     background: #555;
@@ -46,4 +55,5 @@
     cursor: pointer;
     border: 1px solid #aaa;
     border-radius: 5px;
+    font-size: 1.2rem;
 }

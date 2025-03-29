@@ -60,7 +60,7 @@ export default function ZeroGroup() {
 
     return (
         <div>
-            {showKeypad && (<KeypadModal promptText="Enter Tool Length Offset" onOk={handleTLO} onCancel={() => setShowKeypad(false)} />)}
+            {showKeypad && (<KeypadModal simple={false} promptText="Enter Tool Length Offset" onOk={handleTLO} onCancel={() => setShowKeypad(false)} />)}
             {showModal && <AxisModal axes={["X", "Y", "Z"]} onOk={handleZero} onCancel={() => setShowModal(false)} />}
             {showOverrides && <OverridesModal onClose={() => setShowOverrides(false)} />}
             {showWCSModal && <WCSModal onClose={() => setShowWCSModal(false)} />}

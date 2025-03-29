@@ -161,7 +161,7 @@ func parseStatusReport(rawdata string, g *state.State) {
 			}
 
 		case "Pn":
-			logme.Println("📡 Input Pin State:", value)
+			// logme.Println("📡 Input Pin State:", value)
 
 		default:
 			logme.Println("Unknown Grbl status field:", key, " in ", rawdata)
