@@ -18,7 +18,12 @@ func (a *App) Config() *config.Config {
 }
 
 func (a *App) PutFile(name, content string) error {
-	return a.Cnc.PutFile(name, content)
+	logme.Debug(fmt.Sprintf("app.PutFile( %s , len(%d) )", name, len(content)))
+	err := a.Cnc.PutFile(name, content)
+	if err != nil {
+		logme.Error("app.PutFile: Error uploading file to CNC:", err)
+	}
+	return err
 }
 
 func (a *App) DelFile(delfile string) (string, error) {
@@ -29,7 +34,9 @@ func (a *App) DelFile(delfile string) (string, error) {
 	}
 	drive := tmp[0]
 	path := tmp[1]
-	logme.Debug("DelFile -> delfile:", delfile)
+
+	logme.Debug(fmt.Sprintf("app.DelFile(%s) -> drive: %s, path: %s", delfile, drive, path))
+
 	if drive == "USB" {
 		// return delFileUSB(delfile)
 		return "", fmt.Errorf("USB delete not implemented")
@@ -38,7 +45,12 @@ func (a *App) DelFile(delfile string) (string, error) {
 		// return delMacro(delfile)
 		return "", fmt.Errorf("MACROS delete not implemented")
 	}
-	return a.Cnc.DelFile(path)
+	r, err := a.Cnc.DelFile(path)
+	if err != nil {
+		logme.Error("app.DelFile:", err)
+		return "", err
+	}
+	return r, err
 }
 
 func (a *App) RunFile(drivepathcsv string) error {
@@ -50,50 +62,86 @@ func (a *App) RunFile(drivepathcsv string) error {
 	drive := tmp[0]
 	path := tmp[1]
 
-	logme.Debug("RunFile -> drive: ", drive, " path:", path)
+	logme.Debug(fmt.Sprintf("app.RunFile(%s) -> drive: %s, path: %s", drivepathcsv, drive, path))
+
 	if drive == "USB" {
 		content, err := getFileUSB(path)
 		if err != nil {
-			logme.Error("RunFile: Error getting file from USB:", err)
+			logme.Error("app.RunFile: Error getting file from USB:", err)
 			return err
 		}
 		fname := filepath.Base(path)
 		n := filepath.Join("/", fname)
 		err = a.Cnc.PutFile(n, content)
 		if err != nil {
-			logme.Error("RunFile: Error uploading file to CNC:", err)
+			logme.Error("app.RunFile: Error uploading file to CNC:", err)
 			return err
 		}
 		path = n
 	}
-	return a.Cnc.RunFile(path)
+
+	err := a.Cnc.RunFile(path)
+	if err != nil {
+		logme.Error("app.RunFile:", err)
+	}
+	return err
 }
 
 func (a *App) ListFiles(drive, path string) (string, error) {
-	logme.Debug("ListFiles -> drive: ", drive, " path:", path)
+	logme.Debug(fmt.Sprintf("app.ListFiles(%s , %s)", drive, path))
 	if drive == "USB" {
-		return listFilesUSB(path)
+		ret, err := listFilesUSB(path)
+		if err != nil {
+			logme.Error("app.ListFiles:", err)
+		}
+		return ret, err
 	}
 	if drive == "MACROS" {
-		return a.listMacros()
+		ret, err := a.listMacros()
+		if err != nil {
+			logme.Error("app.ListFiles:", err)
+		}
+		return ret, err
 	}
 
-	return a.Cnc.ListFiles(path)
+	ret, err := a.Cnc.ListFiles(path)
+	if err != nil {
+		logme.Error("app.ListFiles:", err)
+	}
+	return ret, err
 }
 
 func (a *App) SaveMacro(name, content string) error {
-	return os.WriteFile(filepath.Join(a.Cfg.MacroPath, name), []byte(content), 0644)
+	logme.Debug(fmt.Sprintf("app.SaveMacro( %s , len(%d) )", name, len(content)))
+	err := os.WriteFile(filepath.Join(a.Cfg.MacroPath, name), []byte(content), 0644)
+	if err != nil {
+		logme.Error("app.SaveMacro: Error saving macro:", err)
+
+	}
+	return err
 }
 
 func (a *App) GetFile(drive, path string) (string, error) {
-	logme.Debug("GetFile -> drive: ", drive, " path:", path)
+	logme.Debug(fmt.Sprintf("app.GetFile(%s , %s )", drive, path))
 	if drive == "USB" {
-		return getFileUSB(path)
+		ret, err := getFileUSB(path)
+		if err != nil {
+			logme.Error("app.GetFile:", err)
+		}
+		return ret, err
 	}
 	if drive == "MACROS" {
-		return a.getMacro(path)
+		ret, err := a.getMacro(path)
+		if err != nil {
+			logme.Error("app.GetFile:", err)
+		}
+		return ret, err
 	}
-	return a.Cnc.GetFile(path)
+	ret, err := a.Cnc.GetFile(path)
+	if err != nil {
+		logme.Error("app.GetFile:", err)
+	}
+	return ret, err
 }
 
 func (a *App) TestIngest() {

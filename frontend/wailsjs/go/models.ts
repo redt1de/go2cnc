@@ -44,6 +44,7 @@ export namespace fluidnc {
 	export class FluidNCConfig {
 	    api_url: string;
 	    ws_url: string;
+	    devProxy: string;
 	
 	    static createFrom(source: any = {}) {
 	        return new FluidNCConfig(source);
@@ -53,6 +54,7 @@ export namespace fluidnc {
 	        if ('string' === typeof source) source = JSON.parse(source);
 	        this.api_url = source["api_url"];
 	        this.ws_url = source["ws_url"];
+	        this.devProxy = source["devProxy"];
 	    }
 	}
 

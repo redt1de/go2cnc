@@ -21,6 +21,8 @@ export default function FileViewer({ selectedFile, fileContent, loading, path, a
             if (!selectedFile || !editedContent) return;
 
             const fileName = path ? `${path}/${selectedFile.name}` : selectedFile.name;
+            // const fileName = path ? `${path}/${selectedFile.name}` : `/${selectedFile.name}`;
+            // 
 
             LogDebug("Saving file:", fileName);
             await PutFile(fileName, editedContent);

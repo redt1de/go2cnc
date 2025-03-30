@@ -48,24 +48,15 @@ export const CNCProvider = ({ children }) => {
 
         // Listen for Status Updates
         const unsubscribeStatus = EventsOn("statusEvent", (newStatus) => {
-            LogDebug("Status Event:", newStatus);
-            // setStatus(newStatus[0]);
             setStatus(newStatus);
-            // setProbeHistory(status.probeHistory[0]);
         });
 
         // Listen for Connection Status Updates
         const unsubscribeConnection = EventsOn("connectionEvent", (connected) => {
-            // LogDebug(">>>>>>>>>>>>>>>>>>>> Connection Event:", connected);
-            // LogDebug("React hook Connection Event:<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             setIsConnected(connected);
         });
 
-        // TODO: figure out probe udpates since they are passed as status now 
         const unsubscribeProbe = EventsOn("probeEvent", (probeHist) => {
-            // LogDebug("Probe Event:", probeHist);
-            // setProbeHistory((prev) => [...prev, probeResult]);
-            LogDebug("Probe Event:", probeHist);
             setProbeHistory(probeHist);
         });
 

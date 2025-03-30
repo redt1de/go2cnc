@@ -26,7 +26,7 @@ func getAppOptions(a *app.App, assets embed.FS, v int) *options.App {
 		// Fullscreen:         true,
 		// Frameless:          true,
 		Debug: options.Debug{
-			OpenInspectorOnStartup: true,
+			OpenInspectorOnStartup: false,
 		},
 
 		AssetServer: &assetserver.Options{

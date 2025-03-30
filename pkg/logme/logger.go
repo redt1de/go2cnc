@@ -117,7 +117,7 @@ func (l *logMe) Trace(message string) {
 	if l.Level < TRACE {
 		return
 	}
-	if strings.Contains(message, " No listeners for event") {
+	if strings.Contains(message, "listeners") {
 		return
 	}
 	log.Println("🔧 [TRACE]", message+getCaller())
