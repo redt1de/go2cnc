@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"go2cnc/pkg/logme"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
@@ -11,13 +12,77 @@ import (
 	"time"
 )
 
+// func (f *FluidNC) DelFile(drivepath string) (string, error) {
+// 	parts := strings.SplitN(drivepath, ",", 3)
+// 	if len(parts) < 3 {
+// 		return "", fmt.Errorf("invalid path format: %s", drivepath)
+// 	}
+// 	drive := parts[0]
+// 	path := parts[1]
+// 	name := parts[2]
+
+// 	// Normalize path
+// 	if path == "." || path == "" {
+// 		path = "/"
+// 	}
+
+// 	logme.Debug("DelFile -> drive:", drive)
+// 	logme.Debug("DelFile -> path:", path)
+// 	logme.Debug("DelFile -> filename:", name)
+
+// 	url := fmt.Sprintf("%s/upload?path=%s&action=delete&filename=%s", f.ApiUrl, path, name)
+// 	resp, err := f.httpClient.Get(url)
+// 	if err != nil {
+// 		logme.Error("DelFile -> error:", err)
+// 		return "", fmt.Errorf("failed to send GET request: %w", err)
+// 	}
+// 	defer resp.Body.Close()
+
+// 	if resp.StatusCode != http.StatusOK {
+// 		logme.Error("DelFile -> error:", resp.Status)
+// 		return "", fmt.Errorf("failed to delete file: received HTTP %s", resp.Status)
+// 	}
+
+// 	body, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		logme.Error("DelFile -> error:", err)
+// 		return string(body), fmt.Errorf("failed to read response body: %w", err)
+// 	}
+// 	logme.Debug("DelFile -> response body:", string(body))
+// 	return string(body), nil
+// }
+
+func (f *FluidNC) DelFile(delfile string) (string, error) {
+	path := filepath.Dir(delfile)
+	name := filepath.Base(delfile)
+
+	logme.Debug("DelFile -> delfile:", delfile)
+	// resp, err := http.Get(fmt.Sprintf("%s/upload?path=%s&action=delete&filename=%s", f.ApiUrl, path, name))
+	resp, err := f.httpClient.Get(fmt.Sprintf("%s/upload?path=%s&action=delete&filename=%s", f.ApiUrl, path, name))
+	if err != nil {
+		return "", fmt.Errorf("failed to send GET request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to delete file: received HTTP %s", resp.Status)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return string(body), fmt.Errorf("failed to read response body: %w", err)
+	}
+	logme.Debug("DelFile -> response body:", string(body))
+	return string(body), nil
+}
+
 func (f *FluidNC) RunFile(filePath string) error {
 	cmd := fmt.Sprintf("$SD/Run=%s", filePath)
 	f.SendAsync(cmd)
 	return nil
 }
 
-func (f *FluidNC) UploadFile(fpath, content string) error {
+func (f *FluidNC) PutFile(fpath, content string) error {
 	filename := filepath.Base(fpath)
 	targetPath := filepath.Dir(fpath)
 
@@ -55,8 +120,7 @@ func (f *FluidNC) UploadFile(fpath, content string) error {
 	req.Header.Set("Content-Type", writer.FormDataContentType())
 
 	// Send the request
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := f.httpClient.Do(req)
 	if err != nil {
 		return fmt.Errorf("upload failed: %w", err)
 	}

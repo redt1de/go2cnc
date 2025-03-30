@@ -14,18 +14,19 @@ type Controller interface {
 
 	SendAsync(msg string)                  // SendAsync sends a message to the CNC controller and returns immediately
 	SendAsyncRaw(msg []byte)               // SendAsyncRaw sends a raw message to the CNC controller and returns immediately
-	SendWait(msg string) ([]string, error) // SendWait sends a message to the CNC controller and waits for error/ok, and returns the resulting messages
+	SendWait(msg string) ([]string, error) // SendWait sends a message to the CNC controller, waits for error/ok, and returns the resulting messages
 
-	ClearProbeHistory() // ClearProbeHistory clears the probe history
+	ClearProbeHistory()
 	GetProbeHistory() []state.ProbeResult
 	GetLastProbe() state.ProbeResult
 
-	TestIngest()
-	TestSender()
+	TestIngest() // just used for dev, RM me later
+	TestSender() // just used for dev, RM me later
 
 	ListFiles(path string) (string, error)
 	GetFile(path string) (string, error)
-	UploadFile(fpath, content string) error
+	PutFile(fpath, content string) error
+	DelFile(path string) (string, error)
 	RunFile(path string) error
 }
 

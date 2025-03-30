@@ -1,11 +1,15 @@
 import React, { useEffect, useState } from "react";
 import styles from "./css/FileBrowser.module.css";
-import { ListFiles } from "../../wailsjs/go/app/App";
+import { ListFiles, DelFile } from "../../wailsjs/go/app/App";
+import YesNoDialog from "../util/YesNoDialog";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrash } from '@fortawesome/free-solid-svg-icons';
 
 export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, forceDrive = "", refreshTrigger = 0 }) {
     const [drive, setDrive] = useState(forceDrive || "SD");
     const [fileList, setFileList] = useState([]);
     const [currentPath, setCurrentPath] = useState("");
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     useEffect(() => {
         if (forceDrive) {
@@ -50,6 +54,28 @@ export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, 
         onFileSelect(file, drive, currentPath);
     };
 
+    const handleDelete = async () => {
+        if (!selectedFile || selectedFile.name === ".." || selectedFile.size === "-1") {
+            return;
+        }
+
+        const filepath = currentPath ? `${currentPath}/${selectedFile.name}` : `/${selectedFile.name}`;
+
+        // const cleanPath = currentPath || ""; // default to "/" if root
+
+
+        try {
+            await DelFile(`${drive},${filepath}`);
+            // await DelFile(`${drive},${cleanPath}/${selectedFile.name}`);
+            setFileList((prev) => prev.filter(f => f.name !== selectedFile.name));
+            onFileSelect(null);
+            setShowDeleteDialog(false);
+        } catch (err) {
+            console.error("Failed to delete file:", err);
+            alert("Failed to delete file.");
+        }
+    };
+
     return (
         <div className={styles.fileList}>
             {fileList.map((file, index) => (
@@ -74,7 +100,24 @@ export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, 
                         Drive: {drive}
                     </button>
                 )}
+
+                <button
+                    className={styles.trashButton}
+                    onClick={() => setShowDeleteDialog(true)}
+                    disabled={!selectedFile || selectedFile.size === "-1"}
+                    title="Delete selected file"
+                >
+                    <FontAwesomeIcon icon={faTrash} />
+                </button>
+
             </div>
+            {showDeleteDialog && (
+                <YesNoDialog
+                    message={`Delete "${selectedFile?.name}"?`}
+                    onConfirm={handleDelete}
+                    onCancel={() => setShowDeleteDialog(false)}
+                />
+            )}
         </div>
     );
 }

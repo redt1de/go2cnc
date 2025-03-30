@@ -17,8 +17,28 @@ func (a *App) Config() *config.UiCfg {
 	return a.UiCfg
 }
 
-func (a *App) UploadFile(name, content string) error {
-	return a.Cnc.UploadFile(name, content)
+func (a *App) PutFile(name, content string) error {
+	return a.Cnc.PutFile(name, content)
+}
+
+func (a *App) DelFile(delfile string) (string, error) {
+	tmp := strings.Split(delfile, ",")
+	if len(tmp) != 2 {
+		logme.Error("RunFile: Invalid file arg format. Expected 'drive,path'")
+		return "", fmt.Errorf("invalid drivepathcsv format")
+	}
+	drive := tmp[0]
+	path := tmp[1]
+	logme.Debug("DelFile -> delfile:", delfile)
+	if drive == "USB" {
+		// return delFileUSB(delfile)
+		return "", fmt.Errorf("USB delete not implemented")
+	}
+	if drive == "MACROS" {
+		// return delMacro(delfile)
+		return "", fmt.Errorf("MACROS delete not implemented")
+	}
+	return a.Cnc.DelFile(path)
 }
 
 func (a *App) RunFile(drivepathcsv string) error {
@@ -39,7 +59,7 @@ func (a *App) RunFile(drivepathcsv string) error {
 		}
 		fname := filepath.Base(path)
 		n := filepath.Join("/", fname)
-		err = a.Cnc.UploadFile(n, content)
+		err = a.Cnc.PutFile(n, content)
 		if err != nil {
 			logme.Error("RunFile: Error uploading file to CNC:", err)
 			return err

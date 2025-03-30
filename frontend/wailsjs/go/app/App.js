@@ -10,6 +10,10 @@ export function Config() {
   return window['go']['app']['App']['Config']();
 }
 
+export function DelFile(arg1) {
+  return window['go']['app']['App']['DelFile'](arg1);
+}
+
 export function GetFile(arg1, arg2) {
   return window['go']['app']['App']['GetFile'](arg1, arg2);
 }
@@ -24,6 +28,10 @@ export function GetProbeHistory() {
 
 export function ListFiles(arg1, arg2) {
   return window['go']['app']['App']['ListFiles'](arg1, arg2);
+}
+
+export function PutFile(arg1, arg2) {
+  return window['go']['app']['App']['PutFile'](arg1, arg2);
 }
 
 export function RunFile(arg1) {
@@ -52,8 +60,4 @@ export function TestIngest() {
 
 export function TestSender() {
   return window['go']['app']['App']['TestSender']();
-}
-
-export function UploadFile(arg1, arg2) {
-  return window['go']['app']['App']['UploadFile'](arg1, arg2);
 }

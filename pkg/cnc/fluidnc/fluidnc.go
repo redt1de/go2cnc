@@ -9,6 +9,8 @@ import (
 	"go2cnc/pkg/logme"
 	"go2cnc/pkg/util"
 	"math/rand"
+	"net/http"
+	"net/url"
 	"strings"
 	"sync"
 	"time"
@@ -17,12 +19,13 @@ import (
 )
 
 type FluidNC struct {
-	conn      *websocket.Conn
-	sendMu    sync.Mutex
-	waitMu    sync.Mutex
-	waitQueue []*waitEntry
-	ctx       context.Context
-	cancel    context.CancelFunc
+	conn       *websocket.Conn
+	sendMu     sync.Mutex
+	waitMu     sync.Mutex
+	waitQueue  []*waitEntry
+	ctx        context.Context
+	cancel     context.CancelFunc
+	httpClient *http.Client
 
 	state        *state.State // stores the current machine state and postion data
 	ApiUrl       string       // URL for the web api
@@ -45,12 +48,41 @@ type waitEntry struct {
 	done   bool
 }
 
+func withDevProxy() *http.Client {
+	proxyStr := "http://127.0.0.1:8080"
+
+	proxyURL, err := url.Parse(proxyStr)
+	if err != nil {
+		logme.Fatal("Error parsing proxy URL:", err)
+		return nil
+	}
+
+	transport := &http.Transport{
+		Proxy: http.ProxyURL(proxyURL),
+	}
+
+	logme.Warning("Using dev proxy: ", proxyStr)
+
+	return &http.Client{
+		Transport: transport,
+	}
+
+}
+func withDefaultClient() *http.Client {
+	return &http.Client{
+		Timeout: 10 * time.Second,
+	}
+}
+
 func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
+
 	ret := FluidNC{
-		state:     state.NewState(),
-		ApiUrl:    cfg.ApiUrl,
-		WsUrl:     cfg.WsUrl,
-		connected: false,
+		state:      state.NewState(),
+		ApiUrl:     cfg.ApiUrl,
+		WsUrl:      cfg.WsUrl,
+		connected:  false,
+		httpClient: withDevProxy(),
+		// httpClient: withDefaultClient(),
 
 		onMessage:    func(msg string) { logme.Warning("Default OnMessage handler: " + msg) },
 		onConnection: func(iscon bool) { logme.Warning(fmt.Sprintf("Default OnConnection handler: %v", iscon)) },

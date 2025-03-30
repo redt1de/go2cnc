@@ -50,9 +50,17 @@ export default function RunView() {
 
 
     const handleFileSelect = async (file, drive, currentPath) => {
+        if (!file) {
+            setLoadingFile(false);
+            setFileContent("");
+            setSelectedFile(null);
+            return;
+        }
+
         setSelectedFile(file);
         setLoadingFile(true);
         setFileContent("");
+
 
         try {
             const content = await GetFile(drive, currentPath ? `${currentPath}/${file.name}` : file.name);
@@ -63,6 +71,7 @@ export default function RunView() {
         } finally {
             setLoadingFile(false);
         }
+
     };
 
 

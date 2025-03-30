@@ -7,6 +7,8 @@ export function ClearProbeHistory():Promise<void>;
 
 export function Config():Promise<config.UiCfg>;
 
+export function DelFile(arg1:string):Promise<string>;
+
 export function GetFile(arg1:string,arg2:string):Promise<string>;
 
 export function GetLastProbe():Promise<state.ProbeResult>;
@@ -14,6 +16,8 @@ export function GetLastProbe():Promise<state.ProbeResult>;
 export function GetProbeHistory():Promise<Array<state.ProbeResult>>;
 
 export function ListFiles(arg1:string,arg2:string):Promise<string>;
+
+export function PutFile(arg1:string,arg2:string):Promise<void>;
 
 export function RunFile(arg1:string):Promise<void>;
 
@@ -28,5 +32,3 @@ export function SendWait(arg1:string):Promise<Array<string>>;
 export function TestIngest():Promise<void>;
 
 export function TestSender():Promise<void>;
-
-export function UploadFile(arg1:string,arg2:string):Promise<void>;
