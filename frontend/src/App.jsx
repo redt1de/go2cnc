@@ -27,18 +27,22 @@ function App() {
             <NavLink to="/control" title="Control" className={({ isActive }) => isActive ? styles.active : ""}>
               Control
             </NavLink>
+
             <NavLink to="/console" title="Console" className={({ isActive }) => isActive ? styles.active : ""}>
               Console
             </NavLink>
+
+            <NavLink to="/macros" title="Macros" className={({ isActive }) => isActive ? styles.active : ""}>
+              Macros
+            </NavLink>
+
             <NavLink to="/run" title="Run" className={({ isActive }) => isActive ? styles.active : ""}>
               Run
             </NavLink>
             <NavLink to="/probe" title="Probe" className={({ isActive }) => isActive ? styles.active : ""}>
               Probe
             </NavLink>
-            <NavLink to="/macros" title="Macros" className={({ isActive }) => isActive ? styles.active : ""}>
-              Macros
-            </NavLink>
+
             <NavLink to="/webcam" title="Webcam" className={({ isActive }) => isActive ? styles.active : ""}>
               Webcam
             </NavLink>
