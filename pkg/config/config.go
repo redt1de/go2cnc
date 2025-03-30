@@ -7,29 +7,11 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-const testCfgProxy = `
-ui:
- probeMacro1: "G38.2 Z-50 F100"
-pendantCfg:
- serverAddress: ""
-fluidnc:
- api_url: "http://fluidnc.local"
- ws_url: "ws://localhost:81"
-`
-const testCfg = `
-ui:
- probeMacro1: "G38.2 Z-50 F100"
-pendantCfg:
- serverAddress: ""
-fluidnc:
- api_url: "http://fluidnc.local"
- ws_url: "ws://fluidnc.local:81"
-`
-
 type Config struct {
 	MacroPath string `json:"macroPath" yaml:"macro_path"`
 	LogLevel  int    `json:"logLevel" yaml:"log_level"`
 	LogFile   string `json:"logFile" yaml:"log_file"`
+
 	//
 	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
 }

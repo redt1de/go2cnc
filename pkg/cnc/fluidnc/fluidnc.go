@@ -38,8 +38,9 @@ type FluidNC struct {
 }
 
 type FluidNCConfig struct {
-	ApiUrl string `json:"api_url" yaml:"api_url"`
-	WsUrl  string `json:"ws_url" yaml:"ws_url"`
+	ApiUrl   string `json:"api_url" yaml:"api_url"`
+	WsUrl    string `json:"ws_url" yaml:"ws_url"`
+	DevProxy string `json:"devProxy" yaml:"dev_proxy"`
 }
 
 type waitEntry struct {
@@ -48,8 +49,8 @@ type waitEntry struct {
 	done   bool
 }
 
-func withDevProxy() *http.Client {
-	proxyStr := "http://127.0.0.1:8080"
+func withDevProxy(u string) *http.Client {
+	proxyStr := u
 
 	proxyURL, err := url.Parse(proxyStr)
 	if err != nil {
@@ -75,13 +76,18 @@ func withDefaultClient() *http.Client {
 }
 
 func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
-
+	var cl *http.Client
+	if cfg.DevProxy != "" {
+		cl = withDevProxy(cfg.DevProxy)
+	} else {
+		cl = withDefaultClient()
+	}
 	ret := FluidNC{
 		state:      state.NewState(),
 		ApiUrl:     cfg.ApiUrl,
 		WsUrl:      cfg.WsUrl,
 		connected:  false,
-		httpClient: withDevProxy(),
+		httpClient: cl,
 		// httpClient: withDefaultClient(),
 
 		onMessage:    func(msg string) { logme.Warning("Default OnMessage handler: " + msg) },
