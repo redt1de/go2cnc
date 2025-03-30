@@ -13,7 +13,18 @@ import (
 )
 
 func getAppOptions(a *app.App, assets embed.FS, v int) *options.App {
-
+	logLevel := logger.ERROR // v is inverse of wails loglevel i.e. trace = 1 in wails, here its 5
+	if v == 1 {
+		logLevel = logger.ERROR
+	} else if v == 2 {
+		logLevel = logger.WARNING
+	} else if v == 3 {
+		logLevel = logger.INFO
+	} else if v == 4 {
+		logLevel = logger.DEBUG
+	} else if v == 5 {
+		logLevel = logger.TRACE
+	}
 	return &options.App{
 		// Title:              "go2cnc",
 		Width:              1024,

@@ -12,17 +12,35 @@ import (
 	"github.com/wailsapp/wails/v2/pkg/options/assetserver"
 )
 
+// TRACE LogLevel = 1
+// DEBUG LogLevel = 2
+// INFO LogLevel = 3
+// WARNING LogLevel = 4
+// ERROR LogLevel = 5
+
+/*
+err = 1
+warn = 2
+info = 3
+debug = 4
+trace = 5
+
+*/
+
 func getAppOptions(a *app.App, assets embed.FS, v int) *options.App {
-	logLevel := logger.ERROR
-	if v > 0 {
+	logLevel := logger.ERROR // v is inverse of wails loglevel i.e. trace = 1 in wails, here its 5
+	if v == 1 {
+		logLevel = logger.ERROR
+	} else if v == 2 {
+		logLevel = logger.WARNING
+	} else if v == 3 {
 		logLevel = logger.INFO
-	}
-	if v > 1 {
+	} else if v == 4 {
 		logLevel = logger.DEBUG
-	}
-	if v > 2 {
+	} else if v == 5 {
 		logLevel = logger.TRACE
 	}
+
 	return &options.App{
 		// Title:              "go2cnc",
 		Width:              1024,
