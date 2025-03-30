@@ -12,6 +12,9 @@ import MachineGroup from '../components/MachineGroup';
 import CycleGroup from '../components/CycleGroup';
 import StateGroup from '../components/StateGroup';
 import { useCNC } from '../context/CNCContext';
+import { LogError, LogInfo, LogDebug } from '../util/logger';
+
+
 
 export default function ConsoleView() {
     const { consoleMessages, status, isConnected, sendAsync } = useCNC();
@@ -28,7 +31,7 @@ export default function ConsoleView() {
 
             <div style={{ position: 'absolute', bottom: '0px', left: '10px' }}>
                 <GPadGroup onEnter={(input) => {
-                    console.log('🚀 Sending Gcode:', input);
+                    LogDebug('🚀 Sending Gcode:', input);
                     sendAsync(input);
 
                 }} />

@@ -2,7 +2,9 @@ package logme
 
 import (
 	"fmt"
+	"io"
 	"log"
+	"os"
 	"runtime"
 	"strings"
 )
@@ -10,7 +12,8 @@ import (
 var Log *logMe
 
 type logMe struct {
-	Level int
+	Level   int
+	LogFile string
 }
 
 const (
@@ -21,15 +24,16 @@ const (
 )
 
 const (
-	colorNone   = "\033[0m"
-	colorRed    = "\033[0;31m"
-	colorGreen  = "\033[0;32m"
-	colorYellow = "\033[0;33m"
-	colorBlue   = "\033[0;34m"
-	colorPurple = "\033[0;35m"
-	colorCyan   = "\033[0;36m"
-	colorWhite  = "\033[0;37m"
-	colorGray   = "\033[0;90m"
+	colorNone    = "\033[0m"
+	colorRed     = "\033[0;31m"
+	colorGreen   = "\033[0;32m"
+	colorYellow  = "\033[0;33m"
+	colorBlue    = "\033[0;34m"
+	colorPurple  = "\033[0;35m"
+	colorCyan    = "\033[0;36m"
+	colorWhite   = "\033[0;37m"
+	colorGray    = "\033[0;90m"
+	colorMagenta = "\033[0;95m"
 )
 
 const (
@@ -40,8 +44,39 @@ const (
 	MsgSuccess = colorGreen + "✅ [SUCCESS] " + colorNone
 )
 
-func NewLogger(level int) *logMe {
+func (l *logMe) logRotate() {
+	// Target path: lLogFile.2
+	log2 := l.LogFile + ".2"
 
+	// Delete .2 if it exists
+	if _, err := os.Stat(log2); err == nil {
+		if err := os.Remove(log2); err != nil {
+			fmt.Printf("Failed to delete old log: %v\n", err)
+		}
+	}
+
+	// Rename current log file to .2, if it exists
+	if _, err := os.Stat(l.LogFile); err == nil {
+		if err := os.Rename(l.LogFile, log2); err != nil {
+			fmt.Printf("Failed to rotate log to .2: %v\n", err)
+		}
+	}
+}
+
+func (l *logMe) initLogFile() {
+	l.logRotate()
+	// Open log file for writing
+	lf, err := os.OpenFile(l.LogFile, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
+	if err != nil {
+		log.Fatalf("Failed to open log file: %v", err)
+	}
+
+	// Write to both stdout and the file
+	mw := io.MultiWriter(os.Stdout, lf)
+	log.SetOutput(mw)
+}
+
+func NewLogger(level int, logfile string) *logMe {
 	logLevel := ERROR
 	if level > 0 {
 		logLevel = INFO
@@ -54,7 +89,11 @@ func NewLogger(level int) *logMe {
 	}
 
 	Log = &logMe{
-		Level: logLevel,
+		Level:   logLevel,
+		LogFile: logfile,
+	}
+	if logfile != "" {
+		Log.initLogFile()
 	}
 	return Log
 }
@@ -78,12 +117,18 @@ func (l *logMe) Trace(message string) {
 	if l.Level < TRACE {
 		return
 	}
+	if strings.Contains(message, " No listeners for event") {
+		return
+	}
 	log.Println("🔧 [TRACE]", message+getCaller())
 
 }
 
 func (l *logMe) Debug(message string) {
 	if l.Level < DEBUG {
+		return
+	}
+	if strings.Contains(message, "AssetHandler") {
 		return
 	}
 	log.Println(MsgDebug, message+getCaller())
@@ -138,7 +183,7 @@ func getCaller() string {
 		frame, more := frames.Next()
 		if !strings.Contains(frame.File, "log") {
 			if strings.HasSuffix(frame.File, "dispatcher/dispatcher.go") {
-				return " (FRONTEND)"
+				return fmt.Sprintf(" %s(FRONTEND)%s", colorMagenta, colorNone) //" (FRONTEND)"
 			}
 			return fmt.Sprintf(" %s(%s:%d)%s", colorGray, trimPath(frame.File), frame.Line, colorNone)
 		}

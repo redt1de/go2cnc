@@ -7,19 +7,19 @@ import (
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
-	"log"
 	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
-var ConfigFile string
+var CurrentConfig *config.Config
 
 // App struct
 type App struct {
-	ctx   context.Context
-	Cnc   cnc.Controller
-	UiCfg *config.UiCfg
+	ctx context.Context
+	Cnc cnc.Controller
+	// UiCfg *config.UiCfg
+	Cfg *config.Config
 }
 
 // NewApp creates a new App application struct
@@ -30,18 +30,14 @@ func NewApp() *App {
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {
-	runtime.LogSetLogLevel(ctx, 5)
+	// runtime.LogSetLogLevel(ctx, 5)
 	logme.Info("Starting up CNC controller")
 	a.ctx = ctx
-	c, err := config.LoadYamlConfig(ConfigFile)
-	if err != nil {
-		log.Fatal(err)
-	}
 
-	a.UiCfg = &c.Ui
+	a.Cfg = CurrentConfig
 
 	///////////////////////////////////////////////////////////////
-	a.Cnc = fluidnc.NewFluidNcController(c.FluidNCConfig)
+	a.Cnc = fluidnc.NewFluidNcController(a.Cfg.FluidNCConfig)
 	a.Cnc.OnConnection(func(iscon bool) {
 		runtime.EventsEmit(a.ctx, "connectionEvent", iscon)
 		if iscon {

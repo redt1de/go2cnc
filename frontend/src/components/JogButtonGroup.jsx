@@ -3,6 +3,7 @@ import styles from './css/JogButtonGroup.module.css';
 import { useContext } from 'react';
 import { useCNC } from '../context/CNCContext';
 import YesNoDialog from "../util/YesNoDialog";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function JogButtonGroup() {
     const [stepSize, setStepSize] = useState('10.0');
@@ -22,7 +23,7 @@ export default function JogButtonGroup() {
     // Example handler, replace with your real logic
     const handleStepChange = (event) => {
         setStepSize(event.target.value);
-        console.log('New step size:', event.target.value);
+        LogDebug('New step size:', event.target.value);
     };
     return (
         // <Frame title="Jog">

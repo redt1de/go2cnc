@@ -5,7 +5,7 @@ import {state} from '../models';
 
 export function ClearProbeHistory():Promise<void>;
 
-export function Config():Promise<config.UiCfg>;
+export function Config():Promise<config.Config>;
 
 export function DelFile(arg1:string):Promise<string>;
 

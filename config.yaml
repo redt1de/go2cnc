@@ -1,7 +1,7 @@
-ui:
-  macro_path: "/tmp/macros"
-pendantCfg:
-  serverAddress: ""
+macro_path: "/tmp/macros"
+log_level: 5
+log_file: "/tmp/fluidnc.log"
+
 fluidnc:
   api_url: "http://fluidnc.local"
   ws_url: "ws://fluidnc.local:81"

@@ -29,6 +29,7 @@ func getAppOptions(a *app.App, assets embed.FS, v int) *options.App {
 		Height:             600,
 		DisableResize:      true,
 		LogLevelProduction: logLevel,
+		LogLevel:           logLevel,
 		WindowStartState:   options.Maximised,
 		AlwaysOnTop:        true,
 		Fullscreen:         true,

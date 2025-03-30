@@ -34,7 +34,7 @@ func getFileUSB(path string) (string, error) {
 
 // (a *App) listMacros()  will list all files in the configured macro path (a.UiCfg.MacroPath) and return a JSON string
 func (a *App) listMacros() (string, error) {
-	macroPath := a.UiCfg.MacroPath
+	macroPath := a.Cfg.MacroPath
 	if macroPath == "" {
 		logme.Error("ListMacros -> macro path is empty")
 		return "", errors.New("macro path is empty")
@@ -78,7 +78,7 @@ func (a *App) listMacros() (string, error) {
 }
 
 func (a *App) getMacro(path string) (string, error) {
-	macroPath := a.UiCfg.MacroPath
+	macroPath := a.Cfg.MacroPath
 	if macroPath == "" {
 		logme.Error("ListMacros -> macro path is empty")
 		return "", errors.New("macro path is empty")

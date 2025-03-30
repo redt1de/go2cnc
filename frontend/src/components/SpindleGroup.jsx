@@ -3,6 +3,7 @@ import styles from './css/SpindleGroup.module.css';
 // import { useWebSocket } from "../websocket/WebSocketProvider";
 import KeypadModal from '../util/KeypadModal';
 import { useCNC } from '../context/CNCContext';
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function SpindleGroup() {
     const [showKeypad, setShowKeypad] = useState(false);
@@ -39,27 +40,27 @@ export default function SpindleGroup() {
       'value' is the typed number.
     */
     const handleOk = (value) => {
-        console.log(`User entered: ${value}, for command: ${currentCommand}`);
+        LogDebug(`User entered: ${value}, for command: ${currentCommand}`);
 
         // You could send a G-code command here based on the chosen command:
         switch (currentCommand) {
             case 'm3':
                 // e.g., "M3 S{value}"
-                console.log(`Send command: M3 S${value}`);
+                LogDebug(`Send command: M3 S${value}`);
                 sendAsync(`M3 S${value}`);
                 break;
             case 'm4':
                 // e.g., "M4 S{value}"
-                console.log(`Send command: M4 S${value}`);
+                LogDebug(`Send command: M4 S${value}`);
                 sendAsync(`M4 S${value}`);
                 break;
             case 'm6':
                 // e.g., "M6 T{value}"
-                console.log(`Send command: M6 T${value}`);
+                LogDebug(`Send command: M6 T${value}`);
                 sendAsync(`M6 T${value}`);
                 break;
             default:
-                console.log('Unknown command');
+                LogError('Unknown command');
         }
 
         setShowKeypad(false);
@@ -67,7 +68,7 @@ export default function SpindleGroup() {
 
     // Example simple M5 logic (stop spindle) - no keypad
     const handleM5 = () => {
-        console.log('Send command: M5 (stop spindle)');
+        LogDebug('Send command: M5 (stop spindle)');
         sendAsync(`M5`);
     };
 

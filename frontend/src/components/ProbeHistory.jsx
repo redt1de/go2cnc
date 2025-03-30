@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { useCNC } from "../context/CNCContext";
 import styles from "./css/ProbeHistory.module.css"; // Import the CSS file for styling
 import YesNoDialog from "../util/YesNoDialog";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
+
 const PAGE_SIZE = 5; // Number of rows per page
 
 export default function ProbeHistory() {
@@ -10,7 +12,7 @@ export default function ProbeHistory() {
     const [showDialog, setShowDialog] = useState(false);
 
     // Calculate total pages
-    // console.log('>>>>> probeHistory:', probeHistory);
+    // LogDebug('>>>>> probeHistory:', probeHistory);
     const totalPages = Math.ceil(probeHistory.length / PAGE_SIZE);
 
     // Slice the probe history for the current page
@@ -21,7 +23,7 @@ export default function ProbeHistory() {
 
     const handleConfirm = () => {
 
-        console.log('clearing...');
+        LogDebug('clearing...');
         clearProbeHistory();
         setShowDialog(false);
 

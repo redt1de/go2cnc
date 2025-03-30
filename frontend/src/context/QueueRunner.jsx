@@ -1,6 +1,6 @@
 import { useCNC } from '../context/CNCContext';
 import { useEffect, useRef } from 'react';
-import { LogError, LogInfo } from "../../wailsjs/runtime";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 
 export function useCommandRunner() {

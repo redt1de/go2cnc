@@ -4,8 +4,10 @@ import RunExplorerGroup from "../components/RunExplorerGroup";
 import styles from "./css/RunView.module.css";
 import { useCNC } from "../context/CNCContext";
 import { ListFiles, GetFile, RunFile } from "../../wailsjs/go/app/App";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
 
 import FileBrowser from "../components/FileBrowser";
 import FileViewer from "../components/FileViewer";
@@ -20,7 +22,7 @@ export default function RunView() {
     const listFiles = async (drive, path) => {
         try {
             const response = await ListFiles(drive, path);
-            console.log("ListFiles response:", response);
+            LogDebug("ListFiles response:", response);
             return { success: true, data: response };
         } catch (error) {
             LogError("ListFiles command failed:", error);
@@ -34,14 +36,14 @@ export default function RunView() {
             return;
         }
         let csvstr = `${drive},${currentPath}/${selectedFile.name}`;
-        console.log("Running file:", csvstr);
+        LogDebug("Running file:", csvstr);
         try {
             const response = await RunFile(csvstr);
-            console.log("RunFile response:", response);
+            LogDebug("RunFile response:", response);
             navigate("/control", { replace: true });
             return response;
         } catch (error) {
-            console.error("RunFile failed:", error);
+            LogError("RunFile failed:", error);
             return null;
         }
 
@@ -66,7 +68,7 @@ export default function RunView() {
             const content = await GetFile(drive, currentPath ? `${currentPath}/${file.name}` : file.name);
             setFileContent(content);
         } catch (err) {
-            console.error("Failed to load file:", err);
+            LogError("Failed to load file:", err);
             setFileContent("// Error loading file");
         } finally {
             setLoadingFile(false);

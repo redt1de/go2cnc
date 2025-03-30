@@ -27,16 +27,11 @@ fluidnc:
 `
 
 type Config struct {
-	Ui         UiCfg `json:"ui" yaml:"ui"`
-	PendantCfg struct {
-		ServerAddr string `json:"serverAddress" yaml:"server_address"`
-	} `json:"pendantCfg" yaml:"pendant_cfg"`
-
-	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
-}
-
-type UiCfg struct {
 	MacroPath string `json:"macroPath" yaml:"macro_path"`
+	LogLevel  int    `json:"logLevel" yaml:"log_level"`
+	LogFile   string `json:"logFile" yaml:"log_file"`
+	//
+	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
 }
 
 func LoadYamlConfig(fpath string) (*Config, error) {

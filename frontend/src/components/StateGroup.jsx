@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styles from "./css/StateGroup.module.css";
 import { useCNC } from '../context/CNCContext';
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function StateGroup() {
     const { consoleMessages, status, sendAsync } = useCNC();
@@ -8,7 +9,7 @@ export default function StateGroup() {
 
     // ✅ Ensure gState is always a valid string
     const gState = status?.activeState || "unknown";
-    // console.log("gState:", gState); // Debugging
+    // LogDebug("gState:", gState); // Debugging
 
     // ✅ Determine the state class for background color
     const getStateClass = () => {
@@ -26,7 +27,7 @@ export default function StateGroup() {
 
 
     useEffect(() => {
-        console.log("consoleMessages:", consoleMessages); // Debugging
+        // LogDebug("consoleMessages:", consoleMessages); // Debugging
 
         const lastMessage = consoleMessages
             .slice() // Copy array to avoid mutating state

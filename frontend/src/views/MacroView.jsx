@@ -25,7 +25,7 @@ export default function MacroView() {
             const content = await GetFile(drive, currentPath ? `${currentPath}/${file.name}` : file.name);
             setFileContent(content);
         } catch (err) {
-            console.error("Failed to load file:", err);
+            LogError("Failed to load file:", err);
             setFileContent("// Error loading file");
         } finally {
             setLoadingFile(false);
@@ -40,7 +40,7 @@ export default function MacroView() {
             await RunFile(`MACROS,${filePath}`);
             navigate("/control", { replace: true });
         } catch (error) {
-            console.error("RunFile failed:", error);
+            LogError("RunFile failed:", error);
         }
     };
 
@@ -58,7 +58,7 @@ export default function MacroView() {
             setShowNewModal(false);
             setRefreshCounter(prev => prev + 1);
         } catch (err) {
-            console.error("Upload failed:", err);
+            LogError("Upload failed:", err);
             // alert("Failed to create macro");
         }
     };

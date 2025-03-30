@@ -4,6 +4,7 @@ import { ListFiles, DelFile } from "../../wailsjs/go/app/App";
 import YesNoDialog from "../util/YesNoDialog";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, forceDrive = "", refreshTrigger = 0 }) {
     const [drive, setDrive] = useState(forceDrive || "SD");
@@ -23,11 +24,11 @@ export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, 
         const fetchFiles = async () => {
             try {
                 const response = await ListFiles(drive, currentPath);
-                console.log("ListFiles response:", response);
+                LogDebug("ListFiles response:", response);
                 const parsed = JSON.parse(response);
                 setFileList(currentPath ? [{ name: "..", size: "-1" }, ...parsed.files] : parsed.files || []);
             } catch (err) {
-                console.error("Failed to fetch file list:", err);
+                LogError("Failed to fetch file list:", err);
                 setFileList([]);
             }
         };
@@ -71,7 +72,7 @@ export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, 
             onFileSelect(null);
             setShowDeleteDialog(false);
         } catch (err) {
-            console.error("Failed to delete file:", err);
+            LogError("Failed to delete file:", err);
             alert("Failed to delete file.");
         }
     };

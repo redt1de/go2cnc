@@ -4,7 +4,7 @@ import { faHouse, faLockOpen, faRotateBack } from '@fortawesome/free-solid-svg-i
 import { useCNC } from '../context/CNCContext';
 import AxisModal from "../util/AxisModal";
 import { useState } from 'react';
-import { LogInfo } from "../../wailsjs/runtime";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function MachineGroup() {
     const [showModal, setShowModal] = useState(false);
@@ -17,14 +17,14 @@ export default function MachineGroup() {
             return;
         }
         if (axis.includes("Z") && axis.includes("X") && axis.includes("Y")) {
-            console.log("All axis");
+            LogDebug("All axis");
             sendAsync(`$H`);
         }
         if (axis.includes("Z")) {
             sendAsync(`$HZ`);
         }
         if (axis.includes("X")) {
-            console.log("X axis");
+            LogDebug("X axis");
             sendAsync(`$HX`);
         }
 

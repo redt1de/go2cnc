@@ -13,8 +13,8 @@ import (
 )
 
 // Config() returns the UiCfg configuration
-func (a *App) Config() *config.UiCfg {
-	return a.UiCfg
+func (a *App) Config() *config.Config {
+	return a.Cfg
 }
 
 func (a *App) PutFile(name, content string) error {
@@ -82,7 +82,7 @@ func (a *App) ListFiles(drive, path string) (string, error) {
 }
 
 func (a *App) SaveMacro(name, content string) error {
-	return os.WriteFile(filepath.Join(a.UiCfg.MacroPath, name), []byte(content), 0644)
+	return os.WriteFile(filepath.Join(a.Cfg.MacroPath, name), []byte(content), 0644)
 }
 
 func (a *App) GetFile(drive, path string) (string, error) {

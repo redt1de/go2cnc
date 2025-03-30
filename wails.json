@@ -9,5 +9,8 @@
   "author": {
     "name": "redt1de",
     "email": "redtidesec@gmail.com"
+  },
+  "log": {
+    "level": "debug"
   }
 }

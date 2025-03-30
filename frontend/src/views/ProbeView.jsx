@@ -3,11 +3,12 @@ import Frame from "../util/Frame";
 import KeypadModal from "../util/KeypadModal";
 import styles from "./css/ProbeView.module.css";
 import { useCNC } from "../context/CNCContext";
-import { LogInfo, LogError } from "../../wailsjs/runtime";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 import AxisModal from "../util/AxisModal";
 import ProbeHistory from "../components/ProbeHistory";
 import { useCommandRunner } from '../context/QueueRunner';
 import { ClearProbeHistory, Config } from "../../wailsjs/go/app/App";
+import { AppConfig } from "../context/CNCContext";
 
 export default function ProbeView() {
     const { sendAsync, sendWait, getLastProbe, testIngest, testSender, status, probeHistory } = useCNC();
@@ -32,7 +33,7 @@ export default function ProbeView() {
     const { runCommandQueue } = useCommandRunner();
 
     const handleZeroSelect = (axes) => {
-        console.log("User selected axes:", axes);
+        LogDebug("User selected axes:", axes);
         // Example: build a command
         const a = `G0 ${axes.map(a => `${a}0`).join(" ")}`;
 
@@ -60,8 +61,7 @@ export default function ProbeView() {
     const probeHole = async () => {
         ClearProbeHistory();
         // testIngest();
-        let cfg = await Config();
-        console.log("Config:", cfg);
+        // LogDebug("Config:", AppConfig);
 
         return;
         const stored_mpos = status?.mpos;
@@ -87,7 +87,7 @@ export default function ProbeView() {
         pr = await getLastProbe();
         const xmax = pr.data.x;
         let c = (xmax - xmin) / 2;
-        console.log("Command succeeded: c=g91 g0x", c);
+        LogDebug("Command succeeded: c=g91 g0x", c);
 
 
         // sendWait(`G90 G53 G0 X${stored_mpos.x}`);
@@ -95,7 +95,7 @@ export default function ProbeView() {
 
 
         // const result2 = sendWait(`G91 G38.2 X${probeDistance} F${feedRate}`);
-        // console.log("Probe result:", result2);
+        // LogDebug("Probe result:", result2);
         // sendWait(`G90 G53 G0 X${stored_mpos.x}`);
 
 
@@ -149,7 +149,7 @@ export default function ProbeView() {
             const cmd = `G91 ${probeMode} ${cleaned}${probeDistance} F${feedRate}`;
             LogInfo("Executing probe: " + cmd);
             sendCommand(cmd);
-            // console.log("🔧 Executing probe:", `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
+            // LogDebug("🔧 Executing probe:", `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
 
         } else if (type === "utility") {
             // Placeholder for utility action logic

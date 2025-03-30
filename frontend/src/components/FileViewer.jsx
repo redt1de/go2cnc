@@ -6,6 +6,7 @@ import styles from "./css/FileViewer.module.css";
 import EditFileModal from "../util/EditFileModal";
 import { useState } from "react";
 import { PutFile } from "../../wailsjs/go/app/App";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function FileViewer({ selectedFile, fileContent, loading, path, allowEdit = false }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -21,13 +22,13 @@ export default function FileViewer({ selectedFile, fileContent, loading, path, a
 
             const fileName = path ? `${path}/${selectedFile.name}` : selectedFile.name;
 
-            console.log("Saving file:", fileName);
+            LogDebug("Saving file:", fileName);
             await PutFile(fileName, editedContent);
 
             alert("File saved successfully!");
             setIsEditing(false);
         } catch (err) {
-            console.error("Failed to save file:", err);
+            LogError("Failed to save file:", err);
             alert("Failed to save file.");
         }
     };

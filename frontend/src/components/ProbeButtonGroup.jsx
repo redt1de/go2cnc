@@ -3,6 +3,7 @@ import styles from './css/ProbeButtonGroup.module.css';
 import { useContext } from 'react';
 import { useCNC } from '../context/CNCContext';
 import KeypadModal from "../util/KeypadModal";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function ProbeButtonGroup() {
     const { sendCommand } = useCNC();
@@ -44,17 +45,17 @@ export default function ProbeButtonGroup() {
 
     // Probing Commands
     const probe = (axis, direction) => {
-        console.log(`G91 G38.2 ${axis}${direction}${probeDistance} F${feedRate}`); // Probe move
+        LogDebug(`G91 G38.2 ${axis}${direction}${probeDistance} F${feedRate}`); // Probe move
     };
 
     // Find Center (Inside/Outside)
     const findCenter = (type) => {
         const dir = type === "inside" ? "" : "-";
-        console.log(`G91 G38.2 X${dir}${probeDistance} F${feedRate}`);
-        console.log(`G91 G38.2 X-${dir}${probeDistance} F${feedRate}`);
-        console.log(`G91 G38.2 Y${dir}${probeDistance} F${feedRate}`);
-        console.log(`G91 G38.2 Y-${dir}${probeDistance} F${feedRate}`);
-        console.log(`G90 G0 X0 Y0`); // Move to center
+        LogDebug(`G91 G38.2 X${dir}${probeDistance} F${feedRate}`);
+        LogDebug(`G91 G38.2 X-${dir}${probeDistance} F${feedRate}`);
+        LogDebug(`G91 G38.2 Y${dir}${probeDistance} F${feedRate}`);
+        LogDebug(`G91 G38.2 Y-${dir}${probeDistance} F${feedRate}`);
+        LogDebug(`G90 G0 X0 Y0`); // Move to center
     };
     return (
         // <Frame title="Jog">
@@ -86,17 +87,17 @@ export default function ProbeButtonGroup() {
 
                 <div className={styles.jogContainer}>
                     <div></div>
-                    <button onClick={() => console.log(`G91 G0 Y${stepSize}`)} >▲</button>
+                    <button onClick={() => LogDebug(`G91 G0 Y${stepSize}`)} >▲</button>
                     <div></div>
-                    <button onClick={() => console.log(`G91 G0 Z${stepSize}`)}>Z+</button>
-                    <button onClick={() => console.log(`G91 G0 X-${stepSize}`)}>◄</button>
+                    <button onClick={() => LogDebug(`G91 G0 Z${stepSize}`)}>Z+</button>
+                    <button onClick={() => LogDebug(`G91 G0 X-${stepSize}`)}>◄</button>
                     <div></div>
-                    <button onClick={() => console.log(`G91 G0 X${stepSize}`)}>►</button>
+                    <button onClick={() => LogDebug(`G91 G0 X${stepSize}`)}>►</button>
                     <div></div>
                     <div></div>
-                    <button onClick={() => console.log(`G91 G0 Y-${stepSize}`)}>▼</button>
+                    <button onClick={() => LogDebug(`G91 G0 Y-${stepSize}`)}>▼</button>
                     <div></div>
-                    <button onClick={() => console.log(`G91 G0 Z-${stepSize}`)}>Z-</button>
+                    <button onClick={() => LogDebug(`G91 G0 Z-${stepSize}`)}>Z-</button>
 
                 </div>
             </div>

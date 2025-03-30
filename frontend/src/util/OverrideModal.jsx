@@ -1,6 +1,7 @@
 import React from "react";
 import styles from "./css/OverrideModal.module.css"; // Reuse existing styling
 import { useCNC } from "../context/CNCContext";
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function OverridesModal({ onClose }) {
     const { status, sendAsync, sendAsyncRaw } = useCNC();
@@ -15,7 +16,7 @@ export default function OverridesModal({ onClose }) {
 
     const sendOverride = (type, amount) => {
         let byte = null;
-        console.log("Sending override command:", type, amount);
+        LogDebug("Sending override command:", type, amount);
         if (type === "spindle") {
             if (amount === 100) byte = 0x99; // Reset
             else if (amount === 10) byte = 0x9A; // Coarse +
@@ -36,7 +37,7 @@ export default function OverridesModal({ onClose }) {
 
 
         if (byte !== null) {
-            console.log("Sending override command:", byte);
+            LogDebug("Sending override command:", byte);
             sendAsyncRaw(byte);
         }
     };

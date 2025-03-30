@@ -26,7 +26,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
                     setFileList([]);
                 }
             } catch (err) {
-                console.error("Failed to fetch file list:", err);
+                LogError("Failed to fetch file list:", err);
                 setFileList([]);
             }
         };
@@ -46,14 +46,14 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
             return;
         }
         let csvstr = `${drive},${currentPath}/${selectedFile.name}`;
-        console.log("Running file:", csvstr);
+        LogDebug("Running file:", csvstr);
         try {
             const response = await RunFile(csvstr);
-            console.log("RunFile response:", response);
+            LogDebug("RunFile response:", response);
             navigate("/control", { replace: true });
             return response;
         } catch (error) {
-            console.error("RunFile failed:", error);
+            LogError("RunFile failed:", error);
             return null;
         }
 
@@ -112,7 +112,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
                                     return;
                                 }
 
-                                console.log("Selected file:", drive, currentPath, file.name);
+                                LogDebug("Selected file:", drive, currentPath, file.name);
                                 // It's a file — fetch contents
                                 setSelectedFile(file);
                                 setLoadingFile(true);   // Start loading
@@ -122,7 +122,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
                                     const content = await GetFile(drive, currentPath ? `${currentPath}/${file.name}` : file.name);
                                     setFileContent(content);
                                 } catch (err) {
-                                    console.error("Failed to load file content:", err);
+                                    LogError("Failed to load file content:", err);
                                     setFileContent("// Error loading file");
                                 } finally {
                                     setLoadingFile(false); // Done loading

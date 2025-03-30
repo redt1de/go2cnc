@@ -1,9 +1,15 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
-import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender, ListFiles, GetFile } from "../../wailsjs/go/app/App";
-import { EventsOn, LogError } from "../../wailsjs/runtime/runtime"
+import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender, ListFiles, GetFile, Config as FetchConfig } from "../../wailsjs/go/app/App";
+import { EventsOn } from "../../wailsjs/runtime/runtime"
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 // Create CNC Context
 const CNCContext = createContext();
+
+export let AppConfig = {};
+
+// let cfg = await Config();
+// LogDebug("Config:", cfg);
 
 // CNCProvider Component
 export const CNCProvider = ({ children }) => {
@@ -11,6 +17,19 @@ export const CNCProvider = ({ children }) => {
     const [status, setStatus] = useState({});
     const [isConnected, setIsConnected] = useState(false);
     const [probeHistory, setProbeHistory] = useState([]);
+    const [configLoaded, setConfigLoaded] = useState(false);
+
+    useEffect(() => {
+        FetchConfig()
+            .then((cfg) => {
+                AppConfig = cfg;
+                LogDebug("Loaded app config:", cfg);
+                setConfigLoaded(true);
+            })
+            .catch((err) => {
+                LogError("Failed to load config:", err);
+            });
+    }, []);
 
     const consoleMessagesRef = useRef([]);
 
@@ -19,17 +38,17 @@ export const CNCProvider = ({ children }) => {
     }, [consoleMessages]);
 
     useEffect(() => {
-        console.log("CNCProvider mounted, setting up event listeners...");
+        LogDebug("CNCProvider mounted, setting up event listeners...");
 
         // Listen for Console Messages
         const unsubscribeConsole = EventsOn("consoleEvent", (message) => {
-            console.log("Console Event:", message);
+            LogDebug("Console Event:", message);
             setConsoleMessages((prev) => [...prev, message]);
         });
 
         // Listen for Status Updates
         const unsubscribeStatus = EventsOn("statusEvent", (newStatus) => {
-            console.log("Status Event:", newStatus);
+            LogDebug("Status Event:", newStatus);
             // setStatus(newStatus[0]);
             setStatus(newStatus);
             // setProbeHistory(status.probeHistory[0]);
@@ -37,30 +56,30 @@ export const CNCProvider = ({ children }) => {
 
         // Listen for Connection Status Updates
         const unsubscribeConnection = EventsOn("connectionEvent", (connected) => {
-            // console.log(">>>>>>>>>>>>>>>>>>>> Connection Event:", connected);
+            // LogDebug(">>>>>>>>>>>>>>>>>>>> Connection Event:", connected);
             // LogDebug("React hook Connection Event:<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
             setIsConnected(connected);
         });
 
         // TODO: figure out probe udpates since they are passed as status now 
         const unsubscribeProbe = EventsOn("probeEvent", (probeHist) => {
-            // console.log("Probe Event:", probeHist);
+            // LogDebug("Probe Event:", probeHist);
             // setProbeHistory((prev) => [...prev, probeResult]);
-            console.log("Probe Event:", probeHist);
+            LogDebug("Probe Event:", probeHist);
             setProbeHistory(probeHist);
         });
 
 
         // Listen for Connection Status Updates
         const unsubscribeGeneric = EventsOn("genericEvent", (connected) => {
-            console.log("Connection Event:", connected);
+            LogDebug("Connection Event:", connected);
             setIsConnected(connected);
         });
 
 
         // Cleanup listeners on unmount
         return () => {
-            // console.log("CNCProvider unmounting, cleaning up event listeners...");
+            // LogDebug("CNCProvider unmounting, cleaning up event listeners...");
             unsubscribeConsole();
             unsubscribeStatus();
             unsubscribeConnection();
@@ -69,39 +88,39 @@ export const CNCProvider = ({ children }) => {
 
 
     const testIngest = async () => {
-        console.log("Testing function...");
+        LogDebug("Testing function...");
         try {
             const response = await TestIngest();
-            console.log("Test function response:", response);
+            LogDebug("Test function response:", response);
             return response;
         } catch (error) {
-            console.error("Test function failed:", error);
+            LogError("Test function failed:", error);
             return null;
         }
     }
 
     const testSender = async () => {
-        console.log("Testing function...");
+        LogDebug("Testing function...");
         try {
             const response = await TestSender();
-            console.log("Test function response:", response);
+            LogDebug("Test function response:", response);
             return response;
         } catch (error) {
-            console.error("Test function failed:", error);
+            LogError("Test function failed:", error);
             return null;
         }
     }
 
 
     const clearProbeHistory = async () => {
-        console.log("Clearing probe history...");
+        LogDebug("Clearing probe history...");
         try {
             const response = await ClearProbeHistory();
-            console.log("Clear probe history response:", response);
+            LogDebug("Clear probe history response:", response);
             setProbeHistory([]);
             return response;
         } catch (error) {
-            console.error("Clear probe history failed:", error);
+            LogError("Clear probe history failed:", error);
             return null;
         }
     }
@@ -109,46 +128,46 @@ export const CNCProvider = ({ children }) => {
     //////////////////////////////////// senders ////////////////////////////////
     // Expose Send function from Go backend
     const sendAsync = async (command) => {
-        console.log("Sending command:", command);
+        LogDebug("Sending command:", command);
         try {
             const response = await SendAsync(command);
-            console.log("Command response:", response);
+            LogDebug("Command response:", response);
             return response;
         } catch (error) {
-            console.error("Send command failed:", error);
+            LogError("Send command failed:", error);
             return null;
         }
     };
 
     const sendAsyncRaw = async (command) => {
-        console.log("Sending command:", command);
+        LogDebug("Sending command:", command);
         try {
             const response = await SendAsyncRaw(command);
-            console.log("Command response:", response);
+            LogDebug("Command response:", response);
             return response;
         } catch (error) {
-            console.error("Send command failed:", error);
+            LogError("Send command failed:", error);
             return null;
         }
     };
 
 
     // const sendWait = async (command) => {
-    //     console.log("Sending (wait) command:", command);
+    //     LogDebug("Sending (wait) command:", command);
     //     try {
     //         const response = await SendWait(command);
-    //         console.log("SendWait response:", response);
+    //         LogDebug("SendWait response:", response);
     //         return response; // an array of response lines
     //     } catch (error) {
-    //         console.error("SendWait command failed:", error);
+    //         LogError("SendWait command failed:", error);
     //         return null;
     //     }
     // };
     const sendWait = async (command) => {
-        console.log("Sending (wait) command:", command);
+        LogDebug("Sending (wait) command:", command);
         try {
             const response = await SendWait(command);
-            console.log("SendWait response:", response);
+            LogDebug("SendWait response:", response);
             return { success: true, data: response };
         } catch (error) {
             LogError("SendWait command failed:", error);
@@ -161,7 +180,7 @@ export const CNCProvider = ({ children }) => {
     const listFiles = async (drive, path) => {
         try {
             const response = await ListFiles(drive, path);
-            console.log("ListFiles response:", response);
+            LogDebug("ListFiles response:", response);
             return { success: true, data: response };
         } catch (error) {
             LogError("ListFiles command failed:", error);

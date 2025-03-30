@@ -17,7 +17,7 @@ export default function WebcamView() {
                 }
             } catch (err) {
                 setError("Failed to access webcam. Please check permissions.");
-                console.error("Webcam error:", err);
+                LogError("Webcam error:", err);
             }
         }
 

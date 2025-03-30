@@ -3,7 +3,6 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import styles from './App.module.css';
 import { NavLink } from "react-router-dom"; // ✅ Use NavLink for active styling
-import loadConfig from "./util/Config";
 import { useState, useEffect } from 'react';
 //
 import { CNCProvider } from './context/CNCContext';
@@ -18,11 +17,6 @@ import DisconnectedOverlay from './util/DisconnectedOverlay';
 
 
 function App() {
-  const [config, setConfig] = useState(null);
-
-  useEffect(() => {
-    loadConfig().then(setConfig);
-  }, []);
 
   return (
 

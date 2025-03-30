@@ -5,6 +5,7 @@ import AxisModal from "../util/AxisModal";
 import KeypadModal from '../util/KeypadModal';
 import OverridesModal from '../util/OverrideModal';
 import WCSModal from '../util/WCSModal';
+import { LogError, LogInfo, LogDebug } from '../util/logger';
 
 export default function ZeroGroup() {
     const { sendAsync, status } = useCNC();
@@ -42,14 +43,14 @@ export default function ZeroGroup() {
             cmd += " Z0";
         }
 
-        console.log("Command:", cmd);
+        LogDebug("Command:", cmd);
         sendAsync(cmd);
         setShowModal(false);
     };
 
     const handleTLO = (value) => {
         const cmd = `G43.1 Z${value}`;
-        console.log(`Set TLO: ${cmd}`);
+        LogDebug(`Set TLO: ${cmd}`);
         // G43.1 Z<value>
         sendAsync(cmd);
 

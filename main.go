@@ -3,8 +3,10 @@ package main
 import (
 	"embed"
 	"flag"
+	"log"
 
 	"go2cnc/pkg/app"
+	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
 
 	"github.com/wailsapp/wails/v2"
@@ -14,7 +16,6 @@ import (
 var assets embed.FS
 
 var (
-	verbosity  int
 	configFile string
 )
 
@@ -24,23 +25,25 @@ func init() {
 
 func main() {
 
-	flag.IntVar(&verbosity, "v", 0, "Verbosity level")
 	flag.StringVar(&configFile, "config", "./config.yaml", "Path to the configuration file")
 	flag.Parse()
 
-	app.ConfigFile = configFile
-	verbosity = 5
+	var err error
+	app.CurrentConfig, err = config.LoadYamlConfig(configFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	// Create an instance of the app structure
-	app := app.NewApp()
-
-	logs := logme.NewLogger(verbosity)
-
-	opts := getAppOptions(app, assets, verbosity)
+	a := app.NewApp()
+	logs := logme.NewLogger(app.CurrentConfig.LogLevel, app.CurrentConfig.LogFile)
+	opts := getAppOptions(a, assets, app.CurrentConfig.LogLevel)
 	opts.Logger = logs
-
 	// Create application with options
-	err := wails.Run(opts)
+
+	logme.Info("Config File: ", configFile)
+	logme.Info("Log Level: ", app.CurrentConfig.LogLevel)
+	err = wails.Run(opts)
 
 	if err != nil {
 		println("Error:", err.Error())
