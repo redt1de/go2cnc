@@ -2,7 +2,7 @@ package app
 
 import (
 	"context"
-	"go2cnc/pkg/cnc"
+	"go2cnc/pkg/cnc/controllers"
 	"go2cnc/pkg/cnc/controllers/fluidnc"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
@@ -17,7 +17,7 @@ var CurrentConfig *config.Config
 // App struct
 type App struct {
 	ctx context.Context
-	Cnc cnc.Controller
+	Cnc controllers.Controller
 	// UiCfg *config.UiCfg
 	Cfg *config.Config
 }

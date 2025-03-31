@@ -2,6 +2,7 @@ import {
     LogError as WailsLogError,
     LogInfo as WailsLogInfo,
     LogDebug as WailsLogDebug,
+    LogTrace as WailsLogTrace,
 } from '../../wailsjs/runtime';
 import { AppConfig } from "../context/CNCContext";
 
@@ -46,6 +47,13 @@ export function LogDebug(...args) {
     const location = parseStack(stack);
     const message = formatArgs(args);
     WailsLogDebug(`${message} (${location})`);
+}
+
+export function LogTrace(...args) {
+    const stack = new Error().stack;
+    const location = parseStack(stack);
+    const message = formatArgs(args);
+    WailsLogTrace(`${message} (${location})`);
 }
 
 // import { LogError as WailsLogError, LogInfo as WailsLogInfo, LogDebug as WailsLogDebug } from '../../wailsjs/runtime/runtime';

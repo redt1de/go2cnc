@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go2cnc/pkg/cnc"
+	"go2cnc/pkg/cnc/controllers"
 	"go2cnc/pkg/logme"
 	"go2cnc/pkg/util"
 	"os"
@@ -46,20 +46,20 @@ func (a *App) listMacros() (string, error) {
 		return "", err
 	}
 
-	var files []cnc.FileInfo
+	var files []controllers.FileInfo
 
 	for _, entry := range entries {
 		info, err := entry.Info()
 		if err != nil {
 			continue
 		}
-		files = append(files, cnc.FileInfo{
+		files = append(files, controllers.FileInfo{
 			Name: entry.Name(),
 			Size: fmt.Sprintf("%d", info.Size()),
 		})
 	}
 
-	reft := &cnc.FileList{
+	reft := &controllers.FileList{
 		Files:      files,
 		Path:       macroPath,
 		Total:      "N/A", // You could calculate total disk space
@@ -119,13 +119,13 @@ func listFilesUSB(path string) (string, error) {
 
 }
 
-func listFiles(dirPath string) (*cnc.FileList, error) {
+func listFiles(dirPath string) (*controllers.FileList, error) {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		return nil, err
 	}
 
-	var files []cnc.FileInfo
+	var files []controllers.FileInfo
 	var totalBytes int64
 
 	for _, entry := range entries {
@@ -140,13 +140,13 @@ func listFiles(dirPath string) (*cnc.FileList, error) {
 			totalBytes += info.Size()
 		}
 
-		files = append(files, cnc.FileInfo{
+		files = append(files, controllers.FileInfo{
 			Name: entry.Name(),
 			Size: size,
 		})
 	}
 
-	fileList := &cnc.FileList{
+	fileList := &controllers.FileList{
 		Files:      files,
 		Path:       dirPath,
 		Total:      "N/A",                  // You could calculate total disk space

@@ -1,10 +1,5 @@
 package state
 
-import (
-	"fmt"
-	"go2cnc/pkg/logme"
-)
-
 type State struct {
 	ActiveState  string                `json:"activeState"`
 	Mpos         Coordinate            `json:"mpos"`
@@ -82,23 +77,4 @@ func (s *State) GetLastProbeResult() ProbeResult {
 
 func (s *State) AddProbeResult(pr ProbeResult) {
 	s.ProbeHistory = append(s.ProbeHistory, pr)
-}
-
-func (s *State) UpdateWpos() {
-	if s.WCS == "" {
-		logme.Warning("WCS not set, assuming G54")
-		s.WCS = "G54" // Default to G54 if WCS is not set
-		return
-	}
-
-	offset, ok := s.WCO[s.WCS]
-	if !ok {
-		// If WCS is not found in WCO, assume zero offset
-		logme.Warning(fmt.Sprintf("WCO[%s] not found. Assuming 0,0,0", s.WCS))
-		offset = Coordinate{}
-	}
-
-	s.Wpos.X = s.Mpos.X - offset.X
-	s.Wpos.Y = s.Mpos.Y - offset.Y
-	s.Wpos.Z = s.Mpos.Z - offset.Z
 }

@@ -4,7 +4,7 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
-	"go2cnc/pkg/cnc"
+	"go2cnc/pkg/cnc/controllers"
 	"go2cnc/pkg/cnc/controllers/fluidnc"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
@@ -18,7 +18,7 @@ import (
 var (
 	verbosity  int
 	configFile string
-	Cnc        cnc.Controller
+	Cnc        controllers.Controller
 )
 
 func main() {
@@ -32,6 +32,7 @@ func main() {
 	logme.NewLogger(c.LogLevel, c.LogFile)
 
 	///////////////////////////////////////////////////////////////
+
 	Cnc = fluidnc.NewFluidNcController(c.FluidNCConfig)
 	Cnc.OnConnection(func(iscon bool) {
 		if iscon {
@@ -42,11 +43,11 @@ func main() {
 	})
 
 	Cnc.OnMessage(func(msg string) {
-		fmt.Println(msg)
+		fmt.Println(">>>", msg)
 	})
 
 	Cnc.OnUpdate(func(status *state.State) {
-
+		fmt.Println("<update>", status)
 	})
 
 	Cnc.OnProbe(func(result []state.ProbeResult) {
@@ -83,40 +84,48 @@ func main() {
 		switch parts[0] {
 		case "exit":
 			os.Exit(0)
-		case "cat":
-			if len(parts) < 2 {
-				logme.Error("cat: no file specified")
-				continue
-			}
+			// case "cat":
+			// 	if len(parts) < 2 {
+			// 		logme.Error("cat: no file specified")
+			// 		continue
+			// 	}
 
-			a, err := Cnc.GetFile("center.nc")
-			// a, err := Cnc.GetFile("usb", "sha256sum.README") //// /media/redt1de/Parrot home 6.3.2/sha256sum.README
-			if err != nil {
-				logme.Error("GetFile -> error:", err)
-				continue
-			}
-			fmt.Println(a)
-			continue
-		case "list":
-			a, err := Cnc.ListFiles("")
-			if err != nil {
-				logme.Error("ListFiles -> error:", err)
-				continue
-			}
-			fmt.Println(a)
-			continue
+			// 	a, err := Cnc.GetFile("center.nc")
+			// 	// a, err := Cnc.GetFile("usb", "sha256sum.README") //// /media/redt1de/Parrot home 6.3.2/sha256sum.README
+			// 	if err != nil {
+			// 		logme.Error("GetFile -> error:", err)
+			// 		continue
+			// 	}
+			// 	fmt.Println(a)
+			// 	continue
+			// case "list":
+			// 	a, err := Cnc.ListFiles("")
+			// 	if err != nil {
+			// 		logme.Error("ListFiles -> error:", err)
+			// 		continue
+			// 	}
+			// 	fmt.Println(a)
+			// 	continue
 
-		case "sendfile":
-			err := Cnc.PutFile("Macros/test1.nc", "(print,hello)")
-			if err != nil {
-				logme.Error("SendFile -> error:", err)
-				continue
-			}
-			fmt.Println("File sent")
-			continue
+			// case "sendfile":
+			// 	err := Cnc.PutFile("Macros/test1.nc", "(print,hello)")
+			// 	if err != nil {
+			// 		logme.Error("SendFile -> error:", err)
+			// 		continue
+			// 	}
+			// 	fmt.Println("File sent")
+			// 	continue
 		}
 
-		Cnc.SendAsync(line)
+		// Cnc.SendAsync(line)
+		lines, err := Cnc.SendWait(line)
+		if err != nil {
+			logme.Error("SendWait -> error:", err)
+			continue
+		}
+		for _, l := range lines {
+			fmt.Println(l)
+		}
 	}
 
 }

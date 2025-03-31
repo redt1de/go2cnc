@@ -19,20 +19,20 @@ export default function MachineGroup() {
         if (axis.includes("Z") && axis.includes("X") && axis.includes("Y")) {
             LogDebug("All axis");
             sendAsync(`$H`);
-        }
-        if (axis.includes("Z")) {
-            sendAsync(`$HZ`);
-        }
-        if (axis.includes("X")) {
-            LogDebug("X axis");
-            sendAsync(`$HX`);
-        }
+            return
+        } else {
+            if (axis.includes("Z")) { // always z first
+                sendAsync(`$HZ`);
+            }
+            if (axis.includes("X")) {
+                LogDebug("X axis");
+                sendAsync(`$HX`);
+            }
 
-        if (axis.includes("Y")) {
-            sendAsync(`$HY`);
+            if (axis.includes("Y")) {
+                sendAsync(`$HY`);
+            }
         }
-
-
         setShowModal(false);
     };
 

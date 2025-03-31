@@ -17,7 +17,6 @@ const (
 )
 
 func ParseGrblData(data string, g *state.State) (bool, int) {
-	logme.Trace("ParseGrblData() called with data:", data)
 	section := CHANGE_NONE
 	switch {
 	case strings.HasPrefix(data, "<"):
@@ -39,9 +38,6 @@ func ParseGrblData(data string, g *state.State) (bool, int) {
 		return false, 0
 
 	}
-	// TODO calc work position???
-	g.UpdateWpos()
-
 	return true, section
 }
 
@@ -214,7 +210,6 @@ func parseGCodeParserState(data string, g *state.State) {
 
 // parseWorkOffsets parses Grbl's work state.Coordinate offsets ($#)
 func parseWorkOffsets(data string, g *state.State) {
-	logme.Warning("parseWorkOffsets() called")
 	// Updated regex to capture all state.Coordinate systems (G54-G59, G28, G30, G92, TLO)
 	re := regexp.MustCompile(`\[(G[5-9][0-9]?|G28|G30|G92|TLO):([-\d.]+)(?:,([-\d.]+),([-\d.]+))?\]`)
 	matches := re.FindAllStringSubmatch(data, -1)

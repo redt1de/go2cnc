@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender, ListFiles, GetFile, Config as FetchConfig } from "../../wailsjs/go/app/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime"
-import { LogError, LogInfo, LogDebug } from '../util/logger';
+import { LogError, LogInfo, LogDebug, LogTrace } from '../util/logger';
 
 // Create CNC Context
 const CNCContext = createContext();
@@ -46,6 +46,7 @@ export const CNCProvider = ({ children }) => {
         // Listen for Status Updates
         const unsubscribeStatus = EventsOn("statusEvent", (newStatus) => {
             setStatus(newStatus);
+            LogTrace("Status Event:", newStatus);
         });
 
         // Listen for Connection Status Updates
