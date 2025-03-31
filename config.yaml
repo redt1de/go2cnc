@@ -5,5 +5,5 @@ log_file: "/tmp/fluidnc.log"
 fluidnc:
   api_url: "http://fluidnc.local"
   ws_url: "ws://fluidnc.local:81"
-  dev_proxy: http://127.0.0.1:8080
+  # dev_proxy: http://127.0.0.1:8080
   # ws_url: "ws://localhost:81"

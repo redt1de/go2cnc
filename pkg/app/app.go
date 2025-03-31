@@ -3,7 +3,7 @@ package app
 import (
 	"context"
 	"go2cnc/pkg/cnc"
-	"go2cnc/pkg/cnc/fluidnc"
+	"go2cnc/pkg/cnc/controllers/fluidnc"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"

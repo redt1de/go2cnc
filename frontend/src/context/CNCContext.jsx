@@ -8,9 +8,6 @@ const CNCContext = createContext();
 
 export let AppConfig = {};
 
-// let cfg = await Config();
-// LogDebug("Config:", cfg);
-
 // CNCProvider Component
 export const CNCProvider = ({ children }) => {
     const [consoleMessages, setConsoleMessages] = useState([]);

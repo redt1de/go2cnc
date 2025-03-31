@@ -1,7 +1,7 @@
 package config
 
 import (
-	"go2cnc/pkg/cnc/fluidnc"
+	"go2cnc/pkg/cnc/controllers/fluidnc"
 	"io/ioutil"
 
 	"gopkg.in/yaml.v3"

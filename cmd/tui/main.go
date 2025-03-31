@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"go2cnc/pkg/cnc"
-	"go2cnc/pkg/cnc/fluidnc"
+	"go2cnc/pkg/cnc/controllers/fluidnc"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
@@ -22,19 +22,14 @@ var (
 )
 
 func main() {
-	flag.IntVar(&verbosity, "v", 0, "Verbosity level")
 	flag.StringVar(&configFile, "config", "./config.yaml", "Path to the configuration file")
 	flag.Parse()
 
-	// Create an instance of the app structure
-	verbosity = 5
-	logme.NewLogger(verbosity)
-
-	logme.Info("Starting up CNC controller")
 	c, err := config.LoadYamlConfig(configFile)
 	if err != nil {
 		log.Fatal(err)
 	}
+	logme.NewLogger(c.LogLevel, c.LogFile)
 
 	///////////////////////////////////////////////////////////////
 	Cnc = fluidnc.NewFluidNcController(c.FluidNCConfig)

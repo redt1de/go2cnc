@@ -1,5 +1,9 @@
 
 
+## V3 rev
+- [ ] move connections to a provider interface.
+- [ ] revamp all controller (fluidnc) file functionality, Macro specific functions, this will break filebrowser
+
 ## TODO
 - [ ] clean up CNCContext, most of the funcs can be removed and called directly via the go exports
 - [ ] I do not like the current file functionality/code layout

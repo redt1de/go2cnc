@@ -4,11 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"go2cnc/pkg/cnc/grbl"
+	"go2cnc/pkg/cnc/parsers/grbl"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/logme"
 	"go2cnc/pkg/util"
-	"math/rand"
 	"net/http"
 	"net/url"
 	"strings"
@@ -35,6 +34,7 @@ type FluidNC struct {
 	onConnection func(iscon bool)
 	onUpdate     func(status *state.State)
 	onProbe      func(pr []state.ProbeResult)
+	// TODO add onError,onAck,onAlarm events? may be useful for streaming
 }
 
 type FluidNCConfig struct {
@@ -284,18 +284,10 @@ func (f *FluidNC) TestIngest() {
 		}
 	}()
 
-	// if testBool {
-	// 	f.handleMessage("[PRB:-11.00,0.200,0.300:1]")
-	// 	testBool = false
-	// } else {
-	// 	f.handleMessage("[PRB:12.00,0.200,0.300:1]")
-	// 	testBool = true
-	// }
-
 }
 
-func randFloat(min, max float64, n int) float64 {
-	// Seed the random number generator to ensure different results each time
-	rand.Seed(time.Now().UnixNano())
-	return min + rand.Float64()*(max-min)
-}
+// func randFloat(min, max float64, n int) float64 {
+// 	// Seed the random number generator to ensure different results each time
+// 	rand.Seed(time.Now().UnixNano())
+// 	return min + rand.Float64()*(max-min)
+// }
