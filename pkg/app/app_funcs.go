@@ -171,7 +171,6 @@ func (a *App) GetLastProbe() state.ProbeResult {
 func (a *App) SendAsync(msg string) {
 	a.Cnc.SendAsync(msg)
 	runtime.EventsEmit(a.ctx, "consoleEvent", fmt.Sprintf("> %s", msg))
-
 }
 
 func (a *App) SendAsyncRaw(cmd interface{}) {

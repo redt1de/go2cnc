@@ -24,6 +24,7 @@ export default function MachineGroup() {
             if (axis.includes("Z")) { // always z first
                 sendAsync(`$HZ`);
             }
+
             if (axis.includes("X")) {
                 LogDebug("X axis");
                 sendAsync(`$HX`);
