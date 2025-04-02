@@ -64,6 +64,9 @@ export default function MacroView() {
         // }
     };
 
+    const setDrive = async (drive) => {
+        drive = "MACROS";
+    }
 
     return (
         <div className={styles.FilesViewContainer}>
@@ -72,6 +75,7 @@ export default function MacroView() {
                     <div className={styles.explorerContainer}>
                         <FileBrowser
                             drive="MACROS"
+                            setDrive={setDrive}
                             onFileSelect={handleFileSelect}
                             onPathChange={(newPath) => {
                                 setPath(newPath);

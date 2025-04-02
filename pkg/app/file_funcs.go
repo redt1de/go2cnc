@@ -34,7 +34,7 @@ func (a *App) ListDrives() ([]string, error) {
 	if a.IsLocalFS() {
 		ret = append(ret, "LOCAL")
 	}
-	logme.Warning("ListDrives -> ", ret)
+	logme.Trace("ListDrives -> ", ret)
 	return ret, nil
 }
 
