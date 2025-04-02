@@ -120,6 +120,7 @@ func (l *logMe) Trace(message string) {
 	if strings.Contains(message, "listeners") {
 		return
 	}
+	message = strings.TrimSpace(message)
 	log.Println("🔧 [TRACE]", message+getCaller())
 
 }

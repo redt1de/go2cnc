@@ -61,15 +61,15 @@ type Tool struct {
 }
 
 func NewState() *State {
-	logme.Error("remove the test probe history")
+	// logme.Error("remove the test probe history")
 	return &State{
-		WCO: make(map[string]Coordinate),
-		// ProbeHistory: make([]ProbeResult, 0),
-		ProbeHistory: []ProbeResult{ // TODO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..remove this
-			{X: 1.01, Y: 1.02, Z: 1.03, Success: true},
-			{X: 2.01, Y: 2.02, Z: 2.03, Success: true},
-			{X: 3.01, Y: 3.02, Z: 3.03, Success: true},
-		},
+		WCO:          make(map[string]Coordinate),
+		ProbeHistory: make([]ProbeResult, 0),
+		// ProbeHistory: []ProbeResult{ // TODO >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>..remove this
+		// 	{X: 1.01, Y: 1.02, Z: 1.03, Success: true},
+		// 	{X: 2.01, Y: 2.02, Z: 2.03, Success: true},
+		// 	{X: 3.01, Y: 3.02, Z: 3.03, Success: true},
+		// },
 		Mpos: Coordinate{},
 	}
 }

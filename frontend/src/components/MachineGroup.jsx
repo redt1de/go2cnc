@@ -13,6 +13,7 @@ export default function MachineGroup() {
 
 
     const handleOk = (axis) => {
+        setShowModal(false);
         if (axis.length === 0) {
             return;
         }
@@ -34,7 +35,7 @@ export default function MachineGroup() {
                 sendAsync(`$HY`);
             }
         }
-        setShowModal(false);
+
     };
 
 

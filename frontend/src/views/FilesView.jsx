@@ -17,7 +17,7 @@ export default function FilesView() {
     const [fileContent, setFileContent] = useState("");
     const [loadingFile, setLoadingFile] = useState(false);
     const [path, setPath] = useState("");
-    const [drive, setDrive] = useState("");
+    const [drive, setDrive] = useState("LOCAL");
     const navigate = useNavigate();
 
 
