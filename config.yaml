@@ -1,5 +1,6 @@
 macro_path: "/tmp/macros"
-log_level: 5
+local_fs_path: "/tmp/localfs"
+log_level: 4
 log_file: "/tmp/fluidnc.log"
 
 fluidnc:

@@ -1,9 +1,9 @@
 import React from "react";
 import Frame from "../util/Frame";
 import RunExplorerGroup from "../components/RunExplorerGroup";
-import styles from "./css/RunView.module.css";
+import styles from "./css/FilesView.module.css";
 import { useCNC } from "../context/CNCContext";
-import { ListFiles, GetFile, RunFile } from "../../wailsjs/go/app/App";
+import { GetFile, RunFile } from "../../wailsjs/go/app/App";
 import { LogError, LogInfo, LogDebug } from '../util/logger';
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -12,23 +12,15 @@ import { useNavigate, useLocation } from "react-router-dom";
 import FileBrowser from "../components/FileBrowser";
 import FileViewer from "../components/FileViewer";
 
-export default function RunView() {
+export default function FilesView() {
     const [selectedFile, setSelectedFile] = useState(null);
     const [fileContent, setFileContent] = useState("");
     const [loadingFile, setLoadingFile] = useState(false);
     const [path, setPath] = useState("");
+    const [drive, setDrive] = useState("");
     const navigate = useNavigate();
 
-    const listFiles = async (drive, path) => {
-        try {
-            const response = await ListFiles(drive, path);
-            LogDebug("ListFiles response:", response);
-            return { success: true, data: response };
-        } catch (error) {
-            LogError("ListFiles command failed:", error);
-            return { success: false, error };
-        }
-    };
+
 
     const handleRun = async () => {
         if (!selectedFile) {
@@ -78,12 +70,13 @@ export default function RunView() {
 
 
     return (
-        <div className={styles.runViewContainer}>
+        <div className={styles.FilesViewContainer}>
             <div style={{ position: "absolute", top: "10px", left: "10px" }}>
                 <Frame title="Files">
                     <div className={styles.explorerContainer}>
                         <FileBrowser
-                            // forceDrive="MACROS"
+                            drive={drive}
+                            setDrive={setDrive}
                             onFileSelect={handleFileSelect}
                             onPathChange={(newPath) => {
                                 setPath(newPath);
@@ -93,6 +86,7 @@ export default function RunView() {
                             selectedFile={selectedFile}
                         />
                         <FileViewer
+                            drive={drive}
                             selectedFile={selectedFile}
                             fileContent={fileContent}
                             loading={loadingFile}

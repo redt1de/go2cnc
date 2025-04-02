@@ -3,6 +3,7 @@ package fluidnc
 import (
 	"context"
 	"errors"
+	"go2cnc/pkg/cnc/fileman"
 	"go2cnc/pkg/cnc/parsers/grbl"
 	"go2cnc/pkg/cnc/providers"
 	"go2cnc/pkg/cnc/providers/websocket"
@@ -20,6 +21,7 @@ type FluidNC struct {
 	waitQueue []*waitEntry
 	ctx       context.Context
 	cancel    context.CancelFunc
+	Fs        fileman.FileManager
 
 	state        *state.State
 	onMessage    func(msg string)
@@ -51,6 +53,14 @@ func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
 		// } else if cfg.Serial != nil {
 		// provider := serial.New(cfg.FluidNC.Serial)
 	}
+
+	var fs *FluidNCFileManager
+	if cfg.ApiUrl != "" {
+		fs = NewFluidNCFileManager(cfg.ApiUrl)
+	} else {
+		fs = nil
+	}
+
 	f := &FluidNC{
 		provider:     provider,
 		state:        state.NewState(),
@@ -60,6 +70,7 @@ func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
 		onProbe:      func([]state.ProbeResult) {},
 		connected:    false,
 		waitQueue:    []*waitEntry{},
+		Fs:           fs,
 	}
 
 	provider.SetReceiveHandler(func(data []byte) {
@@ -75,6 +86,7 @@ func (f *FluidNC) Connect() {
 	f.connected = true
 	f.onConnection(true)
 	time.Sleep(3 * time.Second)
+	logme.Error("these are getting sent before we are really connected // TODO")
 	f.SendAsync("$G")
 	f.SendAsync("$#")
 	f.SendAsync("?")
@@ -87,6 +99,10 @@ func (f *FluidNC) IsConnected() bool {
 
 func (f *FluidNC) GetState() *state.State {
 	return f.state
+}
+
+func (f *FluidNC) FileManager() fileman.FileManager {
+	return f.Fs
 }
 
 func (f *FluidNC) OnMessage(handler func(msg string))               { f.onMessage = handler }

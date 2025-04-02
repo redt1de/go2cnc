@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"go2cnc/pkg/cnc/controllers"
+	"go2cnc/pkg/cnc/fileman"
 	"go2cnc/pkg/logme"
 	"go2cnc/pkg/util"
 	"os"
@@ -46,26 +46,22 @@ func (a *App) listMacros() (string, error) {
 		return "", err
 	}
 
-	var files []controllers.FileInfo
+	var files []fileman.FileInfo
 
 	for _, entry := range entries {
 		info, err := entry.Info()
 		if err != nil {
 			continue
 		}
-		files = append(files, controllers.FileInfo{
+		files = append(files, fileman.FileInfo{
 			Name: entry.Name(),
 			Size: fmt.Sprintf("%d", info.Size()),
 		})
 	}
 
-	reft := &controllers.FileList{
-		Files:      files,
-		Path:       macroPath,
-		Total:      "N/A", // You could calculate total disk space
-		Used:       "N/A", // Convert bytes to string like "52.0 KB"
-		Occupation: "0",   // Optional: you can compute % usage
-
+	reft := &fileman.FileList{
+		Files: files,
+		Path:  macroPath,
 	}
 
 	ret, err := json.Marshal(reft)
@@ -119,13 +115,13 @@ func listFilesUSB(path string) (string, error) {
 
 }
 
-func listFiles(dirPath string) (*controllers.FileList, error) {
+func listFiles(dirPath string) (*fileman.FileList, error) {
 	entries, err := os.ReadDir(dirPath)
 	if err != nil {
 		return nil, err
 	}
 
-	var files []controllers.FileInfo
+	var files []fileman.FileInfo
 	var totalBytes int64
 
 	for _, entry := range entries {
@@ -140,18 +136,15 @@ func listFiles(dirPath string) (*controllers.FileList, error) {
 			totalBytes += info.Size()
 		}
 
-		files = append(files, controllers.FileInfo{
+		files = append(files, fileman.FileInfo{
 			Name: entry.Name(),
 			Size: size,
 		})
 	}
 
-	fileList := &controllers.FileList{
-		Files:      files,
-		Path:       dirPath,
-		Total:      "N/A",                  // You could calculate total disk space
-		Used:       formatSize(totalBytes), // Convert bytes to string like "52.0 KB"
-		Occupation: "0",                    // Optional: you can compute % usage
+	fileList := &fileman.FileList{
+		Files: files,
+		Path:  dirPath,
 	}
 
 	return fileList, nil

@@ -1,6 +1,9 @@
 package controllers
 
-import "go2cnc/pkg/cnc/state"
+import (
+	"go2cnc/pkg/cnc/fileman"
+	"go2cnc/pkg/cnc/state"
+)
 
 type Controller interface {
 	Connect()
@@ -16,29 +19,6 @@ type Controller interface {
 	SendAsyncRaw(msg []byte)               // SendAsyncRaw sends a raw message to the CNC controller and returns immediately
 	SendWait(msg string) ([]string, error) // SendWait sends a message to the CNC controller, waits for error/ok, and returns the resulting messages
 
-	// ClearProbeHistory()
-	// GetProbeHistory() []state.ProbeResult
-	// GetLastProbe() state.ProbeResult
+	FileManager() fileman.FileManager // FileManager returns the file manager for the controller
 
-	// TestIngest() // just used for dev, RM me later
-	// TestSender() // just used for dev, RM me later
-
-	// ListFiles(path string) (string, error)
-	// GetFile(path string) (string, error)
-	// PutFile(fpath, content string) error
-	// DelFile(path string) (string, error)
-	// RunFile(path string) error
-}
-
-type FileList struct {
-	Files      []FileInfo `json:"files"`
-	Path       string     `json:"path"`
-	Total      string     `json:"total"`
-	Used       string     `json:"used"`
-	Occupation string     `json:"occupation"`
-}
-
-type FileInfo struct {
-	Name string `json:"name"`
-	Size string `json:"size"` // Note: size is a string in the JSON
 }

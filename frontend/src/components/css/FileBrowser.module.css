@@ -1,7 +1,6 @@
 .fileList {
     background: #333;
     color: white;
-    overflow-y: auto;
     border-right: 1px solid #444;
     display: flex;
     flex-direction: column;
@@ -11,11 +10,19 @@
     max-width: 300px;
     flex-shrink: 0;
     border-radius: 8px;
+    position: relative;
+    overflow: hidden;
+}
+
+.fileItemsContainer {
+    flex: 1;
+    overflow-y: auto;
 }
 
 .fileItem {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid #555;
@@ -26,48 +33,40 @@
     font-weight: bold;
 }
 
-.fileName {
+.fileLabel {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
     flex-grow: 1;
+    overflow: hidden;
+}
+
+.fileName {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .fileSize {
     color: #aaa;
+    font-size: 0.85rem;
+    flex-shrink: 0;
 }
-
-.controlContainer {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    padding: 10px;
-    width: 90%;
-    margin-top: 10px;
-}
-
-.toggleButton {
-    height: 60px;
-    background: #555;
-    color: white;
-    border: none;
-    padding: 10px 16px;
-    font-size: 1rem;
-    border-radius: 5px;
-    min-width: 100px;
-}
-
-.toggleButton:hover {
-    background: #777;
-}
-
 
 .trashButton {
-    width: 60px;
-    height: 60px;
+    width: 28px;
+    height: 28px;
     background: #555;
     color: white;
     border: none;
-    padding: 10px 14px;
-    font-size: 1rem;
-    border-radius: 5px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 6px;
+    flex-shrink: 0;
 }
 
 .trashButton:hover {
@@ -77,4 +76,30 @@
 .trashButton:disabled {
     opacity: 0.5;
     cursor: not-allowed;
+}
+
+.controlContainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    width: 100%;
+    border-top: 1px solid #444;
+    background-color: #222;
+    flex-shrink: 0;
+}
+
+.toggleButton {
+    height: 40px;
+    background: #555;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    font-size: 1rem;
+    border-radius: 5px;
+    min-width: 120px;
+}
+
+.toggleButton:hover {
+    background: #777;
 }

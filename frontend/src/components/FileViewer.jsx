@@ -8,7 +8,7 @@ import { useState } from "react";
 import { PutFile } from "../../wailsjs/go/app/App";
 import { LogError, LogInfo, LogDebug } from '../util/logger';
 
-export default function FileViewer({ selectedFile, fileContent, loading, path, allowEdit = false }) {
+export default function FileViewer({ drive, selectedFile, fileContent, loading, path, allowEdit = false }) {
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(fileContent);
 
@@ -20,12 +20,11 @@ export default function FileViewer({ selectedFile, fileContent, loading, path, a
         try {
             if (!selectedFile || !editedContent) return;
 
-            // const fileName = path ? `${path}/${selectedFile.name}` : selectedFile.name;
             const fileName = path ? `${path}/${selectedFile.name}` : `/${selectedFile.name}`;
             // 
 
             LogDebug("Saving file:", fileName);
-            await PutFile(fileName, editedContent);
+            await PutFile(drive, fileName, editedContent);
 
             alert("File saved successfully!");
             setIsEditing(false);

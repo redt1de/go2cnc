@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 import { CNCProvider } from './context/CNCContext';
 import ControlView from './views/ControlView';
 import ConsoleView from './views/ConsoleView';
-import RunView from './views/RunView';
+import FilesView from './views/FilesView';
 import ProbeView from './views/ProbeView';
 import MacroView from './views/MacroView';
 import WebcamView from './views/WebcamView';
@@ -36,8 +36,8 @@ function App() {
               Macros
             </NavLink>
 
-            <NavLink to="/run" title="Run" className={({ isActive }) => isActive ? styles.active : ""}>
-              Run
+            <NavLink to="/files" title="Files" className={({ isActive }) => isActive ? styles.active : ""}>
+              Files
             </NavLink>
             <NavLink to="/probe" title="Probe" className={({ isActive }) => isActive ? styles.active : ""}>
               Probe
@@ -53,7 +53,7 @@ function App() {
               <Route path="/" element={<Navigate to="/control" replace />} />
               <Route path="/control" element={<ControlView />} />
               <Route path="/console" element={<ConsoleView />} />
-              <Route path="/run" element={<RunView />} />
+              <Route path="/Files" element={<FilesView />} />
               <Route path="/probe" element={<ProbeView />} />
               <Route path="/macros" element={<MacroView />} />
               <Route path="/webcam" element={<WebcamView />} />

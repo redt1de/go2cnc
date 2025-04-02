@@ -10,8 +10,8 @@ export function Config() {
   return window['go']['app']['App']['Config']();
 }
 
-export function DelFile(arg1) {
-  return window['go']['app']['App']['DelFile'](arg1);
+export function DelFile(arg1, arg2) {
+  return window['go']['app']['App']['DelFile'](arg1, arg2);
 }
 
 export function GetFile(arg1, arg2) {
@@ -26,12 +26,32 @@ export function GetProbeHistory() {
   return window['go']['app']['App']['GetProbeHistory']();
 }
 
+export function IsLocalFS() {
+  return window['go']['app']['App']['IsLocalFS']();
+}
+
+export function IsMacroFS() {
+  return window['go']['app']['App']['IsMacroFS']();
+}
+
+export function IsRemoteFS() {
+  return window['go']['app']['App']['IsRemoteFS']();
+}
+
+export function IsUsbFS() {
+  return window['go']['app']['App']['IsUsbFS']();
+}
+
+export function ListDrives() {
+  return window['go']['app']['App']['ListDrives']();
+}
+
 export function ListFiles(arg1, arg2) {
   return window['go']['app']['App']['ListFiles'](arg1, arg2);
 }
 
-export function PutFile(arg1, arg2) {
-  return window['go']['app']['App']['PutFile'](arg1, arg2);
+export function PutFile(arg1, arg2, arg3) {
+  return window['go']['app']['App']['PutFile'](arg1, arg2, arg3);
 }
 
 export function RunFile(arg1) {

@@ -5,7 +5,8 @@ import FileBrowser from "../components/FileBrowser";
 import FileViewer from "../components/FileViewer";
 import InputModal from "../util/InputModal";
 import { ListFiles, GetFile, PutFile, RunFile, SaveMacro } from "../../wailsjs/go/app/App";
-import styles from "./css/RunView.module.css";
+import { LogError, LogDebug } from '../util/logger';
+import styles from "./css/FilesView.module.css";
 
 export default function MacroView() {
     const [selectedFile, setSelectedFile] = useState(null);
@@ -45,32 +46,32 @@ export default function MacroView() {
     };
 
     const handleCreateMacro = async (filename) => {
-        if (!filename.endsWith(".nc")) filename += ".nc";
+        // if (!filename.endsWith(".nc")) filename += ".nc";
 
         const fullPath = path ? `${path}/${filename}` : filename;
         const defaultContent = "; New macro\n";
 
-        try {
-            await SaveMacro(fullPath, defaultContent);
-            // Load the new macro into the viewer
-            setSelectedFile({ name: filename });
-            setFileContent(defaultContent);
-            setShowNewModal(false);
-            setRefreshCounter(prev => prev + 1);
-        } catch (err) {
-            LogError("Upload failed:", err);
-            // alert("Failed to create macro");
-        }
+        // try {
+        await PutFile("MACROS", fullPath, defaultContent);
+        // Load the new macro into the viewer
+        setSelectedFile({ name: filename });
+        setFileContent(defaultContent);
+        setShowNewModal(false);
+        setRefreshCounter(prev => prev + 1);
+        // } catch (err) {
+        //     LogError("Upload failed:", err);
+        //     // alert("Failed to create macro");
+        // }
     };
 
 
     return (
-        <div className={styles.runViewContainer}>
+        <div className={styles.FilesViewContainer}>
             <div style={{ position: "absolute", top: "10px", left: "10px" }}>
                 <Frame title="Macros">
                     <div className={styles.explorerContainer}>
                         <FileBrowser
-                            forceDrive="MACROS"
+                            drive="MACROS"
                             onFileSelect={handleFileSelect}
                             onPathChange={(newPath) => {
                                 setPath(newPath);
@@ -81,6 +82,7 @@ export default function MacroView() {
                             refreshTrigger={refreshCounter}
                         />
                         <FileViewer
+                            drive="MACROS"
                             selectedFile={selectedFile}
                             fileContent={fileContent}
                             loading={loadingFile}

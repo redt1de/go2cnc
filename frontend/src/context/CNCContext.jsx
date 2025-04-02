@@ -141,17 +141,6 @@ export const CNCProvider = ({ children }) => {
     };
 
 
-    // const sendWait = async (command) => {
-    //     LogDebug("Sending (wait) command:", command);
-    //     try {
-    //         const response = await SendWait(command);
-    //         LogDebug("SendWait response:", response);
-    //         return response; // an array of response lines
-    //     } catch (error) {
-    //         LogError("SendWait command failed:", error);
-    //         return null;
-    //     }
-    // };
     const sendWait = async (command) => {
         LogDebug("Sending (wait) command:", command);
         try {
@@ -164,19 +153,6 @@ export const CNCProvider = ({ children }) => {
         }
     };
 
-    ////////////////////////////////////////
-
-    const listFiles = async (drive, path) => {
-        try {
-            const response = await ListFiles(drive, path);
-            LogDebug("ListFiles response:", response);
-            return { success: true, data: response };
-        } catch (error) {
-            LogError("ListFiles command failed:", error);
-            return { success: false, error };
-        }
-    };
-    ///////////////////////////////////////////
 
     const getLastProbe = async () => {
         try {
@@ -191,7 +167,7 @@ export const CNCProvider = ({ children }) => {
 
 
     return (
-        <CNCContext.Provider value={{ consoleMessages, consoleMessagesRef, probeHistory, status, isConnected, listFiles, getLastProbe, testSender, testIngest, sendAsync, sendAsyncRaw, sendWait, clearProbeHistory }}>
+        <CNCContext.Provider value={{ consoleMessages, consoleMessagesRef, probeHistory, status, isConnected, getLastProbe, testSender, testIngest, sendAsync, sendAsyncRaw, sendWait, clearProbeHistory }}>
             {children}
         </CNCContext.Provider>
     );

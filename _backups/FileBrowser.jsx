@@ -6,13 +6,12 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrash } from '@fortawesome/free-solid-svg-icons';
 import { LogError, LogDebug, LogTrace } from '../util/logger';
 
-export default function FileBrowser({ drive, setDrive, onFileSelect, onPathChange, selectedFile, forceDrive = "", refreshTrigger = 0 }) {
-    // const [drive, setDrive] = useState(forceDrive || "");
+export default function FileBrowser({ onFileSelect, onPathChange, selectedFile, forceDrive = "", refreshTrigger = 0 }) {
+    const [drive, setDrive] = useState(forceDrive || "");
     const [drives, setDrives] = useState([]);
     const [fileList, setFileList] = useState([]);
     const [currentPath, setCurrentPath] = useState("");
-    const [showDeleteDialog, setShowDeleteDialog] = useState(null); // store file to delete
-
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     useEffect(() => {
         const loadDrives = async () => {
@@ -74,24 +73,20 @@ export default function FileBrowser({ drive, setDrive, onFileSelect, onPathChang
     };
 
     const handleDelete = async () => {
-        if (!showDeleteDialog) return;
+        if (!selectedFile || selectedFile.name === ".." || selectedFile.size === "-1") return;
 
-        const file = showDeleteDialog;
-        const filepath = currentPath ? `${currentPath}/${file.name}` : `/${file.name}`;
-
+        const filepath = currentPath ? `${currentPath}/${selectedFile.name}` : `/${selectedFile.name}`;
         try {
-            await DelFile(`${drive}`, `${filepath}`);
-            setFileList((prev) => prev.filter(f => f.name !== file.name));
-            if (selectedFile?.name === file.name) {
-                onFileSelect(null);
-            }
+            await DelFile(`${drive},${filepath}`);
+            setFileList((prev) => prev.filter(f => f.name !== selectedFile.name));
+            onFileSelect(null);
+            setShowDeleteDialog(false);
         } catch (err) {
             LogError("Failed to delete file:", err);
             alert("Failed to delete file.");
-        } finally {
-            setShowDeleteDialog(null);
         }
     };
+
     const handleToggleDrive = () => {
         if (drives.length < 2) return;
         const currentIndex = drives.indexOf(drive);
@@ -104,35 +99,16 @@ export default function FileBrowser({ drive, setDrive, onFileSelect, onPathChang
 
     return (
         <div className={styles.fileList}>
-            <div className={styles.fileItemsContainer}>
-                {fileList.map((file, index) => (
-                    <div
-                        key={index}
-                        className={`${styles.fileItem} ${selectedFile?.name === file.name ? styles.selected : ""}`}
-                        onClick={(e) => {
-                            if (e.target.closest(`.${styles.trashButton}`)) return;
-                            handleClick(file);
-                        }}
-                    >
-                        <div className={styles.fileLabel}>
-                            <span className={styles.fileName}>{file.name}</span>
-                            <span className={styles.fileSize}>{file.size === "-1" ? "(DIR)" : `(${file.size}B)`}</span>
-                        </div>
-                        {file.name !== ".." && (
-                            <button
-                                className={styles.trashButton}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setShowDeleteDialog(file);
-                                }}
-                                title={`Delete ${file.name}`}
-                            >
-                                <FontAwesomeIcon icon={faTrash} />
-                            </button>
-                        )}
-                    </div>
-                ))}
-            </div>
+            {fileList.map((file, index) => (
+                <div
+                    key={index}
+                    className={`${styles.fileItem} ${selectedFile?.name === file.name ? styles.selected : ""}`}
+                    onClick={() => handleClick(file)}
+                >
+                    <span className={styles.fileName}>{file.name}</span>
+                    <span className={styles.fileSize}>{file.size === "-1" ? "DIR" : `${file.size} B`}</span>
+                </div>
+            ))}
 
             <div className={styles.controlContainer}>
                 {!forceDrive && (
@@ -140,16 +116,24 @@ export default function FileBrowser({ drive, setDrive, onFileSelect, onPathChang
                         Drive: {drive}
                     </button>
                 )}
+
+                <button
+                    className={styles.trashButton}
+                    onClick={() => setShowDeleteDialog(true)}
+                    disabled={!selectedFile || selectedFile.size === "-1"}
+                    title="Delete selected file"
+                >
+                    <FontAwesomeIcon icon={faTrash} />
+                </button>
             </div>
 
             {showDeleteDialog && (
                 <YesNoDialog
-                    message={`Delete "${showDeleteDialog.name}"?`}
+                    message={`Delete "${selectedFile?.name}"?`}
                     onConfirm={handleDelete}
-                    onCancel={() => setShowDeleteDialog(null)}
+                    onCancel={() => setShowDeleteDialog(false)}
                 />
             )}
         </div>
-
     );
 }

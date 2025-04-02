@@ -4,6 +4,7 @@ import (
 	"context"
 	"go2cnc/pkg/cnc/controllers"
 	"go2cnc/pkg/cnc/controllers/fluidnc"
+	"go2cnc/pkg/cnc/fileman"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
@@ -16,15 +17,22 @@ var CurrentConfig *config.Config
 
 // App struct
 type App struct {
-	ctx context.Context
-	Cnc controllers.Controller
-	// UiCfg *config.UiCfg
-	Cfg *config.Config
+	ctx     context.Context
+	Cnc     controllers.Controller
+	Cfg     *config.Config
+	UsbFs   fileman.FileManager // USBFs
+	LocalFs fileman.FileManager // LocalFs
+	MacroFs fileman.FileManager // MacroFs
+	// MacroFs
 }
 
 // NewApp creates a new App application struct
 func NewApp() *App {
-	return &App{}
+	return &App{
+		UsbFs:   &USBFs{},
+		LocalFs: nil,
+		MacroFs: nil,
+	}
 }
 
 // startup is called when the app starts. The context is saved
@@ -35,6 +43,8 @@ func (a *App) Startup(ctx context.Context) {
 	a.ctx = ctx
 
 	a.Cfg = CurrentConfig
+	a.LocalFs = NewLocalFs(a.Cfg.LocalFsPath)
+	a.MacroFs = NewLocalFs(a.Cfg.MacroPath)
 
 	///////////////////////////////////////////////////////////////
 	a.Cnc = fluidnc.NewFluidNcController(a.Cfg.FluidNCConfig)
@@ -59,8 +69,6 @@ func (a *App) Startup(ctx context.Context) {
 		// logme.Debug("emitting on probe")
 		runtime.EventsEmit(a.ctx, "probeEvent", result)
 	})
-
-	// a.Cnc.Connect()
 
 	go func() {
 		time.Sleep(2 * time.Second)

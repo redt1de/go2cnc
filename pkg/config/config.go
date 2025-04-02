@@ -8,9 +8,10 @@ import (
 )
 
 type Config struct {
-	MacroPath string `json:"macroPath" yaml:"macro_path"`
-	LogLevel  int    `json:"logLevel" yaml:"log_level"`
-	LogFile   string `json:"logFile" yaml:"log_file"`
+	MacroPath   string `json:"macroPath" yaml:"macro_path"`
+	LocalFsPath string `json:"localFsPath" yaml:"local_fs_path"`
+	LogLevel    int    `json:"logLevel" yaml:"log_level"`
+	LogFile     string `json:"logFile" yaml:"log_file"`
 
 	//
 	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`

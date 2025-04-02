@@ -84,28 +84,27 @@ func main() {
 		switch parts[0] {
 		case "exit":
 			os.Exit(0)
-			// case "cat":
-			// 	if len(parts) < 2 {
-			// 		logme.Error("cat: no file specified")
-			// 		continue
-			// 	}
+		case "cat":
+			if len(parts) < 2 {
+				logme.Error("cat: no file specified")
+				continue
+			}
 
-			// 	a, err := Cnc.GetFile("center.nc")
-			// 	// a, err := Cnc.GetFile("usb", "sha256sum.README") //// /media/redt1de/Parrot home 6.3.2/sha256sum.README
-			// 	if err != nil {
-			// 		logme.Error("GetFile -> error:", err)
-			// 		continue
-			// 	}
-			// 	fmt.Println(a)
-			// 	continue
-			// case "list":
-			// 	a, err := Cnc.ListFiles("")
-			// 	if err != nil {
-			// 		logme.Error("ListFiles -> error:", err)
-			// 		continue
-			// 	}
-			// 	fmt.Println(a)
-			// 	continue
+			a, err := Cnc.FileManager().Read(parts[1])
+			if err != nil {
+				logme.Error("GetFile -> error:", err)
+				continue
+			}
+			fmt.Println(a)
+			continue
+		case "list":
+			a, err := Cnc.FileManager().List("/Macros")
+			if err != nil {
+				logme.Error("ListFiles -> error:", err)
+				continue
+			}
+			fmt.Println(a)
+			continue
 
 			// case "sendfile":
 			// 	err := Cnc.PutFile("Macros/test1.nc", "(print,hello)")
