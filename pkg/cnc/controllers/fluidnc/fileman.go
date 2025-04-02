@@ -47,9 +47,9 @@ func withDefaultClient() *http.Client {
 
 func NewFluidNCFileManager(apiUrl string) *FluidNCFileManager {
 	return &FluidNCFileManager{
-		apiUrl: apiUrl,
-		// httpClient: withDefaultClient(),
-		httpClient: withDevProxy("http://localhost:8080"),
+		apiUrl:     apiUrl,
+		httpClient: withDefaultClient(),
+		// httpClient: withDevProxy("http://localhost:8080"),
 	}
 }
 
