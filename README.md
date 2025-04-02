@@ -1,12 +1,14 @@
 
 
 ## V3 rev
-- [ ] move connections to a provider interface.
-- [ ] revamp all controller (fluidnc) file functionality, Macro specific functions, this will break filebrowser
+- [x] move connections to a provider interface.
+- [x] revamp all controller (fluidnc) file functionality
 
 ## TODO
+- [ ] fluidnc initial report request happens before full connection is ready
+- [ ] fluidnc connection status is not quite right
 - [ ] clean up CNCContext, most of the funcs can be removed and called directly via the go exports
-- [ ] I do not like the current file functionality/code layout
+- [x] I do not like the current file functionality/code layout
 - [ ] probing page needs to decide G90 vs G91
 - [ ] add probe grid to probe utils, needs a seperate modal and use keypad??
 - [ ] add import/export to probe history

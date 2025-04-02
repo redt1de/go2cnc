@@ -14,6 +14,10 @@ export function DelFile(arg1, arg2) {
   return window['go']['app']['App']['DelFile'](arg1, arg2);
 }
 
+export function ExportProbeHistory() {
+  return window['go']['app']['App']['ExportProbeHistory']();
+}
+
 export function GetFile(arg1, arg2) {
   return window['go']['app']['App']['GetFile'](arg1, arg2);
 }
@@ -24,6 +28,10 @@ export function GetLastProbe() {
 
 export function GetProbeHistory() {
   return window['go']['app']['App']['GetProbeHistory']();
+}
+
+export function ImportProbeHistory() {
+  return window['go']['app']['App']['ImportProbeHistory']();
 }
 
 export function IsLocalFS() {

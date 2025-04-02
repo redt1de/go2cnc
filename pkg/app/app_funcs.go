@@ -1,10 +1,13 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
 	"go2cnc/pkg/cnc/state"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
+	"os"
+	"time"
 
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
@@ -69,3 +72,73 @@ func (a *App) SendWait(msg string) ([]string, error) {
 }
 
 // //////////////////////////////////////////////////////////////////////////////
+
+func (a *App) ImportProbeHistory() error {
+	val, err := runtime.OpenFileDialog(a.ctx, runtime.OpenDialogOptions{
+		Title: "Import Probe JSON",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "JSON Files",
+				Pattern:     "*.json",
+			},
+		},
+		DefaultDirectory:     a.Cfg.LocalFsPath,
+		CanCreateDirectories: true,
+	},
+	)
+	if err != nil {
+		logme.Error("Error opening file dialog:", err)
+		return err
+	}
+	logme.Debug("Importing probe history from: ", val)
+
+	data, err := os.ReadFile(val)
+	if err != nil {
+		logme.Error("Error reading file:", err)
+		return err
+	}
+	var probeResults []state.ProbeResult
+	err = json.Unmarshal(data, &probeResults)
+	if err != nil {
+		logme.Error("Error unmarshalling JSON:", err)
+	}
+
+	a.Cnc.GetState().ProbeHistory = probeResults
+	runtime.EventsEmit(a.ctx, "probeEvent", probeResults)
+	return nil
+}
+
+func (a *App) ExportProbeHistory() error {
+	//timestamp
+	ts := time.Now().Format("2006-01-02_15-04-05")
+	val, err := runtime.SaveFileDialog(a.ctx, runtime.SaveDialogOptions{
+		Title: "Export Probe JSON",
+		Filters: []runtime.FileFilter{
+			{
+				DisplayName: "JSON Files",
+				Pattern:     "*.json",
+			},
+		},
+		DefaultFilename:  fmt.Sprintf("probe_history_%s.json", ts),
+		DefaultDirectory: a.Cfg.LocalFsPath,
+	},
+	)
+
+	if err != nil {
+		logme.Error("Error opening file dialog:", err)
+		return err
+	}
+
+	logme.Debug("Exporting probe history to: ", val)
+	data, err := json.MarshalIndent(a.Cnc.GetState().ProbeHistory, "", "  ")
+	if err != nil {
+		logme.Error("Error marshalling JSON:", err)
+		return err
+	}
+	err = os.WriteFile(val, data, 0644)
+	if err != nil {
+		logme.Error("Error writing file:", err)
+	}
+
+	return err
+}

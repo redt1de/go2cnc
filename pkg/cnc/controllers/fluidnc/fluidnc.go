@@ -83,10 +83,17 @@ func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
 
 func (f *FluidNC) Connect() {
 	f.provider.Connect()
+
+	for {
+		if f.provider.IsConnected() {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
+
 	f.connected = true
 	f.onConnection(true)
-	time.Sleep(3 * time.Second)
-	logme.Error("these are getting sent before we are really connected // TODO")
+
 	f.SendAsync("$G")
 	f.SendAsync("$#")
 	f.SendAsync("?")

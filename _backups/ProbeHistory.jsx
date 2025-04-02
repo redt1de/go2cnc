@@ -3,8 +3,6 @@ import { useCNC } from "../context/CNCContext";
 import styles from "./css/ProbeHistory.module.css"; // Import the CSS file for styling
 import YesNoDialog from "../util/YesNoDialog";
 import { LogError, LogInfo, LogDebug } from '../util/logger';
-import { PutFile, GetFile, ImportProbeHistory, ExportProbeHistory } from "../../wailsjs/go/app/App"; // assumes Go exposes these
-// import { OpenFileDialog, SaveFileDialog } from "../../wailsjs/runtime";
 
 const PAGE_SIZE = 5; // Number of rows per page
 
@@ -12,10 +10,6 @@ export default function ProbeHistory() {
     const { probeHistory, clearProbeHistory } = useCNC();
     const [currentPage, setCurrentPage] = useState(0);
     const [showDialog, setShowDialog] = useState(false);
-    const [showExportModal, setShowExportModal] = useState(false);
-    const [showImportModal, setShowImportModal] = useState(false);
-    const [drive, setDrive] = useState("LOCAL"); // Drive for file operations
-
 
     // Calculate total pages
     // LogDebug('>>>>> probeHistory:', probeHistory);
@@ -34,24 +28,6 @@ export default function ProbeHistory() {
         setShowDialog(false);
 
     };
-    const handleExport = async () => {
-        try {
-            const openPath = await ExportProbeHistory();
-        } catch (err) {
-            LogError("Import failed:", err);
-            alert("Invalid or unreadable file.");
-        }
-    };
-
-    const handleImport = async () => {
-        try {
-            const openPath = await ImportProbeHistory();
-        } catch (err) {
-            LogError("Import failed:", err);
-            alert("Invalid or unreadable file.");
-        }
-    };
-
 
     return (
         <div className={styles.probeContainer}>
@@ -115,13 +91,13 @@ export default function ProbeHistory() {
                     Next ▶
                 </button>
             </div>
+
+            {/* Clear Probe History Button */}
             <div className={styles.clearContainer}>
-                <button className={styles.clearBtn} onClick={handleImport}>Import</button>
-                <button className={styles.clearBtn} onClick={() => setShowDialog(true)}>Clear</button>
-                <button className={styles.clearBtn} onClick={handleExport}>Export</button>
+                <button className={styles.clearBtn} onClick={() => setShowDialog(true)}>
+                    Clear
+                </button>
             </div>
-
-
         </div>
     );
 }

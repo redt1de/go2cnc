@@ -8,7 +8,7 @@ import { AppConfig } from "../context/CNCContext";
 
 function parseStack(stack) {
     const ll = AppConfig?.logLevel || 3;
-    if (ll <5) {
+    if (ll <4) {
         return "";
     }
     const lines = stack.split("\n");

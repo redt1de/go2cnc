@@ -10,11 +10,15 @@ export function Config():Promise<config.Config>;
 
 export function DelFile(arg1:string,arg2:string):Promise<void>;
 
+export function ExportProbeHistory():Promise<void>;
+
 export function GetFile(arg1:string,arg2:string):Promise<string>;
 
 export function GetLastProbe():Promise<state.ProbeResult>;
 
 export function GetProbeHistory():Promise<Array<state.ProbeResult>>;
+
+export function ImportProbeHistory():Promise<void>;
 
 export function IsLocalFS():Promise<boolean>;
 
