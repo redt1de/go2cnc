@@ -6,7 +6,6 @@ import { useCNC } from "../context/CNCContext";
 import { LogError, LogInfo, LogDebug } from '../util/logger';
 import AxisModal from "../util/AxisModal";
 import ProbeHistory from "../components/ProbeHistory";
-import { useCommandRunner } from '../context/QueueRunner';
 import { ClearProbeHistory, Config } from "../../wailsjs/go/app/App";
 import { AppConfig } from "../context/CNCContext";
 
@@ -30,20 +29,34 @@ export default function ProbeView() {
 
     // Unified probe target (direction or utility)
     const [activeProbeTarget, setActiveProbeTarget] = useState({ type: "direction", value: "Z-" });
-    const { runCommandQueue } = useCommandRunner();
 
-    const handleZeroSelect = (axes) => {
-        LogDebug("User selected axes:", axes);
-        // Example: build a command
-        const a = `G0 ${axes.map(a => `${a}0`).join(" ")}`;
+    const handleZeroSelect = (axis) => {
+        if (!axis || axis.length === 0) return;
 
-        const command = `G10 L20 P1 ${axes.map(a => `${a}0`).join(" ")}`;
+        // Extract numeric part from status.wcs string (e.g., "G54" → 54)
+        const wcsString = status?.wcs ?? "G54";
+        const wcsNumber = parseInt(wcsString.replace("G", ""), 10);
+        const pValue = isNaN(wcsNumber) ? 1 : wcsNumber - 53; // G54 = P1
 
+        let cmd = `G10 L20 P${pValue}`;
 
-        LogInfo("Sending command: " + command);
-        sendCommand(command);
+        if (axis.includes("X")) {
+            cmd += " X0";
+        }
+        if (axis.includes("Y")) {
+            cmd += " Y0";
+        }
+        if (axis.includes("Z")) {
+            cmd += " Z0";
+        }
+
+        LogDebug("Command:", cmd);
+        sendAsync(cmd);
         setShowAxisModal(false);
     };
+
+
+
 
     const handleOpenKeypad = (field) => {
         if (field === "zmin" || field === "zmax") {
@@ -148,7 +161,7 @@ export default function ProbeView() {
             const cleaned = value.replace('+', ''); // ✅ Remove "+"
             const cmd = `G91 ${probeMode} ${cleaned}${probeDistance} F${feedRate}`;
             LogInfo("Executing probe: " + cmd);
-            sendCommand(cmd);
+            sendAsync(cmd);
             // LogDebug("🔧 Executing probe:", `${probeMode} ${cleaned}${probeDistance} F${feedRate}`);
 
         } else if (type === "utility") {

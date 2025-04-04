@@ -4,7 +4,7 @@ import Frame from "../util/Frame";
 import FileBrowser from "../components/FileBrowser";
 import FileViewer from "../components/FileViewer";
 import InputModal from "../util/InputModal";
-import { ListFiles, GetFile, PutFile, RunFile, SaveMacro } from "../../wailsjs/go/app/App";
+import { ListFiles, GetFile, PutFile, RunFile } from "../../wailsjs/go/app/App";
 import { LogError, LogDebug } from '../util/logger';
 import styles from "./css/FilesView.module.css";
 

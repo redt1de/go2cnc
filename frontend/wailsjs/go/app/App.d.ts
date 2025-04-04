@@ -36,8 +36,6 @@ export function PutFile(arg1:string,arg2:string,arg3:string):Promise<void>;
 
 export function RunFile(arg1:string):Promise<void>;
 
-export function SaveMacro(arg1:string,arg2:string):Promise<void>;
-
 export function SendAsync(arg1:string):Promise<void>;
 
 export function SendAsyncRaw(arg1:any):Promise<void>;

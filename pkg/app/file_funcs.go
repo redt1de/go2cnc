@@ -106,8 +106,3 @@ func (a *App) RunFile(drivepathcsv string) error {
 	logme.Error("implement RunFile // TODO")
 	return fmt.Errorf("RunFile not implemented yet")
 }
-
-func (a *App) SaveMacro(name, content string) error {
-	logme.Error("implement SaveMacro // TODO")
-	return fmt.Errorf("SaveMacro not implemented yet")
-}
