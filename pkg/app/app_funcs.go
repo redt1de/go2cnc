@@ -7,8 +7,10 @@ import (
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
 	"os"
+	"strings"
 	"time"
 
+	"github.com/wailsapp/wails/v2/pkg/logger"
 	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
@@ -40,6 +42,9 @@ func (a *App) GetLastProbe() state.ProbeResult {
 }
 
 func (a *App) SendAsync(msg string) {
+	if a.internalCmd(msg) {
+		return
+	}
 	a.Cnc.SendAsync(msg)
 	runtime.EventsEmit(a.ctx, "consoleEvent", fmt.Sprintf("> %s", msg))
 }
@@ -67,6 +72,9 @@ func (a *App) SendAsyncRaw(cmd interface{}) {
 }
 
 func (a *App) SendWait(msg string) ([]string, error) {
+	if a.internalCmd(msg) {
+		return []string{}, nil
+	}
 	runtime.EventsEmit(a.ctx, "consoleEvent", fmt.Sprintf("> %s", msg))
 	return a.Cnc.SendWait(msg)
 }
@@ -141,4 +149,22 @@ func (a *App) ExportProbeHistory() error {
 	}
 
 	return err
+}
+
+// returns true if its an internal command
+func (a *App) internalCmd(msg string) bool {
+	msg = strings.TrimSpace(msg)
+	switch msg {
+	case "exit", "quit", "q":
+		logme.Warning("User initiated exit via console")
+		runtime.Quit(a.ctx)
+		return true
+	case "reload", "refresh", "r":
+		logme.Warning("User initiated reload via console")
+		runtime.WindowReloadApp(a.ctx)
+	case "verbose", "debug", "vvv":
+		runtime.LogSetLogLevel(a.ctx, logger.TRACE)
+	}
+
+	return false
 }
