@@ -4,8 +4,10 @@ import { useContext } from 'react';
 import { useCNC } from '../context/CNCContext';
 import YesNoDialog from "../util/YesNoDialog";
 import { LogError, LogInfo, LogDebug } from '../util/logger';
+// export default React.memo(JogButtonGroup);
 
-export default function JogButtonGroup() {
+export default React.memo(function JogButtonGroup() { // testing memoization for performance
+    // export default function JogButtonGroup() {
     const [stepSize, setStepSize] = useState('10.0');
     const { sendAsync } = useCNC();
 
@@ -66,5 +68,5 @@ export default function JogButtonGroup() {
         </div>
         // </Frame>
     );
-}
+})
 

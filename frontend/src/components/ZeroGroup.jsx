@@ -1,3 +1,4 @@
+import React from 'react';
 import styles from './css/ZeroGroup.module.css';
 import { useCNC } from '../context/CNCContext';
 import { useState } from 'react';
@@ -7,7 +8,8 @@ import OverridesModal from '../util/OverrideModal';
 import WCSModal from '../util/WCSModal';
 import { LogError, LogInfo, LogDebug } from '../util/logger';
 
-export default function ZeroGroup() {
+export default React.memo(function ZeroGroup() { // testing memoization for performance
+    // export default function ZeroGroup() {
     const { sendAsync, status } = useCNC();
     const [showModal, setShowModal] = useState(false);
     const [showKeypad, setShowKeypad] = useState(false);
@@ -75,7 +77,7 @@ export default function ZeroGroup() {
         </div>
     );
 }
-
+)
 // [G54:0.000,0.000,0.000]
 // [G55:0.000,0.000,0.000]
 // [G56:0.000,0.000,0.000]
