@@ -36,6 +36,7 @@ func (w *WebSocketProvider) connectLoop() {
 	for {
 		conn, _, err := websocket.DefaultDialer.Dial(w.url, http.Header{})
 		if err != nil {
+			w.connected = false
 			logme.Error("WebSocket connection failed:", err)
 			time.Sleep(w.reconnectDelay)
 			continue

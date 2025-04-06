@@ -35,6 +35,8 @@ func NewApp() *App {
 	}
 }
 
+// 2025/04/05 19:59:24 ❌ [ERROR]  WebSocket connection failed:dial tcp: lookup fluidnc.local: no such host (websocket/websocket.go:39)
+
 // startup is called when the app starts. The context is saved
 // so we can call the runtime methods
 func (a *App) Startup(ctx context.Context) {

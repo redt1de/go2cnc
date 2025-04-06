@@ -8,6 +8,8 @@ import AxisModal from "../util/AxisModal";
 import ProbeHistory from "../components/ProbeHistory";
 import { ClearProbeHistory, Config } from "../../wailsjs/go/app/App";
 import { AppConfig } from "../context/CNCContext";
+import { LogWarning } from "../../wailsjs/runtime/runtime";
+import MiniMDI from "../components/MiniMDI";
 
 export default function ProbeView() {
     const { sendAsync, sendWait, getLastProbe, testIngest, testSender, status, probeHistory } = useCNC();
@@ -69,20 +71,14 @@ export default function ProbeView() {
 
     };
 
-    const retract = 2;
+    // const retract = 2;
 
     const probeHole = async () => {
         ClearProbeHistory();
-        // testIngest();
-        // LogDebug("Config:", AppConfig);
-
-        return;
         const stored_mpos = status?.mpos;
 
-
-        // const result = sendWait(`G91 G38.2 X-${probeDistance} F${feedRate}`);
-        testIngest();
-        let result = await sendWait(`G4 P1`);
+        // PROBE X-
+        let result = await sendWait(`G91 G38.2 X-${probeDistance} F${feedRate}`);
         if (!result.success) {
             LogError("Probe failed: " + result.error.message);
             return;
@@ -90,26 +86,52 @@ export default function ProbeView() {
         let pr = await getLastProbe();
         const xmin = pr.data.x;
 
+        // // RETURN TO START
+        await sendWait(`G90 G53 G0 X${stored_mpos.x}`);
 
-        testIngest();
-        result = await sendWait(`G4 P1`);
+        // PROBE X+
+        result = await sendWait(`G91 G38.2 X${probeDistance} F${feedRate}`);
         if (!result.success) {
             LogError("Probe failed: " + result.error.message);
             return;
         }
         pr = await getLastProbe();
         const xmax = pr.data.x;
-        let c = (xmax - xmin) / 2;
-        LogDebug("Command succeeded: c=g91 g0x", c);
+
+        let cx = (xmax - xmin) / 2;
+
+        // MOVE TO CENTER
+        await sendWait(`G90 G53 G0 X${cx}`);
+
+        ////////////////////////////////
+        // PROBE X-
+        result = await sendWait(`G91 G38.2 Y-${probeDistance} F${feedRate}`);
+        if (!result.success) {
+            LogError("Probe failed: " + result.error.message);
+            return;
+        }
+        pr = await getLastProbe();
+        const ymin = pr.data.y;
+
+        // // RETURN TO START
+        await sendWait(`G90 G53 G0 Y${stored_mpos.y}`);
+
+        // PROBE X+
+        result = await sendWait(`G91 G38.2 Y${probeDistance} F${feedRate}`);
+        if (!result.success) {
+            LogError("Probe failed: " + result.error.message);
+            return;
+        }
+        pr = await getLastProbe();
+        const ymax = pr.data.y;
+
+        let cy = (ymax - ymin) / 2;
+
+        // MOVE TO CENTER
+        await sendWait(`G90 G53 G0 Y${cy}`);
 
 
-        // sendWait(`G90 G53 G0 X${stored_mpos.x}`);
 
-
-
-        // const result2 = sendWait(`G91 G38.2 X${probeDistance} F${feedRate}`);
-        // LogDebug("Probe result:", result2);
-        // sendWait(`G90 G53 G0 X${stored_mpos.x}`);
 
 
     }
@@ -194,6 +216,12 @@ export default function ProbeView() {
                             </button>
                         ))}
                     </div>
+                </Frame>
+            </div>
+
+            <div style={{ position: 'absolute', top: '10px', left: '310px' }}>
+                <Frame title="DRO">
+                    <MiniMDI workpos={false} />
                 </Frame>
             </div>
 
