@@ -8,6 +8,7 @@ import (
 	"go2cnc/pkg/app"
 	"go2cnc/pkg/config"
 	"go2cnc/pkg/logme"
+	"go2cnc/pkg/util"
 
 	"github.com/wailsapp/wails/v2"
 )
@@ -30,6 +31,15 @@ func main() {
 
 	var err error
 	app.CurrentConfig, err = config.LoadYamlConfig(configFile)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = util.MkDirIfNotExist(app.CurrentConfig.LocalFsPath)
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = util.MkDirIfNotExist(app.CurrentConfig.MacroPath)
 	if err != nil {
 		log.Fatal(err)
 	}

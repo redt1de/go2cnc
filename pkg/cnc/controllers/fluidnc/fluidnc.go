@@ -77,8 +77,17 @@ func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
 		f.handleMessage(string(data), (len(f.waitQueue) > 0))
 	})
 
+	provider.SetConnHandler(func(b bool) {
+		f.handleConn(b)
+	})
+
 	f.ctx, f.cancel = context.WithCancel(context.Background())
 	return f
+}
+
+func (f *FluidNC) handleConn(isconn bool) {
+	f.connected = isconn
+	f.onConnection(isconn)
 }
 
 func (f *FluidNC) Connect() {
@@ -90,9 +99,6 @@ func (f *FluidNC) Connect() {
 		}
 		time.Sleep(1 * time.Second)
 	}
-
-	f.connected = true
-	f.onConnection(true)
 
 	f.SendAsync("$G")
 	f.SendAsync("$#")

@@ -9,12 +9,13 @@ import (
 )
 
 type WebSocketProvider struct {
-	url             string
-	conn            *websocket.Conn
-	onReceive       func([]byte)
-	reconnectTicker *time.Ticker
-	reconnectDelay  time.Duration
-	connected       bool
+	url       string
+	conn      *websocket.Conn
+	onReceive func([]byte)
+	onConn    func(bool)
+	// reconnectTicker *time.Ticker
+	reconnectDelay time.Duration
+	connected      bool
 }
 type WebSocketConfig struct {
 	Url string `json:"url" yaml:"url"`
@@ -32,18 +33,23 @@ func (w *WebSocketProvider) Connect() error {
 	return nil
 }
 
+func (w *WebSocketProvider) handleConn(isconn bool) {
+	w.connected = isconn
+	w.onConn(isconn)
+}
+
 func (w *WebSocketProvider) connectLoop() {
 	for {
 		conn, _, err := websocket.DefaultDialer.Dial(w.url, http.Header{})
 		if err != nil {
-			w.connected = false
+			w.handleConn(false)
 			logme.Error("WebSocket connection failed:", err)
 			time.Sleep(w.reconnectDelay)
 			continue
 		}
 
 		w.conn = conn
-		w.connected = true
+		w.handleConn(true)
 		logme.Success("WebSocket connected to ", w.url)
 		w.readLoop()
 		w.connected = false
@@ -67,6 +73,7 @@ func (w *WebSocketProvider) readLoop() {
 }
 
 func (w *WebSocketProvider) Disconnect() error {
+	w.handleConn(false)
 	if w.conn != nil {
 		return w.conn.Close()
 	}
@@ -82,6 +89,10 @@ func (w *WebSocketProvider) Send(data []byte) error {
 		return nil
 	}
 	return w.conn.WriteMessage(websocket.TextMessage, data)
+}
+
+func (w *WebSocketProvider) SetConnHandler(handler func(bool)) {
+	w.onConn = handler
 }
 
 func (w *WebSocketProvider) SetReceiveHandler(handler func([]byte)) {

@@ -99,12 +99,13 @@ export default function ProbeView() {
         const xmax = pr.data.x;
 
         let cx = (xmax - xmin) / 2;
+        // LogWarning(`storedmpos:${stored_mpos.x}, xmin: ${xmin}, xmax: ${xmax}, cx: ${cx}`);
 
         // MOVE TO CENTER
-        await sendWait(`G90 G53 G0 X${cx}`);
+        await sendWait(`G90 G53 G0 X${xmax - cx}`);
 
         ////////////////////////////////
-        // PROBE X-
+        // PROBE Y-
         result = await sendWait(`G91 G38.2 Y-${probeDistance} F${feedRate}`);
         if (!result.success) {
             LogError("Probe failed: " + result.error.message);
@@ -116,7 +117,7 @@ export default function ProbeView() {
         // // RETURN TO START
         await sendWait(`G90 G53 G0 Y${stored_mpos.y}`);
 
-        // PROBE X+
+        // PROBE Y+
         result = await sendWait(`G91 G38.2 Y${probeDistance} F${feedRate}`);
         if (!result.success) {
             LogError("Probe failed: " + result.error.message);
@@ -128,7 +129,7 @@ export default function ProbeView() {
         let cy = (ymax - ymin) / 2;
 
         // MOVE TO CENTER
-        await sendWait(`G90 G53 G0 Y${cy}`);
+        await sendWait(`G90 G53 G0 Y${ymax - cy}`);
 
 
 

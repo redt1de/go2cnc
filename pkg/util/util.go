@@ -52,3 +52,10 @@ func GenerateRandomPosition() float64 {
 	// Round to 3 decimal places
 	return float64(int(val*1000)) / 1000
 }
+
+func MkDirIfNotExist(path string) error {
+	if _, err := os.Stat(path); os.IsNotExist(err) {
+		return os.MkdirAll(path, os.ModePerm)
+	}
+	return nil
+}

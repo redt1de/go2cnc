@@ -143,14 +143,13 @@ func (l *logMe) Info(message string) {
 }
 
 func (l *logMe) Warning(message string) {
-	if l.Level < INFO {
-		return
-	}
+	// if l.Level < INFO {
+	// 	return
+	// }
 	log.Println(MsgWarn, message+getCaller())
 }
 
 func (l *logMe) Error(message string) {
-
 	log.Println(MsgError, message+getCaller())
 }
 

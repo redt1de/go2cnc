@@ -9,5 +9,6 @@ type Provider interface {
 	IsConnected() bool
 	Send(data []byte) error
 	SetReceiveHandler(func([]byte))
+	SetConnHandler(handler func(bool))
 	SetReconnectInterval(time.Duration)
 }

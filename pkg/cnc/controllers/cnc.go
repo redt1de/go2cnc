@@ -19,6 +19,11 @@ type Controller interface {
 	SendAsyncRaw(msg []byte)               // SendAsyncRaw sends a raw message to the CNC controller and returns immediately
 	SendWait(msg string) ([]string, error) // SendWait sends a message to the CNC controller, waits for error/ok, and returns the resulting messages
 
-	FileManager() fileman.FileManager // FileManager returns the file manager for the controller
+	FileManager() fileman.FileManager     // FileManager returns the file manager for the controller
+	Stream([]string, StreamOptions) error // Stream starts a stream of messages to the controller
 
+}
+
+type StreamOptions interface {
+	Get() int // Get returns the value of the stream option
 }
