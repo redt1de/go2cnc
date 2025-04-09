@@ -22,6 +22,7 @@ type FluidNC struct {
 	ctx       context.Context
 	cancel    context.CancelFunc
 	Fs        fileman.FileManager
+	cfg       *FluidNCConfig
 
 	state        *state.State
 	onMessage    func(msg string)
@@ -35,8 +36,9 @@ type FluidNC struct {
 type FluidNCConfig struct {
 	Websocket *websocket.WebSocketConfig `json:"websocket,omitempty" yaml:"websocket,omitempty"`
 	// Serial    *SerialConfig    `json:"serial,omitempty" yaml:"serial,omitempty"` // TODO
-	ApiUrl   string `json:"api_url" yaml:"api_url"`
-	DevProxy string `json:"devProxy" yaml:"dev_proxy"`
+	ApiUrl   string        `json:"api_url" yaml:"api_url"`
+	DevProxy string        `json:"devProxy" yaml:"dev_proxy"`
+	Stream   *StreamConfig `json:"stream,omitempty" yaml:"stream,omitempty"`
 }
 
 type waitEntry struct {
@@ -71,6 +73,7 @@ func NewFluidNcController(cfg FluidNCConfig) *FluidNC {
 		connected:    false,
 		waitQueue:    []*waitEntry{},
 		Fs:           fs,
+		cfg:          &cfg,
 	}
 
 	provider.SetReceiveHandler(func(data []byte) {

@@ -1,15 +1,12 @@
 package fluidnc
 
-import "go2cnc/pkg/cnc/controllers"
-
-type StreamOptions struct {
-	blah int
+type StreamConfig struct {
+	Simple     bool `json:"simple" yaml:"simple"`
+	RxBuffer   int  `json:"rx_buffer" yaml:"rx_buffer"`
+	LineBuffer int  `json:"line_buffer" yaml:"line_buffer"`
 }
 
-func (s *StreamOptions) Get() int {
-	return 0
-}
-
-func (f *FluidNC) Stream(lines []string, options controllers.StreamOptions) error {
+func (f *FluidNC) Stream(lines []string) error {
+	// f.cfg.Stream.Simple = true
 	return nil
 }

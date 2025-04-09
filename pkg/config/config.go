@@ -13,7 +13,7 @@ type Config struct {
 	LogLevel    int    `json:"logLevel" yaml:"log_level"`
 	LogFile     string `json:"logFile" yaml:"log_file"`
 
-	//
+	// add new controller configs here
 	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
 }
 
