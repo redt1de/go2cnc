@@ -254,3 +254,23 @@ func (f *FluidNCFileManager) RmDir(path string) error {
 
 	return nil
 }
+
+func (f *FluidNCFileManager) RunFile(path string) error {
+	// /command?cmd=$SD/Run=/safe-test.nc
+	filename := filepath.Base(path)
+
+	// url := fmt.Sprintf("%s/upload?path=%s&action=delete&filename=%s", f.apiUrl, dir, filename)
+	url := fmt.Sprintf("%s/command?cmd=$SD/Run=/%s", f.apiUrl, filename)
+
+	resp, err := f.httpClient.Get(url)
+	if err != nil {
+		return fmt.Errorf("failed to send delete request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("delete request failed with HTTP status: %s", resp.Status)
+	}
+
+	return nil
+}

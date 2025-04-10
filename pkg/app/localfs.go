@@ -1,8 +1,10 @@
 package app
 
 import (
+	"errors"
 	"fmt"
 	"go2cnc/pkg/cnc/fileman"
+	"go2cnc/pkg/logme"
 	"os"
 	"path/filepath"
 )
@@ -79,4 +81,9 @@ func (u *LocalFs) MkDir(path string) error {
 func (u *LocalFs) RmDir(path string) error {
 	full := filepath.Join(u.Path(), path)
 	return os.RemoveAll(full)
+}
+
+func (u *LocalFs) RunFile(path string) error {
+	logme.Error("RunFile not implemented")
+	return errors.New("RunFile not implemented") // TODO
 }

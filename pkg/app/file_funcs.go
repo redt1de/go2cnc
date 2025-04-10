@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go2cnc/pkg/cnc/fileman"
 	"go2cnc/pkg/logme"
+	"strings"
 )
 
 func (a *App) IsRemoteFS() bool {
@@ -102,7 +103,52 @@ func (a *App) PutFile(drive, path, content string) error {
 	return fmt.Errorf("invalid location %s", drive)
 }
 
-func (a *App) RunFile(drivepathcsv string) error {
-	logme.Error("implement RunFile // TODO")
-	return fmt.Errorf("RunFile not implemented yet")
+func (a *App) RunFile(drive, path string) error {
+
+	// if fileman.RunFile; err == not implemented then fileman.GetFile > a.Cnc.Stream <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<, MAYBE
+	if drive == "USB" && a.IsUsbFS() {
+		raw, err := a.UsbFs.Read(path)
+		if err != nil {
+			return err
+		}
+		lines := strings.Split(raw, "\n")
+		a.streamWrap(lines)
+		return nil
+	}
+
+	if drive == "LOCAL" && a.IsLocalFS() {
+		raw, err := a.LocalFs.Read(path)
+		if err != nil {
+			return err
+		}
+		lines := strings.Split(raw, "\n")
+		a.streamWrap(lines)
+		return nil
+	}
+	if drive == "MACROS" && a.IsMacroFS() {
+		raw, err := a.MacroFs.Read(path)
+		if err != nil {
+			return err
+		}
+		lines := strings.Split(raw, "\n")
+		a.streamWrap(lines)
+		return nil
+	}
+
+	if drive == "REMOTE" && a.IsRemoteFS() {
+		return a.Cnc.FileManager().RunFile(path)
+	}
+
+	return fmt.Errorf("invalid location %s", drive)
+}
+
+func (a *App) streamWrap(lines []string) {
+	go func() {
+		err := a.Cnc.Stream(lines)
+		if err != nil {
+			logme.Error("Streaming failed:", err)
+		} else {
+			logme.Success("Streaming completed successfully")
+		}
+	}()
 }

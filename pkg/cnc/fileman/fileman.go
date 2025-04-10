@@ -7,6 +7,7 @@ type FileManager interface {
 	Delete(path string) error
 	MkDir(path string) error
 	RmDir(path string) error
+	RunFile(path string) error
 }
 
 type FileList struct {
