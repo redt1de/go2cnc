@@ -4,16 +4,30 @@ This is a wails + react frontend for CNC control designed to run on a Raspberry 
 # Warning
 I am not a web developer nor am I an expericened CNC machine operator. This is a hobby project I am using to learn GUI/frontend development. The application is functional, but I have not done much testing. If you use this, do so at your own risk, and pay attention to what your machine is doing. If you find bugs or problems feel free to create an issue but as this is a hobby project, my dev time is limited.
 
+## Features
+- [x] Websocket provider
+- [ ] socket.io provider 
+- [ ] Telnet provider
+- [ ] UART provider (raw PI)
+- [x] FluidNC Controller
+- [ ] CNCJs Controller
+- [ ] Generic Grbl controller
+- [x] View, Edit, Run Gcode files from local fs (PI), USB, and on controller storage when supported (FluidNC) 
+- [x] Probing controls + some utility functions like probe hole
+- [x] Macros
+- [x] Console
+- [ ] Autoleveling 
+- [x] Webcam viewer with crosshair and position overlay
+- [x] Easy use G54-G59 work offsets
+- [x] Spindle control and TLO setting
+- [x] Realtime Overrides (note this is currently hard coded for Grbl style controllers. This will need implmentation in the controller interface for other controllers but I have none to test with)
+
+
 ## TODO
 - [ ] implement autolevel functionlity
 - [ ] clean up CNCContext, most of the funcs can be removed and called directly via the go exports
 - [ ] add probe grid to probe utils
-- [ ] add socket.io provider 
-- [ ] add telnet provider
-- [ ] add web provider
-- [ ] add UART provider (raw PI pins)
-- [ ] add cncjs controller, needs socket.io provider
-- [ ] add generic Grbl controller, should be able to take a lot from fluidnc
+
 
 - [x] move connections to a provider interface.
 - [x] revamp all controller (fluidnc) file functionality

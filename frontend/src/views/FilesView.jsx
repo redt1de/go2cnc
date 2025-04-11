@@ -37,6 +37,9 @@ export default function FilesView() {
 
     };
 
+    const NaFunc = () => {
+        LogError("Not implemented yet");
+    }
 
     const handleFileSelect = async (file, drive, currentPath) => {
         if (!file) {
@@ -96,10 +99,10 @@ export default function FilesView() {
             <div style={{ position: "absolute", bottom: "10px", left: "10px" }}>
                 <Frame title="Actions">
                     <div className={styles.actionContainer}>
-                        <button disabled={!selectedFile} >DryRun</button>
+                        <button onClick={NaFunc} disabled={!selectedFile} >DryRun</button>
                         <button onClick={handleRun} disabled={!selectedFile} >Run</button>
-                        <button disabled={!selectedFile} >Autolevel</button>
-                        <button disabled={!selectedFile} >Test</button>
+                        <button onClick={NaFunc} disabled={!selectedFile} >Autolevel</button>
+                        <button onClick={NaFunc} disabled={!selectedFile} >Test</button>
                     </div>
                 </Frame>
 

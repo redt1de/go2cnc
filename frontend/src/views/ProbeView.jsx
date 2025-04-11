@@ -195,7 +195,7 @@ export default function ProbeView() {
             if (value === "Hole") {
                 probeHole();
             } else {
-                toast.error("Utility actions are not implemented yet.");
+                toast.error("Not implemented yet.");
             }
         }
     };
