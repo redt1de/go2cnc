@@ -10,6 +10,7 @@ import { CNCProvider } from './context/CNCContext';
 
 import AlarmWatcher from './util/AlarmWatcher';
 import DisconnectedOverlay from './util/DisconnectedOverlay';
+import { ToastContainer } from 'react-toastify';
 
 // import ControlView from './views/ControlView';
 // import ConsoleView from './views/ConsoleView';
@@ -36,6 +37,12 @@ function App() {
 
     <CNCProvider>
       <div className={styles.appContainer}>
+        <ToastContainer
+          theme="colored"
+          hideProgressBar={true}
+          autoClose={3000}
+          closeOnClick={true}
+        />
         <Router>
           <nav className={styles.tabBar}>
             <NavLink to="/control" title="Control" className={({ isActive }) => isActive ? styles.active : ""}>

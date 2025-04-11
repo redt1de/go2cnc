@@ -34,7 +34,7 @@ export function ListFiles(arg1:string,arg2:string):Promise<fileman.FileList>;
 
 export function PutFile(arg1:string,arg2:string,arg3:string):Promise<void>;
 
-export function RunFile(arg1:string):Promise<void>;
+export function RunFile(arg1:string,arg2:string):Promise<void>;
 
 export function SendAsync(arg1:string):Promise<void>;
 

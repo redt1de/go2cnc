@@ -62,8 +62,8 @@ export function PutFile(arg1, arg2, arg3) {
   return window['go']['app']['App']['PutFile'](arg1, arg2, arg3);
 }
 
-export function RunFile(arg1) {
-  return window['go']['app']['App']['RunFile'](arg1);
+export function RunFile(arg1, arg2) {
+  return window['go']['app']['App']['RunFile'](arg1, arg2);
 }
 
 export function SendAsync(arg1) {

@@ -23,20 +23,15 @@ export default function FilesView() {
 
 
     const handleRun = async () => {
-        if (!selectedFile) {
-            alert("No file selected!");
-            return;
-        }
-        let csvstr = `${drive},${currentPath}/${selectedFile.name}`;
-        LogDebug("Running file:", csvstr);
+
+        if (!selectedFile) return;
+
+        const filePath = path ? `${path}/${selectedFile.name}` : selectedFile.name;
         try {
-            const response = await RunFile(csvstr);
-            LogDebug("RunFile response:", response);
+            await RunFile(`${drive}`, filePath);
             navigate("/control", { replace: true });
-            return response;
         } catch (error) {
             LogError("RunFile failed:", error);
-            return null;
         }
 
 
@@ -57,7 +52,7 @@ export default function FilesView() {
 
 
         try {
-            const content = await GetFile(drive, currentPath ? `${currentPath}/${file.name}` : file.name);
+            const content = await GetFile(drive, currentPath ? `${currentPath} / ${file.name}` : file.name);
             setFileContent(content);
         } catch (err) {
             LogError("Failed to load file:", err);

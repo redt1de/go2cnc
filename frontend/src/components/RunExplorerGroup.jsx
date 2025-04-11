@@ -42,7 +42,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
 
     const handleRun = async () => {
         if (!selectedFile) {
-            alert("No file selected!");
+            // alert("No file selected!");
             return;
         }
         let csvstr = `${drive},${currentPath}/${selectedFile.name}`;
@@ -62,7 +62,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
 
     const handleDryRun = () => {
         if (!selectedFile) {
-            alert("No file selected!");
+            // alert("No file selected!");
             return;
         }
         onDryRun(selectedFile);
@@ -70,7 +70,7 @@ export default function RunExplorerGroup({ onRun, onDryRun, onAutoLevel }) {
 
     const handleAutoLevel = () => {
         if (!selectedFile) {
-            alert("No file selected!");
+            // alert("No file selected!");
             return;
         }
         onAutoLevel(selectedFile);

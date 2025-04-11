@@ -7,6 +7,7 @@ import EditFileModal from "../util/EditFileModal";
 import { useState } from "react";
 import { PutFile } from "../../wailsjs/go/app/App";
 import { LogError, LogInfo, LogDebug } from '../util/logger';
+import { toast } from 'react-toastify';
 
 export default function FileViewer({ drive, selectedFile, fileContent, loading, path, allowEdit = false }) {
     const [isEditing, setIsEditing] = useState(false);
@@ -26,11 +27,11 @@ export default function FileViewer({ drive, selectedFile, fileContent, loading, 
             LogDebug("Saving file:", fileName);
             await PutFile(drive, fileName, editedContent);
 
-            alert("File saved successfully!");
+            toast.success("File saved successfully!");
             setIsEditing(false);
         } catch (err) {
             LogError("Failed to save file:", err);
-            alert("Failed to save file.");
+            // alert("Failed to save file.");
         }
     };
 

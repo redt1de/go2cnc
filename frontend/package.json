@@ -16,6 +16,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.4.0",
     "react-simple-keyboard": "^3.8.57",
+    "react-toastify": "^11.0.5",
     "simple-keyboard": "^3.8.44"
   },
   "devDependencies": {

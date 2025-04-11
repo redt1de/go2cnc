@@ -96,10 +96,27 @@ export namespace fileman {
 
 export namespace fluidnc {
 	
+	export class StreamConfig {
+	    simple: boolean;
+	    rx_buffer: number;
+	    line_buffer: number;
+	
+	    static createFrom(source: any = {}) {
+	        return new StreamConfig(source);
+	    }
+	
+	    constructor(source: any = {}) {
+	        if ('string' === typeof source) source = JSON.parse(source);
+	        this.simple = source["simple"];
+	        this.rx_buffer = source["rx_buffer"];
+	        this.line_buffer = source["line_buffer"];
+	    }
+	}
 	export class FluidNCConfig {
 	    websocket?: websocket.WebSocketConfig;
 	    api_url: string;
 	    devProxy: string;
+	    stream?: StreamConfig;
 	
 	    static createFrom(source: any = {}) {
 	        return new FluidNCConfig(source);
@@ -110,6 +127,7 @@ export namespace fluidnc {
 	        this.websocket = this.convertValues(source["websocket"], websocket.WebSocketConfig);
 	        this.api_url = source["api_url"];
 	        this.devProxy = source["devProxy"];
+	        this.stream = this.convertValues(source["stream"], StreamConfig);
 	    }
 	
 		convertValues(a: any, classs: any, asMap: boolean = false): any {

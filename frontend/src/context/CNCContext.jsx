@@ -1,8 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useRef } from "react";
 import { SendWait, SendAsync, SendAsyncRaw, ClearProbeHistory, GetLastProbe, TestIngest, TestSender, ListFiles, GetFile, Config as FetchConfig } from "../../wailsjs/go/app/App";
 import { EventsOn } from "../../wailsjs/runtime/runtime"
-import { LogError, LogInfo, LogDebug, LogTrace } from '../util/logger';
-
+import { LogError, LogInfo, LogDebug, LogTrace, LogWarning } from '../util/logger';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 // Create CNC Context
 const CNCContext = createContext();
 
@@ -49,8 +50,25 @@ export const CNCProvider = ({ children }) => {
             LogTrace("Status Event:", newStatus);
         });
 
+        // Listen for Status Updates
+        const unsubscribeStreamErr = EventsOn("streamError", (err) => {
+            LogError("Job Error:", err);
+            toast.error("Job Error:" + err);
+        });
+
+        const unsubscribeStreamComplete = EventsOn("streamSuccess", () => {
+            LogWarning("Job Complete:");
+            toast.success('Job Complete!');
+        });
+
         // Listen for Connection Status Updates
         const unsubscribeConnection = EventsOn("connectionEvent", (connected) => {
+            if (connected) {
+                LogInfo("Connection Event: Connected");
+                toast.success("Connected to CNC");
+            } else {
+                LogError("Connection Event: Disconnected");
+            }
             setIsConnected(connected);
         });
 
@@ -72,6 +90,8 @@ export const CNCProvider = ({ children }) => {
             unsubscribeConsole();
             unsubscribeStatus();
             unsubscribeConnection();
+            unsubscribeStreamErr();
+            unsubscribeStreamComplete();
         };
     }, []);
 

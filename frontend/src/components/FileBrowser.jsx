@@ -87,7 +87,7 @@ export default function FileBrowser({ drive, setDrive, onFileSelect, onPathChang
             }
         } catch (err) {
             LogError("Failed to delete file:", err);
-            alert("Failed to delete file.");
+            // toast.error("Failed to delete file.");
         } finally {
             setShowDeleteDialog(null);
         }

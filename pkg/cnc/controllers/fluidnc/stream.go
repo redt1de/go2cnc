@@ -2,6 +2,7 @@ package fluidnc
 
 import (
 	"errors"
+	"go2cnc/pkg/logme"
 	"strings"
 	"time"
 )
@@ -29,6 +30,7 @@ func (f *FluidNC) Stream(lines []string) error {
 			if line == "" || strings.HasPrefix(line, ";") {
 				continue
 			}
+			logme.Debug("Stream: ", line)
 			_, err := f.SendWait(line)
 			if err != nil {
 				return err

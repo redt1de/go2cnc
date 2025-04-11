@@ -39,7 +39,7 @@ export default function ProbeHistory() {
             const openPath = await ExportProbeHistory();
         } catch (err) {
             LogError("Import failed:", err);
-            alert("Invalid or unreadable file.");
+            // alert("Invalid or unreadable file.");
         }
     };
 
@@ -48,7 +48,7 @@ export default function ProbeHistory() {
             const openPath = await ImportProbeHistory();
         } catch (err) {
             LogError("Import failed:", err);
-            alert("Invalid or unreadable file.");
+            // alert("Invalid or unreadable file.");
         }
     };
 

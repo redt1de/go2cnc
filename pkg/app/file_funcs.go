@@ -5,6 +5,9 @@ import (
 	"go2cnc/pkg/cnc/fileman"
 	"go2cnc/pkg/logme"
 	"strings"
+	"time"
+
+	"github.com/wailsapp/wails/v2/pkg/runtime"
 )
 
 func (a *App) IsRemoteFS() bool {
@@ -104,7 +107,7 @@ func (a *App) PutFile(drive, path, content string) error {
 }
 
 func (a *App) RunFile(drive, path string) error {
-
+	// logme.Error("RunFile: ", drive, path)
 	// if fileman.RunFile; err == not implemented then fileman.GetFile > a.Cnc.Stream <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<, MAYBE
 	if drive == "USB" && a.IsUsbFS() {
 		raw, err := a.UsbFs.Read(path)
@@ -136,7 +139,22 @@ func (a *App) RunFile(drive, path string) error {
 	}
 
 	if drive == "REMOTE" && a.IsRemoteFS() {
-		return a.Cnc.FileManager().RunFile(path)
+		go func() {
+			err := a.Cnc.FileManager().RunFile(path)
+			if err != nil {
+				logme.Error("RunFile failed:", err)
+				runtime.EventsEmit(a.ctx, "streamError", err.Error())
+			} else {
+				time.Sleep(1000 * time.Millisecond)
+				s := a.Cnc.GetState()
+				for s.Job.Active {
+					s = a.Cnc.GetState()
+				}
+				logme.Success("RunFile completed successfully")
+				runtime.EventsEmit(a.ctx, "streamSuccess", nil)
+			}
+		}()
+		return nil
 	}
 
 	return fmt.Errorf("invalid location %s", drive)
@@ -147,8 +165,10 @@ func (a *App) streamWrap(lines []string) {
 		err := a.Cnc.Stream(lines)
 		if err != nil {
 			logme.Error("Streaming failed:", err)
+			runtime.EventsEmit(a.ctx, "streamError", err.Error())
 		} else {
 			logme.Success("Streaming completed successfully")
+			runtime.EventsEmit(a.ctx, "streamSuccess", nil)
 		}
 	}()
 }

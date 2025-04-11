@@ -10,6 +10,7 @@ import { ClearProbeHistory, Config } from "../../wailsjs/go/app/App";
 import { AppConfig } from "../context/CNCContext";
 import { LogWarning } from "../../wailsjs/runtime/runtime";
 import MiniMDI from "../components/MiniMDI";
+import { toast } from 'react-toastify';
 
 export default function ProbeView() {
     const { sendAsync, sendWait, getLastProbe, testIngest, testSender, status, probeHistory } = useCNC();
@@ -194,7 +195,7 @@ export default function ProbeView() {
             if (value === "Hole") {
                 probeHole();
             } else {
-                alert("Utility actions are not implemented yet.");
+                toast.error("Utility actions are not implemented yet.");
             }
         }
     };

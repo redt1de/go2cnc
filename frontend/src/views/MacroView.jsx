@@ -38,7 +38,7 @@ export default function MacroView() {
 
         const filePath = path ? `${path}/${selectedFile.name}` : selectedFile.name;
         try {
-            await RunFile(`MACROS,${filePath}`);
+            await RunFile("MACROS", filePath);
             navigate("/control", { replace: true });
         } catch (error) {
             LogError("RunFile failed:", error);
@@ -51,17 +51,17 @@ export default function MacroView() {
         const fullPath = path ? `${path}/${filename}` : filename;
         const defaultContent = "; New macro\n";
 
-        // try {
-        await PutFile("MACROS", fullPath, defaultContent);
-        // Load the new macro into the viewer
-        setSelectedFile({ name: filename });
-        setFileContent(defaultContent);
-        setShowNewModal(false);
-        setRefreshCounter(prev => prev + 1);
-        // } catch (err) {
-        //     LogError("Upload failed:", err);
-        //     // alert("Failed to create macro");
-        // }
+        try {
+            await PutFile("MACROS", fullPath, defaultContent);
+            // Load the new macro into the viewer
+            setSelectedFile({ name: filename });
+            setFileContent(defaultContent);
+            setShowNewModal(false);
+            setRefreshCounter(prev => prev + 1);
+        } catch (err) {
+            LogError("Upload failed:", err);
+            // alert("Failed to create macro");
+        }
     };
 
     const setDrive = async (drive) => {

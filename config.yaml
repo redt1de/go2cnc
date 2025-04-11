@@ -7,3 +7,7 @@ fluidnc:
   api_url: "http://fluidnc.local"
   websocket:
     url: "ws://fluidnc.local:81"
+  stream:
+    simple: true
+    rx_buffer_size: 128
+    line_buffer_size: 16
