@@ -2,7 +2,6 @@ package fluidnc
 
 import (
 	"errors"
-	"go2cnc/pkg/logme"
 	"strings"
 	"time"
 )
@@ -23,19 +22,29 @@ func (f *FluidNC) Stream(lines []string) error {
 	lineBuffer := cfg.LineBuffer
 	rxBuffer := cfg.RxBuffer
 
+	total_lines := len(lines)
+	f.state.Job.Active = true
+
 	if cfg.Simple || lineBuffer == 0 || rxBuffer == 0 {
 		// fallback to simple blocking stream using SendWait
-		for _, line := range lines {
+		for cnt, line := range lines {
 			line = strings.TrimSpace(line)
+			progress := float64(cnt) / float64(total_lines) * 100
+			if f.state != nil {
+				f.state.Job.Progress = progress
+			}
+
 			if line == "" || strings.HasPrefix(line, ";") {
 				continue
 			}
-			logme.Debug("Stream: ", line)
+			// logme.Debug("Stream: ", line)
 			_, err := f.SendWait(line)
 			if err != nil {
 				return err
 			}
 		}
+		f.state.Job.Progress = 100
+		f.state.Job.Active = false
 		return nil
 	}
 

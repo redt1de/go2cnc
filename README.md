@@ -22,12 +22,12 @@ I am not a web developer nor am I an expericened CNC machine operator. This is a
 - [x] Spindle control and TLO setting
 - [x] Realtime Overrides (note this is currently hard coded for Grbl style controllers. This will need implmentation in the controller interface for other controllers but I have none to test with)
 
-
 ## TODO
+- [ ] stream issues ???:
+- [x] non remote streams dont update job status
 - [ ] implement autolevel functionlity
 - [ ] clean up CNCContext, most of the funcs can be removed and called directly via the go exports
 - [ ] add probe grid to probe utils
-
 
 - [x] move connections to a provider interface.
 - [x] revamp all controller (fluidnc) file functionality

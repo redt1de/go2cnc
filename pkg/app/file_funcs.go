@@ -110,6 +110,7 @@ func (a *App) RunFile(drive, path string) error {
 	// logme.Error("RunFile: ", drive, path)
 	// if fileman.RunFile; err == not implemented then fileman.GetFile > a.Cnc.Stream <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<, MAYBE
 	if drive == "USB" && a.IsUsbFS() {
+		a.Cnc.GetState().Job.Path = path
 		raw, err := a.UsbFs.Read(path)
 		if err != nil {
 			return err
@@ -120,6 +121,7 @@ func (a *App) RunFile(drive, path string) error {
 	}
 
 	if drive == "LOCAL" && a.IsLocalFS() {
+		a.Cnc.GetState().Job.Path = path
 		raw, err := a.LocalFs.Read(path)
 		if err != nil {
 			return err
@@ -129,6 +131,7 @@ func (a *App) RunFile(drive, path string) error {
 		return nil
 	}
 	if drive == "MACROS" && a.IsMacroFS() {
+		a.Cnc.GetState().Job.Path = path
 		raw, err := a.MacroFs.Read(path)
 		if err != nil {
 			return err
@@ -147,7 +150,7 @@ func (a *App) RunFile(drive, path string) error {
 			} else {
 				time.Sleep(1000 * time.Millisecond)
 				s := a.Cnc.GetState()
-				for s.Job.Active {
+				for s.Job.Active || s.ActiveState == "Run" {
 					s = a.Cnc.GetState()
 				}
 				logme.Success("RunFile completed successfully")
@@ -162,11 +165,17 @@ func (a *App) RunFile(drive, path string) error {
 
 func (a *App) streamWrap(lines []string) {
 	go func() {
+
 		err := a.Cnc.Stream(lines)
 		if err != nil {
 			logme.Error("Streaming failed:", err)
 			runtime.EventsEmit(a.ctx, "streamError", err.Error())
 		} else {
+			time.Sleep(1000 * time.Millisecond)
+			s := a.Cnc.GetState()
+			for s.Job.Active || s.ActiveState == "Run" {
+				s = a.Cnc.GetState()
+			}
 			logme.Success("Streaming completed successfully")
 			runtime.EventsEmit(a.ctx, "streamSuccess", nil)
 		}
