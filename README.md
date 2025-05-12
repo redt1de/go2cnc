@@ -23,6 +23,7 @@ I am not a web developer nor am I an expericened CNC machine operator. This is a
 - [x] Realtime Overrides (note this is currently hard coded for Grbl style controllers. This will need implmentation in the controller interface for other controllers but I have none to test with)
 
 ## TODO
+- [ ] Implement controller specific overrides
 - [ ] stream issues ???:
 - [x] non remote streams dont update job status
 - [ ] implement autolevel functionlity
