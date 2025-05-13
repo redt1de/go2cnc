@@ -47,7 +47,11 @@ export default function SpindleGroup() {
             case 'm3':
                 // e.g., "M3 S{value}"
                 LogDebug(`Send command: M3 S${value}`);
+                // 
+
                 sendAsync(`M3 S${value}`);
+                sendAsync(`G1 F${(status && status.tool?.number) ?? 1}`);
+                LogError("debug this G1 line!!!!");
                 break;
             case 'm4':
                 // e.g., "M4 S{value}"
