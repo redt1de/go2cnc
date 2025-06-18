@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const CNCContext = createContext();
 
 export let AppConfig = {};
-const MAX_MESSAGES = 100;
+const MAX_MESSAGES = 50;
 
 // CNCProvider Component
 export const CNCProvider = ({ children }) => {
@@ -40,10 +40,19 @@ export const CNCProvider = ({ children }) => {
         LogDebug("CNCProvider mounted, setting up event listeners...");
 
         // Listen for Console Messages
+        // const unsubscribeConsole = EventsOn("consoleEvent", (message) => {
+        //     LogDebug("Console Event:", message);
+        //     setConsoleMessages((prev) => [...prev, message]);
+
+        // });
+
         const unsubscribeConsole = EventsOn("consoleEvent", (message) => {
             LogDebug("Console Event:", message);
-            setConsoleMessages((prev) => [...prev, message]);
-
+            setConsoleMessages(prev => {
+                const next = [...prev, message];
+                // Trim to keep only the last 100 messages
+                return next.length > MAX_MESSAGES ? next.slice(next.length - MAX_MESSAGES) : next;
+            });
         });
 
         // Listen for Status Updates

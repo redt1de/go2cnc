@@ -4,6 +4,12 @@ This is a wails + react frontend for CNC control designed to run on a Raspberry 
 # Warning
 I am not a web developer nor am I an expericened CNC machine operator. This is a hobby project I am using to learn GUI/frontend development. The application is functional, but I have not done much testing. If you use this, do so at your own risk, and pay attention to what your machine is doing. If you find bugs or problems feel free to create an issue but as this is a hobby project, my dev time is limited.
 
+# BugFix TODO
+- [x] app slows down after a while, i think consoleMessages gets big. Capped it at 50 to test.
+- [ ] lag is awful, lazyload makes pages slow, non lazyload makes everything slow.
+- [ ] need a heartbeat to detect hangs
+- [ ] disable tooltips wails or OS. they are annoying
+
 ## Features
 - [x] Websocket provider
 - [ ] socket.io provider 
