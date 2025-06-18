@@ -8,6 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 const CNCContext = createContext();
 
 export let AppConfig = {};
+const MAX_MESSAGES = 100;
 
 // CNCProvider Component
 export const CNCProvider = ({ children }) => {
@@ -42,6 +43,7 @@ export const CNCProvider = ({ children }) => {
         const unsubscribeConsole = EventsOn("consoleEvent", (message) => {
             LogDebug("Console Event:", message);
             setConsoleMessages((prev) => [...prev, message]);
+
         });
 
         // Listen for Status Updates
