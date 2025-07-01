@@ -10,6 +10,8 @@ I am not a web developer nor am I an expericened CNC machine operator. This is a
 - [ ] need a heartbeat to detect hangs
 - [ ] disable tooltips wails or OS. they are annoying
 
+
+
 ## Features
 - [x] Websocket provider
 - [ ] socket.io provider 
