@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState, useContext } from "react";
 import styles from "./css/WebcamView.module.css";
 import { useCNC } from '../context/CNCContext';
+import { LogError, LogInfo, LogDebug, LogTrace, LogWarning } from '../util/logger';
 
 export default function WebcamView() {
     const videoRef = useRef(null);
@@ -12,6 +13,7 @@ export default function WebcamView() {
         async function startWebcam() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+                LogInfo("webcam streams:", stream);
                 if (videoRef.current) {
                     videoRef.current.srcObject = stream;
                 }
