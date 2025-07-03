@@ -9,14 +9,42 @@ export default function WebcamView() {
     const [error, setError] = useState(null);
     const { consoleMessages, status, isConnected, sendAsync } = useCNC();
 
+    // useEffect(() => {
+    //     async function startWebcam() {
+    //         try {
+    //             const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    //             LogInfo("webcam streams:", stream);
+    //             if (videoRef.current) {
+    //                 videoRef.current.srcObject = stream;
+    //             }
+    //         } catch (err) {
+    //             setError("Failed to access webcam. Please check permissions.");
+    //             LogError("Webcam error:", err);
+    //         }
+    //     }
+
+    //     startWebcam();
+
+    //     return () => {
+    //         if (videoRef.current && videoRef.current.srcObject) {
+    //             videoRef.current.srcObject.getTracks().forEach(track => track.stop());
+    //         }
+    //     };
+    // }, []);
     useEffect(() => {
         async function startWebcam() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                LogInfo("webcam streams:", stream);
-                if (videoRef.current) {
-                    videoRef.current.srcObject = stream;
-                }
+                LogInfo("webcam stream:", stream);
+
+                const checkRef = () => {
+                    if (videoRef.current) {
+                        videoRef.current.srcObject = stream;
+                    } else {
+                        setTimeout(checkRef, 100); // retry if ref not ready
+                    }
+                };
+                checkRef();
             } catch (err) {
                 setError("Failed to access webcam. Please check permissions.");
                 LogError("Webcam error:", err);
@@ -24,12 +52,6 @@ export default function WebcamView() {
         }
 
         startWebcam();
-
-        return () => {
-            if (videoRef.current && videoRef.current.srcObject) {
-                videoRef.current.srcObject.getTracks().forEach(track => track.stop());
-            }
-        };
     }, []);
 
     useEffect(() => {
