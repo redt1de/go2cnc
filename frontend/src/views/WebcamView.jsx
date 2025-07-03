@@ -35,7 +35,7 @@ export default function WebcamView() {
         async function startWebcam() {
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-                LogInfo("webcam stream:", stream);
+                LogInfo("navigator.mediaDevices:", navigator.mediaDevices);
 
                 const checkRef = () => {
                     if (videoRef.current) {
@@ -103,7 +103,8 @@ export default function WebcamView() {
                 <div className={styles.error}>{error}</div>
             ) : (
                 <>
-                    <video ref={videoRef} autoPlay playsInline className={styles.videoFeed} />
+                    {/* <video ref={videoRef} autoPlay playsInline className={styles.videoFeed} /> */}
+                    <video ref={videoRef} autoPlay playsInline muted className={styles.videoFeed} />
                     <canvas ref={canvasRef} className={styles.overlayCanvas} />
                 </>
             )}
