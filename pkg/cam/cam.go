@@ -1,11 +1,8 @@
 package cam
 
 import (
-	"bytes"
 	"fmt"
-	"image"
-	"image/jpeg"
-	"log"
+	"go2cnc/pkg/logme"
 	"net/http"
 	"sync"
 	"time"
@@ -60,15 +57,15 @@ func (s *StreamServer) Start() error {
 
 	http.HandleFunc("/", s.handleStream)
 	go func() {
-		log.Printf("Starting webcam MJPEG stream on http://localhost:%d\n", s.port)
-		log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", s.port), nil))
+		logme.Log.Info(fmt.Sprintf("Starting webcam MJPEG stream on http://localhost:%d\n", s.port))
+		logme.Log.Error(fmt.Sprintf("webcam stream server failed:", http.ListenAndServe(fmt.Sprintf(":%d", s.port), nil)))
 	}()
 
 	return nil
 }
 
 func (s *StreamServer) handleStream(w http.ResponseWriter, r *http.Request) {
-	log.Printf("Client connected: %s\n", r.RemoteAddr)
+	// logme.Log.Info(fmt.Sprintf("Client connected: %s\n", r.RemoteAddr))
 	w.Header().Add("Content-Type", "multipart/x-mixed-replace; boundary=frame")
 
 	for {
@@ -77,7 +74,7 @@ func (s *StreamServer) handleStream(w http.ResponseWriter, r *http.Request) {
 		case nil:
 			frame, err := s.cam.ReadFrame()
 			if err != nil {
-				log.Printf("Error reading frame: %v", err)
+				logme.Log.Error(fmt.Sprintf("Error reading webcam frame: %v", err))
 				continue
 			}
 			if len(frame) == 0 {
@@ -93,16 +90,16 @@ func (s *StreamServer) handleStream(w http.ResponseWriter, r *http.Request) {
 
 			time.Sleep(33 * time.Millisecond) // ~30 FPS
 		default:
-			log.Printf("WaitForFrame error: %v", err)
+			logme.Log.Error(fmt.Sprintf("webcam WaitForFrame error: %v", err))
 		}
 	}
 }
 
-func decodeMJPEG(frame []byte) image.Image {
-	img, err := jpeg.Decode(bytes.NewReader(frame))
-	if err != nil {
-		log.Printf("Failed to decode MJPEG frame: %v", err)
-		return nil
-	}
-	return img
-}
+// func decodeMJPEG(frame []byte) image.Image {
+// 	img, err := jpeg.Decode(bytes.NewReader(frame))
+// 	if err != nil {
+// 		log.Printf("Failed to decode MJPEG frame: %v", err)
+// 		return nil
+// 	}
+// 	return img
+// }
