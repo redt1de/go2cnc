@@ -3,6 +3,7 @@ module go2cnc
 go 1.23
 
 require (
+	github.com/blackjack/webcam v0.6.1
 	github.com/gorilla/websocket v1.5.3
 	github.com/wailsapp/wails/v2 v2.10.1
 	gopkg.in/yaml.v3 v3.0.1

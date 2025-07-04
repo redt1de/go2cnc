@@ -2,6 +2,7 @@ package app
 
 import (
 	"context"
+	"go2cnc/pkg/cam"
 	"go2cnc/pkg/cnc/controllers"
 	"go2cnc/pkg/cnc/controllers/fluidnc"
 	"go2cnc/pkg/cnc/fileman"
@@ -23,6 +24,7 @@ type App struct {
 	UsbFs   fileman.FileManager // USBFs
 	LocalFs fileman.FileManager // LocalFs
 	MacroFs fileman.FileManager // MacroFs
+	Webcam  *cam.StreamServer
 	// MacroFs
 }
 
@@ -32,6 +34,7 @@ func NewApp() *App {
 		UsbFs:   &USBFs{},
 		LocalFs: nil,
 		MacroFs: nil,
+		Webcam:  nil,
 	}
 }
 

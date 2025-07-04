@@ -5,6 +5,8 @@ export namespace config {
 	    localFsPath: string;
 	    logLevel: number;
 	    logFile: string;
+	    // Go type: struct { Enabled bool "json:\"enabled\" yaml:\"enabled\""; Port int "json:\"port\" yaml:\"port\""; Device string "json:\"device\" yaml:\"device\"" }
+	    webCam: any;
 	    fluidnc: fluidnc.FluidNCConfig;
 	
 	    static createFrom(source: any = {}) {
@@ -17,6 +19,7 @@ export namespace config {
 	        this.localFsPath = source["localFsPath"];
 	        this.logLevel = source["logLevel"];
 	        this.logFile = source["logFile"];
+	        this.webCam = this.convertValues(source["webCam"], Object);
 	        this.fluidnc = this.convertValues(source["fluidnc"], fluidnc.FluidNCConfig);
 	    }
 	

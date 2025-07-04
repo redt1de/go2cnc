@@ -2,6 +2,10 @@ macro_path: "/tmp/macros"
 local_fs_path: "/tmp/localfs"
 log_level: 2
 log_file: "/tmp/fluidnc.log"
+webcam:
+  enabled: true
+  port: 8984
+  device: "/dev/video0"
 
 fluidnc:
   api_url: "http://fluidnc.local"

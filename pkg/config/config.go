@@ -12,6 +12,11 @@ type Config struct {
 	LocalFsPath string `json:"localFsPath" yaml:"local_fs_path"`
 	LogLevel    int    `json:"logLevel" yaml:"log_level"`
 	LogFile     string `json:"logFile" yaml:"log_file"`
+	Webcam      struct {
+		Enabled bool   `json:"enabled" yaml:"enabled"`
+		Port    int    `json:"port" yaml:"port"`
+		Device  string `json:"device" yaml:"device"`
+	} `json:"webCam" yaml:"webcam"`
 
 	// add new controller configs here
 	FluidNCConfig fluidnc.FluidNCConfig `json:"fluidnc" yaml:"fluidnc"`
